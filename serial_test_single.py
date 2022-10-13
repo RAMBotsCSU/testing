@@ -1,3 +1,8 @@
+#********************************************************
+#* Simple teensy communication script                   *
+#* Read next 1000 lines from teensy and print result    *
+#********************************************************
+
 import serial
 
 ser = serial.Serial('/dev/ttyACM0',9600)#, timeout = 2)
