@@ -1,3 +1,8 @@
+#********************************************************
+#* Simple teensy communication script                   *
+#* Communicate back and forth with the Teensy           *
+#********************************************************
+
 import serial
 
 ser = serial.Serial('/dev/ttyACM0',9600, timeout = 1)

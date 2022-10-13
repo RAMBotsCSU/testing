@@ -1,7 +1,11 @@
+#***************************************************************
+#* Combination of PS4 test script and teensy communication     *
+#* script to transfer button presses to the pi and then        *
+#* teensy, receving confirmation from teensie                  *
+#***************************************************************
+
 from pyPS4Controller.controller import Controller
 import serial
-
-
 
 class MyController(Controller):
 
@@ -9,9 +13,7 @@ class MyController(Controller):
         Controller.__init__(self, **kwargs)
 
     def on_x_press(self):
-        #**********************
-        #* write to arduino X *
-        #**********************
+
         print("Pi: X")
         ser.write("X".encode())
         print (str(ser.readline()))

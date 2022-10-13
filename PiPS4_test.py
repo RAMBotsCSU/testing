@@ -1,3 +1,9 @@
+#********************************************************
+#* Simple PS4 test command using pyPS4 library          *
+#* On X press, print hello and on release print goodbye *
+#* Connect to PI over bluetooth                         *
+#********************************************************
+
 from pyPS4Controller.controller import Controller
 
 
