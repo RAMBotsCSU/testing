@@ -48,5 +48,19 @@ History:
  multithreading functionality. Need to make sure child threads are killed once program stops. Also, CPU usage
  on this program can exceed 50%. This is undesirable as the machine learning program requires over 50% CPU usage
  as well. Will look into limiting the resources of each thread. 
- Updated:   _____
+ Updated:   Serial_and_PS4_test.py
+ Pushed:    multithreading_Serial_PS4_Test.py
+            multithreadingTest.py
+            pygame_test.py
+            
+</pre>
+
+
+ **2022-10-20:**  
+ <pre>Ensured child threads are terminated upon closure of the program. Added support for changing the color
+ of the PS4 controller's LEDs with the change of controller mode.
+ Pushed:   color_test.py
+           mult_Ser_PS4_Exit_Exit.py
+           
+
 </pre>
