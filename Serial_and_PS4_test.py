@@ -39,7 +39,7 @@ def serialRead_Write(output):
 
 
 class MyController(Controller):
-
+    mode = 0
     def __init__(self, **kwargs):
         Controller.__init__(self, **kwargs)
 
@@ -65,7 +65,24 @@ class MyController(Controller):
     def on_circle_release(self):
         pass
     
+    #Code for mode changing
+    def on_R1_press(self):
+        #print("Start mode: ", MyController.mode)
+        MyController.mode =  0 if MyController.mode >= 5 else MyController.mode + 1
+        print("Mode is now: ", MyController.mode)
+        
+    def on_R1_release(self):
+        pass
+        
+    def on_L1_press(self):
+        MyController.mode =  5 if MyController.mode <= 0 else MyController.mode - 1
+        print("Mode is now: ", MyController.mode)
+        
+    def on_L1_release(self):
+        pass
+        
 ser = serial.Serial('/dev/ttyACM0',9600)
 controller = MyController(interface="/dev/input/js0", connecting_using_ds4drv=False)
-controller.listen()
-print("test")
+controller.listen(timeout=60)
+print("Timeout")
+print("Mode is : ", mode)
