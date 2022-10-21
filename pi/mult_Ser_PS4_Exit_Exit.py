@@ -3,34 +3,30 @@ from multiprocessing import Process, Queue
 import pygame
 import time
 import subprocess
+import math
 
 #Function to change the RGB of the controller based on mode
 def rgb(m):
     if m == 0:
-        bashCommand = "sudo bash /home/pi/Desktop/RAMBots_Git/testing/color_test.sh 255 255 255"
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        output, error = process.communicate()
+        bashCommand = "sudo bash /home/pi/Desktop/RAMBots_Git/testing/pi/color_test.sh 255 255 255"
+        subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     elif m == 1:
-        bashCommand = "sudo bash /home/pi/Desktop/RAMBots_Git/testing/color_test.sh 255 0 0"
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        output, error = process.communicate()
+        bashCommand = "sudo bash /home/pi/Desktop/RAMBots_Git/testing/pi/color_test.sh 255 0 0"
+        subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     elif m == 2:
-        bashCommand = "sudo bash /home/pi/Desktop/RAMBots_Git/testing/color_test.sh 0 255 0"
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        output, error = process.communicate()
+        bashCommand = "sudo bash /home/pi/Desktop/RAMBots_Git/testing/pi/color_test.sh 0 255 0"
+        subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     elif m == -1:
-        bashCommand = "sudo bash /home/pi/Desktop/RAMBots_Git/testing/color_test.sh 0 0 255"
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        output, error = process.communicate()
+        bashCommand = "sudo bash /home/pi/Desktop/RAMBots_Git/testing/pi/color_test.sh 0 0 255"
+        subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     else:
-        bashCommand = "sudo bash /home/pi/Desktop/RAMBots_Git/testing/color_test.sh 255 0 255"
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        output, error = process.communicate()
+        bashCommand = "sudo bash /home/pi/Desktop/RAMBots_Git/testing/pi/color_test.sh 255 0 255"
+        subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
         
         
 #Function to pad the output chars to length 120 (127- serial ad-ons)
 def padStr(val):
-    for x in range (120-len(val)):
+    for _ in range (120-len(val)):
         val = val + "~"
     return val
 
@@ -47,7 +43,7 @@ def rmPadStr(val):
 #Function to communicate and output to teensy by a given string
 def serialRead_Write(output):
     #Write out what the pi is sending
-    print("Pi: " + output)
+    #print("Pi: " + output)
     output = padStr(output)
     
     #Write out to the serial buffer
@@ -58,7 +54,12 @@ def serialRead_Write(output):
     inp = inp[2:-5]
     inp = rmPadStr(inp)
     print(inp)
-    
+   
+#Function to round to the nearest 0.05 for joysticks and triggers
+def round_val(val):
+    roundTo = 0.2
+    #The -int part removes values of .00000000000001
+    return round(round(val/roundTo)*roundTo,-int(math.floor(math.log10(roundTo))))
     
 #Controller Thread
 def controllerCode(q):
@@ -69,46 +70,36 @@ def controllerCode(q):
     rgb(mode)
     message = ""
     threadTerm = 0
+    #Create arrays for Lx, Ly, L2, Rx, Ry, R2
+    #Lx = strafe, Ly = forback, L2,R2 = roll, Rx = turn, Ry = pitch, D-pad up/down = height
+    oldAxisArr = [0., 0., 0., 0., 0., 0.]
+    newAxisArr = [0., 0., 0., 0., 0., 0.]
+    axisLabelArr = ["Lx", "Ly", "L2", "Rx", "Ry", "R2"]
     while(threadTerm == 0):
         using_controller = True
 
         while using_controller:
             events = pygame.event.get()
             for event in events:
-                
-                #D-Pad Values
-                dx,dy = j.get_hat(0)
-                if(dx == 1):
-                    print("Right")
-                elif(dx == -1):
-                    print("Left")
-                if(dy == 1):
-                    print("Up")
-                elif(dy == -1):
-                    print("Down")
-                
-                #Joysticks
-                lx = j.get_axis(0)
-                ly = -1*j.get_axis(1)
-                if(abs(lx) >= 0.1):
-                    print("lX: ", lx)
-                if(abs(ly) >= 0.1):
-                    print("lY: ", ly)
-                rx = j.get_axis(3)
-                ry = -1*j.get_axis(4)
-                if(abs(rx) >= 0.1):
-                    print("rX: ", rx)
-                if(abs(ry) >= 0.1):
-                    print("rY: ", ry)
-                l2 = j.get_axis(2)
-                r2 = j.get_axis(5)
-                if(l2 != -1):
-                    print("l2: ", l2)
-                if(r2 != -1):
-                    print("r2: ", r2)
+                #print(event)
+                #Axis event
+                if event.type == pygame.JOYAXISMOTION:
+                    #for i in range(6):
+                    i = event.axis
+                    if (i == 1 or i == 4):
+                        newAxisArr[i] = -1.*round_val(j.get_axis(i))
+                    else:
+                        newAxisArr[i] = round_val(j.get_axis(i))
+                    if (oldAxisArr[i] != newAxisArr[i]):
+                        #print(axisLabelArr[i], ": ", newAxisArr[i])
+                        message = "Ar{}:{},".format(i,newAxisArr[i])
+                        q.put(message)
+                    oldAxisArr[i] = newAxisArr[i]
                     
-                #Button Presses
-                if event.type == pygame.JOYBUTTONDOWN:
+                    
+                        
+                #Button Event
+                elif event.type == pygame.JOYBUTTONDOWN:
                     #X
                     if j.get_button(0):
                         print("X")
@@ -158,6 +149,22 @@ def controllerCode(q):
                     #R3 (Joystick Press)
                     elif j.get_button(12):
                         print("R3")
+                
+                #Hat Event
+                elif event.type == pygame.JOYHATMOTION:                        
+                    #D-Pad Values
+                    dx,dy = j.get_hat(0)
+                    if(dx == 1):
+                        print("Right")
+                    elif(dx == -1):
+                        print("Left")
+                    if(dy == 1):
+                        print("Up")
+                    elif(dy == -1):
+                        print("Down")
+                    elif(dy == 0):
+                        print("Dy: released")
+                        
     #After leaving ThreadTerm
     print("CONTROLLER TERMINATING")
 
@@ -167,11 +174,17 @@ def driver(q):
     while (threadTerm == 0):
         if not q.empty():
             item = q.get()
-            print ("Running", item)
-            serialRead_Write(item)
-            if item == "TERMINATE":
-                time.sleep(0.5)
-                threadTerm = 1
+            if(len(item)!=0):
+                #print ("Running", item)
+                if(item[0] == "A"):
+                    serialRead_Write(item)
+                elif (item[0] == "S"):
+                    print(item)
+                elif item == "TERMINATE":
+                    time.sleep(0.5)
+                    threadTerm = 1
+            else:
+                print("Recived nothing")
     print("DRIVER TERMINATING")
         
 
