@@ -64,3 +64,10 @@ History:
            
 
 </pre>
+
+
+ **2022-10-24:**  
+ <pre>Added code for the Teensy. Reorganized directory with subfolders for Pi and Teensy code
+ Pushed:   serial_test.ino
+
+</pre>
