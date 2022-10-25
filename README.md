@@ -23,7 +23,8 @@ History:
  Began work on serial communication between the Raspberry Pi and Teensy via microUSB.
  Pushed:  PiPS4_test.py
           serial_test.py
-          serial_test_single.py</pre>
+          serial_test_single.py
+          </pre>
 
  **2022-10-13:**  
  <pre>Combined the PS4 and serial communication test scripts to pass buttons pressed on the controller
@@ -51,8 +52,7 @@ History:
  Updated:   Serial_and_PS4_test.py
  Pushed:    multithreading_Serial_PS4_Test.py
             multithreadingTest.py
-            pygame_test.py
-            
+            pygame_test.py     
 </pre>
 
 
@@ -61,13 +61,10 @@ History:
  of the PS4 controller's LEDs with the change of controller mode.
  Pushed:   color_test.py
            mult_Ser_PS4_Exit_Exit.py
-           
-
 </pre>
 
 
  **2022-10-24:**  
  <pre>Added code for the Teensy. Reorganized directory with subfolders for Pi and Teensy code
  Pushed:   serial_test.ino
-
 </pre>
