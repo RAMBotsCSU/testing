@@ -30,6 +30,7 @@ String rmPadStr(String str){
       return str;
     }
   }
+  return str;
 }
 
 //Main loop to be executed
