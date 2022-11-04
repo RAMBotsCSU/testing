@@ -9,10 +9,12 @@ Visit us at our [website](https://projects-web.engr.colostate.edu/ece-sr-design/
 Files:
 ------
 
-| File        | Description           |
-| ------------- |-------------|
-| README      | this file |
-| todo        |       |
+| File                       | Description           |
+| ---------------------------|-------------|
+| README                     | this file |
+| teensy/serial_test.ino     | Serial communication between the Pi and Teensy from the Teensy's end      |
+| pi/mult_Ser_PS4_Exit_Exit.py    | Serial communication between the Pi and Teensy from the Pi's end      |
+| pi/color_test.sh    | Bash script used to change LED color of the PS4 controller      |
 
 
   
@@ -67,4 +69,14 @@ History:
  **2022-10-24:**  
  <pre>Added code for the Teensy. Reorganized directory with subfolders for Pi and Teensy code
  Pushed:   serial_test.ino
+</pre>
+
+ **2022-11-02:**  
+ <pre>Improved communication between the controller, Pi, and Teensy, Axes for the left joystick, right joystick,
+ left trigger, and right trigger are normalized to the range [-1.0,1.0] and sent to the Teensy in an array which 
+ is acknowledged and returned to the Pi. These six axes are likely the most complex values which will be sent to 
+ the Teensy--programming the rest of the buttons into this array should be fairly trivial. Next step is to parse 
+ this data in the Teensy and reorganize it intoo the format expected by the OpenDogV3 code.
+ Updated:   serial_test.ino
+            mult_Ser_PS4_Exit_Exit.py
 </pre>
