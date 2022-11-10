@@ -220,6 +220,7 @@ def driver(q):
     threadTerm = 0
     mode = 0
     keyWord = ""
+    message = ""
     while (threadTerm == 0):
         #Main Loop
         if (not q.empty()):   #If item in queue
@@ -232,6 +233,9 @@ def driver(q):
                     serialRead_Write(item)
                 #Mode set
                 elif (keyWord == "MS"):
+                    for i in range(6):
+                        message = "AR{}:{},".format(i,0.)
+                        serialRead_Write(message)
                     mode = item[item.index(":")+1:item.index(",")]
                     print("Setting mode to: " + mode)
                 #Terminate
