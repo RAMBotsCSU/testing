@@ -13,7 +13,7 @@ Files:
 | ---------------------------|-------------|
 | README                     | this file |
 | teensy/serial_test.ino     | Serial communication between the Pi and Teensy from the Teensy's end      |
-| pi/mult_Ser_PS4_Exit_Exit.py    | Serial communication between the Pi and Teensy from the Pi's end      |
+| pi/pi_serial_main.py    | Serial communication between the Pi and Teensy from the Pi's end      |
 | pi/color_test.sh    | Bash script used to change LED color of the PS4 controller      |
 
 
@@ -62,7 +62,7 @@ History:
  <pre>Ensured child threads are terminated upon closure of the program. Added support for changing the color
  of the PS4 controller's LEDs with the change of controller mode.
  Pushed:   color_test.py
-           mult_Ser_PS4_Exit_Exit.py
+           pi_serial_main.py
 </pre>
 
 
@@ -78,5 +78,11 @@ History:
  the Teensy--programming the rest of the buttons into this array should be fairly trivial. Next step is to parse 
  this data in the Teensy and reorganize it intoo the format expected by the OpenDogV3 code.
  Updated:   serial_test.ino
-            mult_Ser_PS4_Exit_Exit.py
+            pi_serial_main.py
+</pre>
+
+ **2022-11-09:**  
+ <pre>Text here
+ Updated:   serial_test.ino
+            pi_serial_main.py
 </pre>
