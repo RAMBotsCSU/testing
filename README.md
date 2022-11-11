@@ -85,7 +85,8 @@ History:
  <pre>Changed heightto be controlled by the D-pad up and down (0.2,-0.2), setting to 0 when neither are pressed.
  Left trigger and right triggered both control the roll, (-1:0) on left (0:1) on right. Implemented a trigger lock
  to ensure only one trigger is presssed at a time. Implemented a mode lock to disable controls if mode is not on
- mode 0. Values are set to defaults if mode is switched.
+ mode 0. Values are set to defaults if mode is switched. Enabled keyword detection for the driver thread and the
+ teensy.
  Updated:   serial_test.ino
             pi_serial_main.py
 </pre>
