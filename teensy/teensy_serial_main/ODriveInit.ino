@@ -7,18 +7,18 @@
 
 void OdriveInit1() {
 
-      Serial.println("ODrive 1");
+      Serial7.println("ODrive 1");
 
       for (int axis = 0; axis < 2; ++axis) {
           //Serial1 << "w axis" << axis << ".controller.config.vel_limit " << 6000.0f << '\n';          // *** Velocity limits should be set to infinite through the ODrive tool, this stops the motors disarming under certain situations ***
           Serial1 << "w axis" << axis << ".motor.config.current_lim " << 20.0f << '\n';
   
           requested_state = requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL;
-          Serial << "Axis" << axis << ": Requesting state " << requested_state << '\n';
+          Serial7 << "Axis" << axis << ": Requesting state " << requested_state << '\n';
           odrive1.run_state(axis, requested_state, false); // don't wait 
       }      
 
-     Serial.println("ODrive 2");
+     Serial7.println("ODrive 2");
 
       for (int axis = 0; axis < 2; ++axis) {
           //Serial2 << "w axis" << axis << ".controller.config.vel_limit " << 6000.0f << '\n';
@@ -29,7 +29,7 @@ void OdriveInit1() {
           odrive2.run_state(axis, requested_state, false); // don't wait 
       }   
 
-      Serial.println("ODrive 3");
+      Serial7.println("ODrive 3");
 
       for (int axis = 0; axis < 2; ++axis) {
           //Serial3 << "w axis" << axis << ".controller.config.vel_limit " << 6000.0f << '\n';
@@ -40,7 +40,7 @@ void OdriveInit1() {
           odrive3.run_state(axis, requested_state, false); // don't wait 
       } 
 
-      Serial.println("ODrive 4");
+      Serial7.println("ODrive 4");
 
       for (int axis = 0; axis < 2; ++axis) {
           //Serial4 << "w axis" << axis << ".controller.config.vel_limit " << 6000.0f << '\n';
@@ -51,7 +51,7 @@ void OdriveInit1() {
           odrive4.run_state(axis, requested_state, false); // don't wait 
       }
 
-      Serial.println("ODrive 5");
+      Serial7.println("ODrive 5");
 
       for (int axis = 0; axis < 2; ++axis) {
           //Serial5 << "w axis" << axis << ".controller.config.vel_limit " << 6000.0f << '\n';
@@ -62,7 +62,7 @@ void OdriveInit1() {
           odrive5.run_state(axis, requested_state, false); // don't wait 
       }
 
-      Serial.println("ODrive 6");
+      Serial7.println("ODrive 6");
 
       for (int axis = 0; axis < 2; ++axis) {
           //Serial6 << "w axis" << axis << ".controller.config.vel_limit " << 6000.0f << '\n';
@@ -77,7 +77,7 @@ void OdriveInit1() {
 
 void modifyGains() {                               // this function turns up the gains when it is executed (menu option 4 via the remote)
 
-          Serial.println("modfy gains");
+          Serial7.println("modfy gains");
 
           float posGainKnee = 20.0;
           float posGainHips = 60.0;  

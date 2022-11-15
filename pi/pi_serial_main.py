@@ -152,7 +152,9 @@ def controllerCode(q):
                             print("Triangle")
                         #Square
                         elif j.get_button(3):
-                            print("Square")
+                            print("Movement Test")
+                            message = "SQ"
+                            q.put(message)
                         #L2 Half Way
                         elif j.get_button(6):
                             pass
@@ -247,6 +249,10 @@ def driver(q):
                         serialRead_Write(message)
                     mode = item[item.index(":")+1:item.index(",")]
                     print("Setting mode to: " + mode)
+                #Test Movement
+                elif (keyWord == "SQ"):
+                    message = "SQ"
+                    serialRead_Write(message)
                 #Terminate
                 elif (item == "TM"):
                     time.sleep(0.5)

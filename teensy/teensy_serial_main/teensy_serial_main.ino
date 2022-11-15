@@ -177,9 +177,31 @@ void updateMovement(){
   kinematics(4,0,0,0,0,0,0,0,0);
 }
 
+void testMovement(){
+
+  odrive2.SetPosition(0, 50);
+  
+ /*
+  kinematics(1,0,0,350,0,0,0,0,0);
+  kinematics(2,0,0,240,0,0,0,0,0);
+  kinematics(3,0,0,350,0,0,0,0,0);
+  kinematics(4,0,0,240,0,0,0,0,0);
+
+  kinematics(1,0,0,240,0,0,0,0,0);
+  kinematics(2,0,0,350,0,0,0,0,0);
+  kinematics(3,0,0,240,0,0,0,0,0);
+  kinematics(4,0,0,350,0,0,0,0,0);
+
+  kinematics(1,0,0,350,0,0,0,0,0);
+  kinematics(2,0,0,350,0,0,0,0,0);
+  kinematics(3,0,0,350,0,0,0,0,0);
+  kinematics(4,0,0,350,0,0,0,0,0);
+ */
+}
+
 //Main loop to be executed
 void loop() {
- currentMillis = millis();
+/* currentMillis = millis();
 
   if (currentMillis - previousMillis >= 10) {  // start timed event
 
@@ -187,7 +209,7 @@ void loop() {
 
       remoteState = 1;
     }    
-
+*/
 
   
   digitalWrite(led, LOW);                             //Set LED to off when no message has been recieved
@@ -202,8 +224,12 @@ void loop() {
       setInd = (readStr.substring(readStr.indexOf("R")+1,readStr.indexOf(":"))).toInt();
       setVal = (readStr.substring(readStr.indexOf(":")+1,readStr.indexOf(","))).toFloat();
       movementArr[setInd] = setVal;
-      Serial.println(getArrStr());      //Print to the serial buffer
+      Serial.println(padStr(getArrStr()));      //Print to the serial buffer
+    }
+    else if (keyWord == "Sq"){
+      testMovement();
+      Serial.println(padStr("Test Complete"));
     }
   }
-  updateMovement();
+  //updateMovement();
   }
