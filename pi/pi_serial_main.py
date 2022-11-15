@@ -1,3 +1,12 @@
+      #**********************************************************************************
+      #* pi_serial_main.py  :Created 10/2022 by Evan Hassman with contribtuions from    *
+      #*  Eric Percin and Thomas Veldhuizen                                             *
+      #*                                                                                *
+      #* This program _____                                                             *
+      #*                                                                                *
+      #*                                                                                *
+      #*                                                                                *
+      #**********************************************************************************
 import serial
 from multiprocessing import Process, Queue
 import pygame
