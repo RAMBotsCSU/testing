@@ -90,3 +90,11 @@ History:
  Updated:   serial_test.ino
             pi_serial_main.py
 </pre>
+
+ **2022-11-15:**  
+ <pre>Integrated OpenDogV3 code into serial_test.ino. Added files ODriveInit.ino and kinematics.ino, which are called
+ from within serial_test.ino. Corrected all dependencies and removed code that will not be used. Program successfully
+ compiles and calls the OpenDog kinematics function, but has not been tested yet.
+ Updated:   serial_test.ino
+
+</pre>
