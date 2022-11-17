@@ -98,3 +98,11 @@ History:
  Updated:   serial_test.ino
 
 </pre>
+
+ **2022-11-16:**  
+ <pre>Troubleshooting the integration of OpenDog. Attempting to call the kinematics function the Teensy hangs.
+ This occurs at a call to odrive.setposition and its cause is currently unknown. Possibly due to no feedback
+ from a connected ODrive or problems with serial ports. Will look into this next time,=.
+ Updated:   serial_test.ino
+
+</pre>
