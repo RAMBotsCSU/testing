@@ -186,8 +186,7 @@ void updateMovement(){
 }
 
 void testMovement(){
-
-  odrive2.SetPosition(0, 50);
+  kinematics(2,0,0,350,0,0,0,0,1000);
   
  /*
   kinematics(1,0,0,350,0,0,0,0,0);

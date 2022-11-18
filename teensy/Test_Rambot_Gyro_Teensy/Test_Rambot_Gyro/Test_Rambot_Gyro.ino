@@ -64,20 +64,20 @@ void loop() {
           IMUroll = mixY - 5;     
           
           
-//           Serial.print("ax: ");
-//           Serial.print(ax);
-//           Serial.print(" ay: ");
-//           Serial.print(ay);
-//           Serial.print(" az: ");
-//           Serial.println(az);
+           Serial.print("ax: ");
+           Serial.print(ax);
+           Serial.print(" ay: ");
+           Serial.print(ay);
+           Serial.print(" az: ");
+           Serial.println(az);
           
-           Serial.print("gx: ");
-           Serial.print(gx);
-           Serial.print(" gy: ");
-           Serial.print(gy);
-           Serial.print(" gz: ");
-           Serial.println(gz);
-          
+//           Serial.print("gx: ");
+//           Serial.print(gx);
+//           Serial.print(" gy: ");
+//           Serial.print(gy);
+//           Serial.print(" gz: ");
+//           Serial.println(gz);
+//          
           
           Wire.end();
           delay(10);

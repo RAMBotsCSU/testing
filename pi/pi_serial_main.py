@@ -250,7 +250,8 @@ def driver(q):
         '''
         if (mode == 1 and thread not started):
             followMe.start()
-        else
+            followMeActive = 1
+        else if (mode == 2 and thread not started:
             followMe.exit()
             start other thread
         '''
