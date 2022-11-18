@@ -9,6 +9,7 @@
 // ramp lib
 #include <Ramp.h>
 #include <ODriveArduino.h>
+#include <HardwareSerial.h>
 
 //Setup and set the pin for the LED
 int led = 13;
@@ -50,13 +51,7 @@ template<>        inline Print& operator <<(Print &obj, float arg) {
 }
 
 
-//ODrive Objects
-ODriveArduino odrive1(Serial1);
-ODriveArduino odrive2(Serial2);
-ODriveArduino odrive3(Serial3);
-ODriveArduino odrive4(Serial4);
-ODriveArduino odrive5(Serial5);
-ODriveArduino odrive6(Serial6);
+
 
 // ODrive offsets from power up
 // ratio is 10:1 so 1 'turn' is 36'.
@@ -77,18 +72,65 @@ float offSet11 = 0.1;      //ODrive 1, axis 1     // hips - right back
 float offSet40 = 0.07;      //ODrive 4, axis 0     // hips - left front
 float offSet41 = 0.35;      //ODrive 4, axis 1     // hips - left back
 
+HardwareSerial& odrive1Serial = Serial1;
+HardwareSerial& odrive2Serial = Serial2;
+HardwareSerial& odrive3Serial = Serial3;
+HardwareSerial& odrive4Serial = Serial4;
+HardwareSerial& odrive5Serial = Serial5;
+HardwareSerial& odrive6Serial = Serial6;
+
+//ODrive Objects
+ODriveArduino odrive1(odrive1Serial);
+ODriveArduino odrive2(odrive2Serial);
+ODriveArduino odrive3(odrive3Serial);
+ODriveArduino odrive4(odrive4Serial);
+ODriveArduino odrive5(odrive5Serial);
+ODriveArduino odrive6(odrive6Serial);
 
 void setup() {
   pinMode(led, OUTPUT);
   Serial.begin(9600);
-  Serial1.begin(115200);
-  Serial1.begin(115200);
-  Serial2.begin(115200);
-  Serial3.begin(115200);
-  Serial4.begin(115200);
-  Serial5.begin(115200);
-  Serial6.begin(115200);
-  Serial7.begin(115200);
+  odrive1Serial.begin(115200);
+  odrive2Serial.begin(115200);
+  odrive3Serial.begin(115200);
+  odrive4Serial.begin(115200);
+  odrive5Serial.begin(115200);
+  odrive6Serial.begin(115200);
+  //Serial7.begin(115200);
+
+  odrive1Serial.print("sr\n");
+  odrive2Serial.print("sr\n");
+  odrive3Serial.print("sr\n");
+  odrive4Serial.print("sr\n");
+  odrive5Serial.print("sr\n");
+  odrive6Serial.print("sr\n");
+
+  String line = "";
+  String str1 = "w axis";
+  String str2 = ".controller.config.vel_limit ";
+  String str3 = ".motor.config.current_limit ";
+  float val = 1.0f;
+  float val2 = 10.0f;
+  String cha = "\n";
+  for (int axis = 0; axis <2; ++axis){
+    //add controller delay
+    line = str1+axis+str2+val+cha;
+    odrive1Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
+    odrive2Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
+    odrive3Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
+    odrive4Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
+    odrive5Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
+    odrive6Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
+
+    line = str1+axis+str3+val2+cha;
+    odrive1Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    odrive2Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    odrive3Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    odrive4Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    odrive5Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    odrive6Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+  }
+ 
 }
 
 String getArrStr(){
@@ -177,16 +219,19 @@ Interpolation interpBLY;
 Interpolation interpBLZ;
 Interpolation interpBLT;
 
-
+/*
 void updateMovement(){
   kinematics(1,0,0,0,0,0,0,0,0);
   kinematics(2,0,0,0,0,0,0,0,0);
   kinematics(3,0,0,0,0,0,0,0,0);
   kinematics(4,0,0,0,0,0,0,0,0);
 }
-
+*/
 void testMovement(){
-  kinematics(2,0,0,350,0,0,0,0,1000);
+  odrive1.SetPosition(1,1);
+  odrive2.SetPosition(1,1);
+  odrive2.SetPosition(0,1);
+  //kinematics(1,0,0,350,0,0,0,0,1000);
   
  /*
   kinematics(1,0,0,350,0,0,0,0,0);
@@ -208,7 +253,7 @@ void testMovement(){
 
 //Main loop to be executed
 void loop() {
-/* currentMillis = millis();
+ currentMillis = millis();
 
   if (currentMillis - previousMillis >= 10) {  // start timed event
 
@@ -216,7 +261,7 @@ void loop() {
 
       remoteState = 1;
     }    
-*/
+
 
   
   digitalWrite(led, LOW);                             //Set LED to off when no message has been recieved
@@ -233,7 +278,7 @@ void loop() {
       movementArr[setInd] = setVal;
       Serial.println(padStr(getArrStr()));      //Print to the serial buffer
     }
-    else if (keyWord == "Sq"){
+    else if (keyWord == "SQ"){
       testMovement();
       Serial.println(padStr("Test Complete"));
     }
