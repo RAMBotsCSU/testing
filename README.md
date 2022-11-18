@@ -12,9 +12,12 @@ Files:
 | File                       | Description           |
 | ---------------------------|-------------|
 | README                     | this file |
-| teensy/serial_test.ino     | Serial communication between the Pi and Teensy from the Teensy's end      |
+| teensy/teensy_serial_main/...     | Serial communication between the Pi and Teensy from the Teensy's end      |
+| teensy/test_rambot_gyro/...    | Test of gyroscope implementation on the Teensy      |
 | pi/pi_serial_main.py    | Serial communication between the Pi and Teensy from the Pi's end      |
 | pi/color_test.sh    | Bash script used to change LED color of the PS4 controller      |
+| pi/PiGUI/...   | RamBOT GUI for Pi touchscreen display      |
+
 
 
   
@@ -68,7 +71,7 @@ History:
 
  **2022-10-24:**  
  <pre>Added code for the Teensy. Reorganized directory with subfolders for Pi and Teensy code
- Pushed:   serial_test.ino
+ Pushed:   teensy_serial_main.ino
 </pre>
 
  **2022-11-02:**  
@@ -77,7 +80,7 @@ History:
  is acknowledged and returned to the Pi. These six axes are likely the most complex values which will be sent to 
  the Teensy--programming the rest of the buttons into this array should be fairly trivial. Next step is to parse 
  this data in the Teensy and reorganize it intoo the format expected by the OpenDogV3 code.
- Updated:   serial_test.ino
+ Updated:   teensy_serial_main.ino
             pi_serial_main.py
 </pre>
 
@@ -87,7 +90,7 @@ History:
  to ensure only one trigger is presssed at a time. Implemented a mode lock to disable controls if mode is not on
  mode 0. Values are set to defaults if mode is switched. Enabled keyword detection for the driver thread and the
  teensy.
- Updated:   serial_test.ino
+ Updated:   teensy_serial_main.ino
             pi_serial_main.py
 </pre>
 
@@ -95,14 +98,23 @@ History:
  <pre>Integrated OpenDogV3 code into serial_test.ino. Added files ODriveInit.ino and kinematics.ino, which are called
  from within serial_test.ino. Corrected all dependencies and removed code that will not be used. Program successfully
  compiles and calls the OpenDog kinematics function, but has not been tested yet.
- Updated:   serial_test.ino
+ Updated:   teensy_serial_main.ino
 
 </pre>
 
  **2022-11-16:**  
  <pre>Troubleshooting the integration of OpenDog. Attempting to call the kinematics function the Teensy hangs.
  This occurs at a call to odrive.setposition and its cause is currently unknown. Possibly due to no feedback
- from a connected ODrive or problems with serial ports. Will look into this next time,=.
- Updated:   serial_test.ino
+ from a connected ODrive or problems with serial ports. Will look into this next time.
+ Updated:   teensy_serial_main.ino
 
 </pre>
+
+ **2022-11-17:**  
+ <pre>Began implementation of user interface using PiGUI. Currently a simple test program that displays the RamBOTs
+ logo. Added Kyle's test program for gyroscope implementation.
+ Added:   pi/PiGUI/...
+          teensy/test_rambot_gyro/...
+
+</pre>
+
