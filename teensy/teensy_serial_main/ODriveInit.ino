@@ -1,7 +1,7 @@
-//**************************************************************************
-//* File takes in data from odrives. Finds new offsets and sends info back *
-//* to Odrives all utilizing serial bus                                    *
-//**************************************************************************
+  //**************************************************************************
+  //* File takes in data from odrives. Finds new offsets and sends info back *
+  //* to Odrives all utilizing serial bus                                    *
+  //**************************************************************************
 
 // init hips
 
