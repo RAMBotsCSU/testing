@@ -14,6 +14,7 @@ Files:
 | README                     | this file |
 | teensy/teensy_serial_main/...     | Serial communication between the Pi and Teensy from the Teensy's end      |
 | teensy/test_rambot_gyro/...    | Test of gyroscope implementation on the Teensy      |
+| teensy/test_stepper/...    | MechE's basic motor test program      |
 | pi/pi_serial_main.py    | Serial communication between the Pi and Teensy from the Pi's end      |
 | pi/color_test.sh    | Bash script used to change LED color of the PS4 controller      |
 | pi/PiGUI/...   | RamBOT GUI for Pi touchscreen display      |
@@ -112,7 +113,7 @@ History:
 
  **2022-11-17:**  
  <pre>Began implementation of user interface using PiGUI. Currently a simple test program that displays the RamBOTs
- logo. Added Kyle's test program for gyroscope implementation.
+ logo. Added Kyle's test program for gyroscope implementation. Added MechE's motor test program.
  Added:   pi/PiGUI/...
           teensy/test_rambot_gyro/...
 
