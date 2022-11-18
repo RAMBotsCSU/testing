@@ -81,6 +81,14 @@ float offSet41 = 0.35;      //ODrive 4, axis 1     // hips - left back
 void setup() {
   pinMode(led, OUTPUT);
   Serial.begin(9600);
+  Serial1.begin(115200);
+  Serial1.begin(115200);
+  Serial2.begin(115200);
+  Serial3.begin(115200);
+  Serial4.begin(115200);
+  Serial5.begin(115200);
+  Serial6.begin(115200);
+  Serial7.begin(115200);
 }
 
 String getArrStr(){

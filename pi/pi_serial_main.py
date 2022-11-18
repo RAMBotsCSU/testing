@@ -74,6 +74,17 @@ def round_val(val):
     #The -int part removes values of .00000000000001
     return returnVal
 
+def MLCode(q):
+    threadTerm = 0
+    while (threadTerm == 0):
+        #Insert machine learning code here.    
+        if (not q.empty()):
+            item = q.get()
+            print(item)
+            if(len(item)!=0):
+                if(item == "$"):
+                    threadTerm = 1
+    print("MACHINE LEARNING TERMINATED")
 #*********************
 #* Controller Thread *
 #*********************
@@ -200,7 +211,7 @@ def controllerCode(q):
                                 message = "AR{}:{},".format(5,0.)
                                 q.put(message)
                                 heightChange = 0
-                                
+                    
                 if (event.type == pygame.JOYBUTTONDOWN):
                     #L1
                     if j.get_button(4):
@@ -232,8 +243,17 @@ def driver(q):
     mode = 0
     keyWord = ""
     message = ""
+    #followMeThread = Process(target=MachineLearningCode, args=(q,))
+    #followMeThread.daemon = True
     while (threadTerm == 0):
         #Main Loop
+        '''
+        if (mode == 1 and thread not started):
+            followMe.start()
+        else
+            followMe.exit()
+            start other thread
+        '''
         if (not q.empty()):   #If item in queue
             item = q.get()
             if(len(item)!=0): #Ensure item is not blank
@@ -269,11 +289,13 @@ if __name__ == '__main__':
     #Main
     ser = serial.Serial('/dev/ttyACM0',9600)
     q = Queue()
-    a = Process(target=controllerCode, args=(q,))
-    b = Process(target=driver, args=(q,))
-    a.start()
-    b.start()
-    a.join()
-    b.join()
+    controllerThread = Process(target=controllerCode, args=(q,))
+    controllerThread.daemon = True
+    driverThread = Process(target=driver, args=(q,))
+    driverThread.daemon = True
+    controllerThread.start()
+    driverThread.start()
+    controllerThread.join()
+    driverThread.join()
     rgb(-1)
     print("Exiting :)")
