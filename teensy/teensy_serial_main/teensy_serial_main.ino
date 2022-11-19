@@ -41,14 +41,9 @@ int modeConfirmFlag = 0;
 int runMode = 0;
 
 // Printing with stream operator
-template<class T> inline Print& operator <<(Print &obj,     T arg) {
-  obj.print(arg);
-  return obj;
-}
-template<>        inline Print& operator <<(Print &obj, float arg) {
-  obj.print(arg, 4);
-  return obj;
-}
+template<class T> inline Print& operator <<(Print &obj,     T arg) { obj.print(arg);    return obj; }
+template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(arg, 4); return obj; }
+
 
 
 
@@ -100,35 +95,35 @@ void setup() {
 
   odrive1Serial.print("sr\n");
   odrive2Serial.print("sr\n");
-  odrive3Serial.print("sr\n");
-  odrive4Serial.print("sr\n");
-  odrive5Serial.print("sr\n");
-  odrive6Serial.print("sr\n");
-
+  //odrive3Serial.print("sr\n");
+  //odrive4Serial.print("sr\n");
+  //odrive5Serial.print("sr\n");
+  //odrive6Serial.print("sr\n");
+/*
   String line = "";
   String str1 = "w axis";
   String str2 = ".controller.config.vel_limit ";
   String str3 = ".motor.config.current_limit ";
-  float val = 1.0f;
-  float val2 = 10.0f;
-  String cha = "\n";
+  int val = 1;
+  int val2 = 10;
+  String cha = "\n";*/
   for (int axis = 0; axis <2; ++axis){
     //add controller delay
-    line = str1+axis+str2+val+cha;
-    odrive1Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
-    odrive2Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
-    odrive3Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
-    odrive4Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
-    odrive5Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
-    odrive6Serial.print(line);// << "w axis" << axis << ".controller.config.vel_limit " << 1.0f << '\n';
+    //line = str1+axis+str2+val+cha;
+    odrive1Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
+    odrive2Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
+    odrive3Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
+    odrive4Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
+    odrive5Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
+    odrive6Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
 
-    line = str1+axis+str3+val2+cha;
-    odrive1Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
-    odrive2Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
-    odrive3Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
-    odrive4Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
-    odrive5Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
-    odrive6Serial.print(line);// << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    //line = str1+axis+str3+val2+cha;
+    odrive1Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    odrive2Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    odrive3Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    odrive4Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    odrive5Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+    odrive6Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
   }
  
 }
@@ -228,9 +223,70 @@ void updateMovement(){
 }
 */
 void testMovement(){
-  odrive1.SetPosition(1,1);
-  odrive2.SetPosition(1,1);
-  odrive2.SetPosition(0,1);
+  float pos0 = odrive1.GetPosition(0);
+  float pos1 = odrive1.GetPosition(1);
+  float pos2 = odrive2.GetPosition(0);
+  float pos3 = odrive2.GetPosition(1);
+
+  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(1,0);
+  odrive2.SetPosition(0,0);
+  odrive2.SetPosition(1,0);
+  delay(1000);
+  
+  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(1,0.1);
+  odrive2.SetPosition(0,0.1);
+  odrive2.SetPosition(1,0.1);
+  delay(100);
+
+  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(1,0.2);
+  odrive2.SetPosition(0,0.2);
+  odrive2.SetPosition(1,0.2);
+  delay(100);
+
+  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(1,0.3);
+  odrive2.SetPosition(0,0.3);
+  odrive2.SetPosition(1,0.3);
+  delay(100);
+
+  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(1,0.4);
+  odrive2.SetPosition(0,0.4);
+  odrive2.SetPosition(1,0.4);
+  delay(100);
+
+  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(1,0.5);
+  odrive2.SetPosition(0,0.5);
+  odrive2.SetPosition(1,0.5);
+  delay(100);
+
+  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(1,0.4);
+  odrive2.SetPosition(0,0.4);
+  odrive2.SetPosition(1,0.4);
+  delay(100);
+
+  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(1,0.3);
+  odrive2.SetPosition(0,0.3);
+  odrive2.SetPosition(1,0.3);
+  delay(100);
+
+  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(1,0.2);
+  odrive2.SetPosition(0,0.2);
+  odrive2.SetPosition(1,0.2);
+  delay(100);
+
+  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(1,0.1);
+  odrive2.SetPosition(0,0.1);
+  odrive2.SetPosition(1,0.1);
+  delay(100);
   //kinematics(1,0,0,350,0,0,0,0,1000);
   
  /*
