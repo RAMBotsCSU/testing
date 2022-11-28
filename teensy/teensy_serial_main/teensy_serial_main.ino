@@ -227,67 +227,68 @@ void testMovement(){
   float pos1 = odrive1.GetPosition(1);
   float pos2 = odrive2.GetPosition(0);
   float pos3 = odrive2.GetPosition(1);
-
+  
   odrive1.SetPosition(0,0);
   odrive1.SetPosition(1,0);
   odrive2.SetPosition(0,0);
   odrive2.SetPosition(1,0);
   delay(1000);
   
-  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(0,0.1);
   odrive1.SetPosition(1,0.1);
   odrive2.SetPosition(0,0.1);
   odrive2.SetPosition(1,0.1);
   delay(100);
 
-  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(0,0.2);
   odrive1.SetPosition(1,0.2);
   odrive2.SetPosition(0,0.2);
   odrive2.SetPosition(1,0.2);
   delay(100);
 
-  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(0,0.3);
   odrive1.SetPosition(1,0.3);
   odrive2.SetPosition(0,0.3);
   odrive2.SetPosition(1,0.3);
   delay(100);
 
-  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(0,0.4);
   odrive1.SetPosition(1,0.4);
   odrive2.SetPosition(0,0.4);
   odrive2.SetPosition(1,0.4);
   delay(100);
 
-  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(0,0.5);
   odrive1.SetPosition(1,0.5);
   odrive2.SetPosition(0,0.5);
   odrive2.SetPosition(1,0.5);
   delay(100);
 
-  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(0,0.4);
   odrive1.SetPosition(1,0.4);
   odrive2.SetPosition(0,0.4);
   odrive2.SetPosition(1,0.4);
   delay(100);
 
-  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(0,0.3);
   odrive1.SetPosition(1,0.3);
   odrive2.SetPosition(0,0.3);
   odrive2.SetPosition(1,0.3);
   delay(100);
 
-  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(0,0.2);
   odrive1.SetPosition(1,0.2);
   odrive2.SetPosition(0,0.2);
   odrive2.SetPosition(1,0.2);
   delay(100);
 
-  odrive1.SetPosition(0,0);
+  odrive1.SetPosition(0,0.1);
   odrive1.SetPosition(1,0.1);
   odrive2.SetPosition(0,0.1);
   odrive2.SetPosition(1,0.1);
   delay(100);
   //kinematics(1,0,0,350,0,0,0,0,1000);
+  //kinematics(1,0,0,240,0,0,0,0,1000);
   
  /*
   kinematics(1,0,0,350,0,0,0,0,0);

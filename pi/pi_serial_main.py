@@ -74,17 +74,6 @@ def round_val(val):
     #The -int part removes values of .00000000000001
     return returnVal
 
-def MLCode(q):
-    threadTerm = 0
-    while (threadTerm == 0):
-        #Insert machine learning code here.    
-        if (not q.empty()):
-            item = q.get()
-            print(item)
-            if(len(item)!=0):
-                if(item == "$"):
-                    threadTerm = 1
-    print("MACHINE LEARNING TERMINATED")
 #*********************
 #* Controller Thread *
 #*********************
