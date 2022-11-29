@@ -15,13 +15,13 @@ Files:
 | teensy/teensy_serial_main/...     | Serial communication between the Pi and Teensy from the Teensy's end      |
 | teensy/test_rambot_gyro/...    | Test of gyroscope implementation on the Teensy      |
 | teensy/test_stepper/...    | MechE's basic motor test program      |
+| teensy/MechETest/...    | MechE's test program for ODrive and encoder implementation     |
 | pi/pi_serial_main.py    | Serial communication between the Pi and Teensy from the Pi's end      |
 | pi/color_test.sh    | Bash script used to change LED color of the PS4 controller      |
 | pi/PiGUI/...   | RamBOT GUI for Pi touchscreen display      |
+| O-Drives/ConfigSteps  | Instructions for configuring an ODrive for initialization     |
 
 
-
-  
 History:
 --------
  **2022-10-12:**  
@@ -119,3 +119,13 @@ History:
 
 </pre>
 
+ **2022-11-28:**  
+ <pre>Over break made great progress on the implementation of ODrives and motor encoders. teensy_serial_main has
+ been updated to reflect these developments and soon move an entire leg. Added teensy/MechETest which contains
+ the tests the mechanical engineers created to get the ODrives and encoders working. Added O-Drives/ConfigSteps
+ which contains the instructions for configuring an ODrive.
+ Updated:   teensy/teensy_serial_main.ino
+ Added:     teesny/MechETest
+            O-Drives/ConfigSteps
+
+</pre>
