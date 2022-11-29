@@ -1,3 +1,15 @@
+//possible
+odrv0.erase_configuration()
+odrv0.config.brake_resitance = 2.0 //if have resistors
+odrv0.config.dc_bus_undervoltage_trip_level = 8.0
+odrv0.config.dc_bus_overvoltage_trip_level = 56.0
+odrv0.config.dc_max_positive_current = 20.0
+odrv0.config.dc_max_negative_current = -3.0
+odrv0.config.max_regen_current = 0
+odrv0.save_configuration()
+
+
+//Certain
 -> Plug in
 dump_errors(odrv0)
 odrv0.axis0.clear_errors()
@@ -15,8 +27,8 @@ odrv0.axis1.controller.config.vel_gain = 0.1
 odrv0.axis0.controller.config.vel_integrator_gain = 0.2
 odrv0.axis1.controller.config.vel_integrator_gain = 0.2
 import math
-odrv0.axis0.controller.config.vel_limit = math.inf
-odrv0.axis1.controller.config.vel_limit = math.inf
+odrv0.axis0.controller.config.vel_limit = math.inf //500.0 without resistors
+odrv0.axis1.controller.config.vel_limit = math.inf //500.0 without resistors
 odrv0.axis0.requested_state = AXIS_STATE_MOTOR_CALIBRATION
 odrv0.axis1.requested_state = AXIS_STATE_MOTOR_CALIBRATION
 odrv0.axis0.motor.config.pre_calibrated = True
