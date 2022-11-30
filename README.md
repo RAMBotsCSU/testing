@@ -129,3 +129,13 @@ History:
             O-Drives/ConfigSteps
 
 </pre>
+
+ **2022-11-30:**  
+ <pre>Looked into PiSimpleGUI and PyGame examples. PiSimpleGUI seems ideal for the RamBOT GUI, though PyGame
+ notably offers support for playing mp3 files which may be utilized in the final product. Will begin work
+ on the official GUI soon.
+ Added:     pi/PiGUI/Dashboard_Example.py
+            pi/PiGUI/pygame_Test.py
+            pi/PiGUI/Demo_Animated_GIFS.py
+
+</pre>
