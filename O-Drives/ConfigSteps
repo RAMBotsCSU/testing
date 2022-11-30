@@ -1,6 +1,6 @@
 //possible
 odrv0.erase_configuration()
-odrv0.config.brake_resitance = 2.0 //if have resistors
+odrv0.config.brake_resistance = 2.0 //if have resistors
 odrv0.config.dc_bus_undervoltage_trip_level = 8.0
 odrv0.config.dc_bus_overvoltage_trip_level = 56.0
 odrv0.config.dc_max_positive_current = 20.0
