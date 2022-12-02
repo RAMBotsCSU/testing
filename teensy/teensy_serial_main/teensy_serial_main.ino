@@ -82,6 +82,8 @@ ODriveArduino odrive4(odrive4Serial);
 ODriveArduino odrive5(odrive5Serial);
 ODriveArduino odrive6(odrive6Serial);
 
+ODriveArduino odrArr[6] = {odrive1, odrive2, odrive3, odrive4, odrive5, odrive6};
+
 void setup() {
   pinMode(led, OUTPUT);
   Serial.begin(9600);
@@ -99,33 +101,24 @@ void setup() {
   //odrive4Serial.print("sr\n");
   //odrive5Serial.print("sr\n");
   //odrive6Serial.print("sr\n");
-/*
-  String line = "";
-  String str1 = "w axis";
-  String str2 = ".controller.config.vel_limit ";
-  String str3 = ".motor.config.current_limit ";
-  int val = 1;
-  int val2 = 10;
-  String cha = "\n";*/
-  for (int axis = 0; axis <2; ++axis){
-    //add controller delay
-    //line = str1+axis+str2+val+cha;
-    odrive1Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
-    odrive2Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
-    odrive3Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
-    odrive4Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
-    odrive5Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
-    odrive6Serial << "w axis" << axis << ".controller.config.vel_limit " << 500.0f << '\n';
 
-    //line = str1+axis+str3+val2+cha;
-    odrive1Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
-    odrive2Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
-    odrive3Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
-    odrive4Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
-    odrive5Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
-    odrive6Serial << "w axis" << axis << ".motor.config.current_limit " << 10.0f << '\n';
+  int closedLoop = 8;
+  for (int i = 0; i<2; i++){
+    for (int axis = 0; axis<2; axis++){ //each axis in the odrive
+      float indexFound = 0;
+      float found = 0;
+      while (found == 0){
+        indexFound = odrArr[i].IndexFound(axis);
+        if (indexFound > 0.){
+          found = 1;
+          delay(5);
+          odrArr[i].run_state(axis,closedLoop, false);
+          //Serial.print(i);
+          //Serial.println(axis);
+        }
+      }
+    } 
   }
- 
 }
 
 String getArrStr(){
@@ -286,10 +279,11 @@ void testMovement(){
   odrive1.SetPosition(1,0.1);
   odrive2.SetPosition(0,0.1);
   odrive2.SetPosition(1,0.1);
-  delay(100);
-  //kinematics(1,0,0,350,0,0,0,0,1000);
-  //kinematics(1,0,0,240,0,0,0,0,1000);
-  
+  delay(100);/*
+  kinematics(1,0,0,350,0,0,0,0,1000);
+  delay (5000);
+  kinematics(1,0,0,240,0,0,0,0,1000);
+  */
  /*
   kinematics(1,0,0,350,0,0,0,0,0);
   kinematics(2,0,0,240,0,0,0,0,0);
