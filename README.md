@@ -139,3 +139,11 @@ History:
             pi/PiGUI/Demo_Animated_GIFS.py
 
 </pre>
+
+</pre>
+
+ **2022-12-08:**  
+ <pre>Modified the Odrive configuration to remove the closed loop control on startup. Modified the teensy code to enable closed loop control after index's have been found.
+ Updated:    teensy/teensy_serial_main.ino
+
+</pre>
