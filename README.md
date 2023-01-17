@@ -1,6 +1,6 @@
-# RamBOTs Locomotion Repo
+# RamBOTs Testing Repo
                    
-This is the official CSU RAMBots locomotion repository. 
+This is the official CSU RAMBots testing repository. 
 Visit us at our [website](https://projects-web.engr.colostate.edu/ece-sr-design/AY22/RamBOTs).
 
 
@@ -147,3 +147,12 @@ History:
  Updated:    teensy/teensy_serial_main.ino
 
 </pre>
+
+ **2022-12-08:**  
+ <pre>Set up a USB speaker on the Pi to make the RamBOT play sounds on command using pygame. Currently, pressing the left
+ d-pad will randomly play one of four sheep sounds. In the future this will be used for a low battery alarm.
+ Updated:    pi_serial_main.py
+             pi/PiGUI/pygame_Test.py
+
+</pre>
+
