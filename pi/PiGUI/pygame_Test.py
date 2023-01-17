@@ -10,8 +10,9 @@ sheep1 = pygame.mixer.Sound('Sounds/sheep1.mp3')
 sheep2 = pygame.mixer.Sound('Sounds/sheep2.mp3')
 sheep3 = pygame.mixer.Sound('Sounds/sheep3.mp3')
 sheep4 = pygame.mixer.Sound('Sounds/sheep4.mp3')
-
 sheep_sounds = [sheep1,sheep2,sheep3,sheep4]
+#pygame.mixer.Sound.play(random.choice(sheep_sounds))
+
 
 def imshow(filename):
     img = pygame.image.load(filename)
@@ -25,6 +26,19 @@ def imclose():
     pygame.display.quit()
 
 pygame.mixer.Sound.play(random.choice(sheep_sounds))
+
+time.sleep(2)
+
+pygame.mixer.Sound.play(random.choice(sheep_sounds))
+
+time.sleep(2)
+
+pygame.mixer.Sound.play(random.choice(sheep_sounds))
+
+time.sleep(2)
+
+pygame.mixer.Sound.play(random.choice(sheep_sounds))
+
 
 #imshow('Resources/RamBOTs_Logo.bmp')
 #time.sleep(3)

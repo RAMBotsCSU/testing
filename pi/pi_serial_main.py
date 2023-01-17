@@ -10,9 +10,21 @@
 import serial
 from multiprocessing import Process, Queue
 import pygame
+from pygame import mixer
 import time
 import subprocess
 import math
+import random
+
+mixer.init()
+sheep1 = pygame.mixer.Sound('Sounds/sheep1.mp3')
+sheep2 = pygame.mixer.Sound('Sounds/sheep2.mp3')
+sheep3 = pygame.mixer.Sound('Sounds/sheep3.mp3')
+sheep4 = pygame.mixer.Sound('Sounds/sheep4.mp3')
+sheep_sounds = [sheep1,sheep2,sheep3,sheep4]
+#pygame.mixer.Sound.play(random.choice(sheep_sounds))
+pygame.mixer.Sound.play(random.choice(sheep_sounds))
+
 
 #Function to change the RGB of the controller based on mode
 def rgb(m):
@@ -183,6 +195,7 @@ def controllerCode(q):
                         if(dx == 1):
                             print("Right")
                         elif(dx == -1):
+                            pygame.mixer.Sound.play(random.choice(sheep_sounds))
                             print("Left")
                         if(dy == 1):
                             #print("Up")
