@@ -148,7 +148,7 @@ History:
 
 </pre>
 
- **2022-12-08:**  
+ **2023-01-17:**  
  <pre>Set up a USB speaker on the Pi to make the RamBOT play sounds on command using pygame. Currently, pressing the left
  d-pad will randomly play one of four sheep sounds. In the future this will be used for a low battery alarm.
  Updated:    pi_serial_main.py
