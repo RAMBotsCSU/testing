@@ -156,3 +156,11 @@ History:
 
 </pre>
 
+
+ **2023-01-19:**  
+ <pre>Began work on RamBOTs GUI using PySimpleGUI. Practiced using the library's features and created a basic prototype with
+ multiple tabs to switch between windows. Not yet sure how seamlessly the machine learning webcam feed and multithreading can
+ be incorporated into PySimpleGUI. Next step is to continue work on prototype and look into these features. 
+ Added:    pi/PiGUI/RamBOTs_UI.py    
+
+</pre>
