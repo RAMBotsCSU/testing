@@ -40,7 +40,7 @@ tab3_layout = [[sg.T('Based on OpenDogV3 by James Bruton')],
 layout = [[sg.TabGroup([[sg.Tab('Feed', tab1_layout, tooltip='tip'), sg.Tab('Settings', tab2_layout, tooltip='TIP3'), sg.Tab('Info', tab3_layout)]], tooltip='TIP2')],    
           [sg.Button('Read')]]    
 
-window = sg.Window('RamBOTs', layout, size=(800,440))    
+window = sg.Window('RamBOTs', layout, size=(800,420))    
 
 while True:    
     event, values = window.read()    
