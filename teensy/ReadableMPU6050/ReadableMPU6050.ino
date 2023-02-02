@@ -25,9 +25,9 @@ void loop() {
   Wire.endTransmission(false);
   Wire.requestFrom(MPU, 6, true); // Read 6 registers total, each axis value is stored in 2 registers
   //For a range of +-2g, we need to divide the raw values by 16384, according to the datasheet
-  AccX = (Wire.read() << 8 | Wire.read()) / 16384.0; // X-axis value
-  AccY = (Wire.read() << 8 | Wire.read()) / 16384.0; // Y-axis value
-  AccZ = (Wire.read() << 8 | Wire.read()) / 16384.0; // Z-axis value
+  AccX = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0; // X-axis value
+  AccY = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0; // Y-axis value
+  AccZ = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0; // Z-axis value
   
   // === Read gyroscope data === //
   previousTime = currentTime;        // Previous time is stored before the actual time read
@@ -37,30 +37,9 @@ void loop() {
   Wire.write(0x43); // Gyro data first register address 0x43
   Wire.endTransmission(false);
   Wire.requestFrom(MPU, 6, true); // Read 4 registers total, each axis value is stored in 2 registers
-  GyroX = (Wire.read() << 8 | Wire.read()) / 131; // For a 1000deg/s range we have to divide first the raw value by 32.8, according to the datasheet
-  GyroY = (Wire.read() << 8 | Wire.read()) / 131;
-  GyroZ = (Wire.read() << 8 | Wire.read()) / 131;
-//Compensate for sign offset
-  GyroX = GyroX+2;
-  if (GyroX > 250){
-    GyroX = -500 + GyroX;
-  }
-  GyroY = GyroY+1;
-  if (GyroY > 250){
-    GyroY = -500 + GyroY;
-  }
-  if (GyroZ > 250){
-    GyroZ = -500 + GyroZ;
-  }
-  if (AccX > 2){
-    AccX = AccX-4;
-  }
-  if (AccY > 2){
-    AccY = AccY-4;
-  }
-  if (AccZ > 2){
-    AccZ = AccZ-4;
-  }
+  GyroX = TwosComp(Wire.read() << 8 | Wire.read()) / 131; // For a 1000deg/s range we have to divide first the raw value by 32.8, according to the datasheet
+  GyroY = TwosComp(Wire.read() << 8 | Wire.read()) / 131;
+  GyroZ = TwosComp(Wire.read() << 8 | Wire.read()) / 131;
 
   //for roll pitch and yaw
   accAngleX = (atan(AccY / sqrt(pow(AccX, 2) + pow(AccZ, 2))) * 180 / PI); 
@@ -74,23 +53,30 @@ void loop() {
   pitch = 0.96 * gyroAngleX + 0.04 * accAngleX; 
   
   // Print the values on the serial monitor
-  Serial.print(" Yaw: ");
-  Serial.print(yaw);
-  Serial.print(" pitch: ");
-  Serial.print(pitch);
-  Serial.print(" roll: ");
-  Serial.println(roll);
-//  Serial.print(" AccX: ");
-//  Serial.print(AccX);
-//  Serial.print(" AccY: ");
-//  Serial.print(AccY);
-//  Serial.print(" AccZ: ");
-//  Serial.print(AccZ);
-//  Serial.print(" GyroX: ");
-//  Serial.print(GyroX);
-//  Serial.print(" GyroY: ");
-//  Serial.println(GyroY);
-//  Serial.print(" GyroZ: ");
-//  Serial.println(GyroZ);
+//  Serial.print(" Yaw: ");
+//  Serial.print(yaw);
+//  Serial.print(" pitch: ");
+//  Serial.print(pitch);
+//  Serial.print(" roll: ");
+//  Serial.println(roll);
+  Serial.print(" AccX: ");
+  Serial.print(AccX);
+  Serial.print(" AccY: ");
+  Serial.print(AccY);
+  Serial.print(" AccZ: ");
+  Serial.print(AccZ);
+  Serial.print(" GyroX: ");
+  Serial.print(GyroX);
+  Serial.print(" GyroY: ");
+  Serial.print(GyroY);
+  Serial.print(" GyroZ: ");
+  Serial.println(GyroZ);
 
+}
+float TwosComp(short bin){
+  if(1 == bin>>15)
+  {
+    return ~bin +1;
+  }
+  return bin;
 }
