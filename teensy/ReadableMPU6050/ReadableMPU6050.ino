@@ -45,6 +45,9 @@ void loop() {
   GyroY = TwosComp(Wire.read() << 8 | Wire.read()) / 131;
   GyroZ = TwosComp(Wire.read() << 8 | Wire.read()) / 131;
 
+  GyroX = GyroX+1.5;
+  GyroY = GyroY+1;
+  GyroZ = GyroZ;  
   //for roll pitch and yaw
   accAngleX = (atan(AccY / sqrt(pow(AccX, 2) + pow(AccZ, 2))) * 180 / PI); 
   accAngleY = (atan(-1 * AccX / sqrt(pow(AccY, 2) + pow(AccZ, 2))) * 180 / PI);
