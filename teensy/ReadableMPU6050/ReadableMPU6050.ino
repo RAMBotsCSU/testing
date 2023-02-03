@@ -1,3 +1,7 @@
+//TO DO:
+//Correct Roll Pitch and Yaw values
+//maybe add error correction with a running sum
+
 #include <Wire.h>
 const int MPU = 0x68; // MPU6050 I2C address
 float AccX, AccY, AccZ;
@@ -49,8 +53,8 @@ void loop() {
   gyroAngleY = gyroAngleY + GyroY * elapsedTime;
   yaw =  yaw + GyroZ * elapsedTime;
 
-  roll = 0.96 * gyroAngleY + 0.04 * accAngleY;
-  pitch = 0.96 * gyroAngleX + 0.04 * accAngleX; 
+  roll = gyroAngleY;
+  pitch = gyroAngleX; 
   
   // Print the values on the serial monitor
 //  Serial.print(" Yaw: ");
@@ -59,12 +63,14 @@ void loop() {
 //  Serial.print(pitch);
 //  Serial.print(" roll: ");
 //  Serial.println(roll);
-  Serial.print(" AccX: ");
-  Serial.print(AccX);
-  Serial.print(" AccY: ");
-  Serial.print(AccY);
-  Serial.print(" AccZ: ");
-  Serial.print(AccZ);
+  Serial.print("0:");
+  Serial.print(0);
+//  Serial.print(" AccX: ");
+//  Serial.print(AccX);
+//  Serial.print(" AccY: ");
+//  Serial.print(AccY);
+//  Serial.print(" AccZ: ");
+//  Serial.println(AccZ);
   Serial.print(" GyroX: ");
   Serial.print(GyroX);
   Serial.print(" GyroY: ");
