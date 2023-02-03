@@ -41,7 +41,7 @@ odrv0.axis0.config.startup_encoder_index_search = True
 odrv0.axis1.config.startup_encoder_index_search = True
 odrv0.axis0.encoder.config.pre_calibrated = True
 odrv0.axis1.encoder.config.pre_calibrated = True
-odrv0.axis0.config.startup_closed_loop_control = True
-odrv0.axis1.config.startup_closed_loop_control = True
+odrv0.axis0.config.startup_closed_loop_control = True //currently doing this with Teensy code
+odrv0.axis1.config.startup_closed_loop_control = True //currently doing this with Teensy code
 odrv0.save_configuration()
 odrv0.reboot()
