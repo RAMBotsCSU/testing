@@ -34,9 +34,6 @@ dev0.axis0.requested_state = AXIS_STATE_MOTOR_CALIBRATION
 dev0.axis1.requested_state = AXIS_STATE_MOTOR_CALIBRATION
 dev0.axis0.motor.config.pre_calibrated = True
 dev0.axis1.motor.config.pre_calibrated = True
-dev0.config.enable_brake_resistor = True
-dev0.config.brake_resistance = 2.0 
-    //if have resistors
 dev0.axis0.requested_state = AxisState.ENCODER_INDEX_SEARCH
 dev0.axis1.requested_state = AxisState.ENCODER_INDEX_SEARCH
 dev0.axis0.requested_state = AxisState.ENCODER_OFFSET_CALIBRATION
@@ -48,6 +45,9 @@ dev0.axis1.config.startup_encoder_index_search = True
 dev0.axis0.config.startup_closed_loop_control = True 
 dev0.axis1.config.startup_closed_loop_control = True 
     //currently doing this with Teensy code
+dev0.config.enable_brake_resistor = True
+dev0.config.brake_resistance = 2.0 
+    //if have resistors
 dev0.save_configuration()
 dev0.reboot()
 dump_errors(dev0)
