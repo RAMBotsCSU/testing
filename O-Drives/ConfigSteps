@@ -26,9 +26,6 @@ dev0.axis0.controller.config.vel_gain = 0.1
 dev0.axis1.controller.config.vel_gain = 0.1
 dev0.axis0.controller.config.vel_integrator_gain = 0.2
 dev0.axis1.controller.config.vel_integrator_gain = 0.2
-dev0.config.enable_brake_resistor = True
-dev0.config.brake_resistance = 2.0 
-    //if have resistors
 import math
 dev0.axis0.controller.config.vel_limit = math.inf
 dev0.axis1.controller.config.vel_limit = math.inf
@@ -37,6 +34,9 @@ dev0.axis0.requested_state = AXIS_STATE_MOTOR_CALIBRATION
 dev0.axis1.requested_state = AXIS_STATE_MOTOR_CALIBRATION
 dev0.axis0.motor.config.pre_calibrated = True
 dev0.axis1.motor.config.pre_calibrated = True
+dev0.config.enable_brake_resistor = True
+dev0.config.brake_resistance = 2.0 
+    //if have resistors
 dev0.axis0.requested_state = AxisState.ENCODER_INDEX_SEARCH
 dev0.axis1.requested_state = AxisState.ENCODER_INDEX_SEARCH
 dev0.axis0.requested_state = AxisState.ENCODER_OFFSET_CALIBRATION
