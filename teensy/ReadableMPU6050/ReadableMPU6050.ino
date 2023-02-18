@@ -1,9 +1,11 @@
 //TO DO:
-//Correct Roll Pitch and Yaw values
 //maybe add error correction with a running sum
+//use acceleration for finding orentation when robot is standing still
+//implement 2 gyros one for sensativity one for wide range of mesuring( high degrees/sec)
+//implement 2 gyros that automatically get compared to test a limb movement by taping one to the end
 
 #include <Wire.h>
-const int MPU = 0x69; // MPU6050 I2C address
+const int MPU = 0x68; // MPU6050 I2C address 0x68 for first mpu 0x69 for second
 float AccX, AccY, AccZ;
 float GyroX, GyroY, GyroZ;
 float AccX_old, AccY_old, AccZ_old;
