@@ -28,7 +28,6 @@ void setup() {
   
 }
 void loop() {
-  Serial.print(GyroErrorX);
   // === Read acceleromter data === //
   Wire.beginTransmission(MPU);
   Wire.write(0x3B); // Start with register 0x3B (ACCEL_XOUT_H)
