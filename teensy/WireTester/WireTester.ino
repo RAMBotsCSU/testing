@@ -1,4 +1,6 @@
 double black,blue,green,yellow,grey,red;
+double high_threshold = 1000.0;
+double low_threshold = 15.0;
 void setup() {
   //Teensy connections
   //Digital pins:
@@ -29,10 +31,11 @@ digitalWrite(9, LOW);
 digitalWrite(10, LOW);
 delay(5);
 Read();
-if(black>1000 && blue<15 && yellow<15 && green<15 && grey<15 && red<15){
+if(black>high_threshold && blue<low_threshold && yellow<low_threshold && green<low_threshold && grey<low_threshold && red<low_threshold){
   Serial.print(" black: Pass");
 }else{
   Serial.print(" black: !Fail!");
+  Dumpinfo();
 }
 digitalWrite(5, LOW);
 digitalWrite(6, HIGH);
@@ -42,10 +45,11 @@ digitalWrite(9, LOW);
 digitalWrite(10, LOW);
 delay(5);
 Read();
-if(blue>1000 && black<15 && yellow<15 && green<15 && grey<15 && red<15){
+if(blue>high_threshold && black<low_threshold && yellow<low_threshold && green<low_threshold && grey<low_threshold && red<low_threshold){
   Serial.print(" blue: Pass");
 }else{
   Serial.print(" blue: !Fail!");
+  Dumpinfo();
 }
 digitalWrite(5, LOW);
 digitalWrite(6, LOW);
@@ -55,10 +59,11 @@ digitalWrite(9, LOW);
 digitalWrite(10, LOW);
 delay(5);
 Read();
-if(yellow>1000 && black<15 && blue<15 && green<15 && grey<15 && red<15){
+if(yellow>high_threshold && black<low_threshold && blue<low_threshold && green<low_threshold && grey<low_threshold && red<low_threshold){
   Serial.print(" yellow: Pass");
 }else{
   Serial.print(" yellow: !Fail!");
+  Dumpinfo();
 }
 digitalWrite(5, LOW);
 digitalWrite(6, LOW);
@@ -68,10 +73,11 @@ digitalWrite(9, LOW);
 digitalWrite(10, LOW);
 delay(5);
 Read();
-if(green>1000 && black<15 && blue<15 && yellow<15 && grey<15 && red<15){
+if(green>high_threshold && black<low_threshold && blue<low_threshold && yellow<low_threshold && grey<low_threshold && red<low_threshold){
   Serial.print(" green: Pass");
 }else{
   Serial.print(" green: !Fail!");
+  Dumpinfo();
 }
 digitalWrite(5, LOW);
 digitalWrite(6, LOW);
@@ -81,10 +87,11 @@ digitalWrite(9, HIGH);
 digitalWrite(10, LOW);
 delay(5);
 Read();
-if(grey>1000 && black<15 && blue<15 && yellow<15 && green<15 && red<15){
+if(grey>high_threshold && black<low_threshold && blue<low_threshold && yellow<low_threshold && green<low_threshold && red<low_threshold){
   Serial.print(" grey: Pass");
 }else{
   Serial.print(" grey: !Fail!");
+  Dumpinfo();
 }
 digitalWrite(5, LOW);
 digitalWrite(6, LOW);
@@ -94,10 +101,11 @@ digitalWrite(9, LOW);
 digitalWrite(10, HIGH);
 delay(5);
 Read();
-if(red>1000 && black<15 && blue<15 && yellow<15 && green<15 && grey<15){
+if(red>high_threshold && black<low_threshold && blue<low_threshold && yellow<low_threshold && green<low_threshold && grey<low_threshold){
   Serial.println(" red: Pass");
 }else{
   Serial.println(" red: !Fail!");
+  Dumpinfo();
 }
 }
 void Read() {
@@ -109,20 +117,21 @@ green = analogRead(A3);
 grey = analogRead(A2);
 red = analogRead(A1);
 delay(10);
+}
+void Dumpinfo() {
 
-
-//Serial.print(" black:");
-//Serial.print(black);
-//Serial.print(" blue:");
-//Serial.print(blue);
-//Serial.print(" yellow:");
-//Serial.print(yellow);
-//Serial.print(" green:");
-//Serial.print(green);
-//Serial.print(" grey:");
-//Serial.print(grey);
-//Serial.print(" red:");
-//Serial.println(red);
-//delay(100);
-
+  Serial.println();
+Serial.print(" black:");
+Serial.print(black);
+Serial.print(" blue:");
+Serial.print(blue);
+Serial.print(" yellow:");
+Serial.print(yellow);
+Serial.print(" green:");
+Serial.print(green);
+Serial.print(" grey:");
+Serial.print(grey);
+Serial.print(" red:");
+Serial.println(red);
+delay(5);
 }
