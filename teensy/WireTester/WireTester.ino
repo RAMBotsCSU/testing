@@ -1,6 +1,6 @@
 double black,blue,green,yellow,grey,red;
 double high_threshold = 1000.0;
-double low_threshold = 15.0;
+double low_threshold = 20.0;
 void setup() {
   //Teensy connections
   //Digital pins:
@@ -22,7 +22,8 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // the wire test fails if the high voltage is below its threshold or one of the low wires is above there threshold.
+  
 digitalWrite(5, HIGH);
 digitalWrite(6, LOW);
 digitalWrite(7, LOW);
@@ -122,16 +123,17 @@ void Dumpinfo() {
 
   Serial.println();
 Serial.print(" black:");
-Serial.print(black);
-Serial.print(" blue:");
-Serial.print(blue);
-Serial.print(" yellow:");
-Serial.print(yellow);
-Serial.print(" green:");
-Serial.print(green);
-Serial.print(" grey:");
-Serial.print(grey);
-Serial.print(" red:");
-Serial.println(red);
+Serial.print(black*5/1024);
+Serial.print("V blue:");
+Serial.print(blue*5/1024);
+Serial.print("V yellow:");
+Serial.print(yellow*5/1024);
+Serial.print("V green:");
+Serial.print(green*5/1024);
+Serial.print("V grey:");
+Serial.print(grey*5/1024);
+Serial.print("V red:");
+Serial.print(red*5/1024);
+Serial.println("V");
 delay(5);
 }
