@@ -1,10 +1,10 @@
 double black,blue,green,yellow,grey,red;
-double high_threshold = 1000.0;
-double low_threshold = 20.0;
+double high_threshold = 1000.0;//1000 is ~3.24mV
+double low_threshold = 20.0;//20 is ~65mV
 void setup() {
   //Teensy connections
   //Digital pins:
-  // connect black to pin 5
+  //connect black to pin 5
   //blue to pin 6
   //yellow to pin 7
   //green to pin 8
@@ -123,17 +123,17 @@ void Dumpinfo() {
 
   Serial.println();
 Serial.print(" black:");
-Serial.print(black*5/1024);
+Serial.print(black*3.32/1024);
 Serial.print("V blue:");
-Serial.print(blue*5/1024);
+Serial.print(blue*3.32/1024);
 Serial.print("V yellow:");
-Serial.print(yellow*5/1024);
+Serial.print(yellow*3.32/1024);
 Serial.print("V green:");
-Serial.print(green*5/1024);
+Serial.print(green*3.32/1024);
 Serial.print("V grey:");
-Serial.print(grey*5/1024);
+Serial.print(grey*3.32/1024);
 Serial.print("V red:");
-Serial.print(red*5/1024);
+Serial.print(red*3.32/1024);
 Serial.println("V");
 delay(5);
 }
