@@ -16,14 +16,14 @@ import subprocess
 import math
 import random
 
-'''mixer.init()
-sheep1 = pygame.mixer.Sound('Sounds/sheep1.mp3')
-sheep2 = pygame.mixer.Sound('Sounds/sheep2.mp3')
-sheep3 = pygame.mixer.Sound('Sounds/sheep3.mp3')
-sheep4 = pygame.mixer.Sound('Sounds/sheep4.mp3')
-sheep_sounds = [sheep1,sheep2,sheep3,sheep4]
+#mixer.init()
+#sheep1 = pygame.mixer.Sound('Sounds/sheep1.mp3')
+#sheep2 = pygame.mixer.Sound('Sounds/sheep2.mp3')
+#sheep3 = pygame.mixer.Sound('Sounds/sheep3.mp3')
+#sheep4 = pygame.mixer.Sound('Sounds/sheep4.mp3')
+#sheep_sounds = [sheep1,sheep2,sheep3,sheep4]
 #pygame.mixer.Sound.play(random.choice(sheep_sounds))
-pygame.mixer.Sound.play(random.choice(sheep_sounds))'''
+#pygame.mixer.Sound.play(random.choice(sheep_sounds))
 
 
 #Function to change the RGB of the controller based on mode
@@ -62,7 +62,7 @@ def rmPadStr(val):
     
     
 #Function to communicate and output to teensy by a given string
-def serialWrite_Read(output):
+def serialRead_Write(output):
     #Write out what the pi is sending
     #print("Pi: " + output)
     output = padStr(output)
@@ -71,12 +71,6 @@ def serialWrite_Read(output):
     ser.write(output.encode())
     
     #Collect from serial buffer, trim the extra bits, then print
-    inp = str(ser.readline())
-    inp = inp[2:-5]
-    inp = rmPadStr(inp)
-    print(inp)
-    
-def serialRead():
     inp = str(ser.readline())
     inp = inp[2:-5]
     inp = rmPadStr(inp)
@@ -270,18 +264,18 @@ def driver(q):
                 keyWord = item[0:2]
                 #Array Modification
                 if (keyWord == "AR"):
-                    serialWrite_Read(item)
+                    serialRead_Write(item)
                 #Mode set
                 elif (keyWord == "MS"):
                     for i in range(6):
                         message = "AR{}:{},".format(i,0.)
-                        serialWrite_Read(message)
+                        serialRead_Write(message)
                     mode = item[item.index(":")+1:item.index(",")]
                     print("Setting mode to: " + mode)
                 #Test Movement
                 elif (keyWord == "SQ"):
                     message = "SQ"
-                    serialWrite_Read(message)
+                    serialRead_Write(message)
                 #Terminate
                 elif (item == "TM"):
                     time.sleep(0.5)
@@ -296,14 +290,7 @@ def driver(q):
 #********
 if __name__ == '__main__':
     #Main
-    odrvs = 2
-    
     ser = serial.Serial('/dev/ttyACM0',9600)
-    
-    print("Hello! Waiting for Arduino Response")
-    for i in range(odrvs*2+1):
-        serialRead()
-    
     q = Queue()
     controllerThread = Process(target=controllerCode, args=(q,))
     controllerThread.daemon = True

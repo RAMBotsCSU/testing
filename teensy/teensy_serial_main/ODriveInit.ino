@@ -74,7 +74,7 @@ void OdriveInit1() {
       }
 }
 
-*//*
+*/
 void modifyGains() {                               // this function turns up the gains when it is executed (menu option 4 via the remote)
 
           Serial7.println("modfy gains");
@@ -90,7 +90,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial2 << "w axis" << 0 << ".controller.config.pos_gain " << posGainKnee << '\n';
           Serial2 << "w axis" << 1 << ".controller.config.pos_gain " << posGainShoulder << '\n';
-
+/*
           Serial3 << "w axis" << 0 << ".controller.config.pos_gain " << posGainKnee << '\n';
           Serial3 << "w axis" << 1 << ".controller.config.pos_gain " << posGainShoulder << '\n';
 
@@ -102,7 +102,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial6 << "w axis" << 0 << ".controller.config.pos_gain " << posGainKnee << '\n';
           Serial6 << "w axis" << 1 << ".controller.config.pos_gain " << posGainShoulder << '\n';
-
+*/
           // ******
 
           Serial1 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
@@ -110,7 +110,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial2 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
           Serial2 << "w axis" << 1 << ".controller.config.vel_gain " << velGain << '\n';
-
+/*
           Serial3 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
           Serial3 << "w axis" << 1 << ".controller.config.vel_gain " << velGain << '\n';
 
@@ -122,7 +122,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial6 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
           Serial6 << "w axis" << 1 << ".controller.config.vel_gain " << velGain << '\n';
-
+*/
           // ******
 
           Serial1 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
@@ -130,7 +130,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial2 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
           Serial2 << "w axis" << 1 << ".controller.config.vel_integrator_gain " << integrator << '\n';
-
+/*
           Serial3 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
           Serial3 << "w axis" << 1 << ".controller.config.vel_integrator_gain " << integrator << '\n';
 
@@ -142,8 +142,8 @@ void modifyGains() {                               // this function turns up the
 
           Serial6 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
           Serial6 << "w axis" << 1 << ".controller.config.vel_integrator_gain " << integrator << '\n';        
-}
-*//*
+*/}
+/*
 //Requires Arduino Odrive Library
 
 void applyOffsets1() {

@@ -95,13 +95,13 @@ void setup() {
   odrive6Serial.begin(115200);
   //Serial7.begin(115200);
 
-  odrive1Serial.print("sr\n");
-  odrive2Serial.print("sr\n");
+  //odrive1Serial.print("sr\n");
+  //odrive2Serial.print("sr\n");
   //odrive3Serial.print("sr\n");
   //odrive4Serial.print("sr\n");
   //odrive5Serial.print("sr\n");
   //odrive6Serial.print("sr\n");
-
+/*
   int closedLoop = 8;
   for (int i = 0; i<2; i++){
     for (int axis = 0; axis<2; axis++){ //each axis in the odrive
@@ -118,7 +118,7 @@ void setup() {
         }
       }
     } 
-  }
+  }*/
 }
 
 String getArrStr(){
@@ -220,7 +220,8 @@ void testMovement(){
   float pos1 = odrive1.GetPosition(1);
   float pos2 = odrive2.GetPosition(0);
   float pos3 = odrive2.GetPosition(1);
-  
+
+  /*
   odrive1.SetPosition(0,0);
   odrive1.SetPosition(1,0);
   odrive2.SetPosition(0,0);
@@ -278,12 +279,10 @@ void testMovement(){
   odrive1.SetPosition(0,0.1);
   odrive1.SetPosition(1,0.1);
   odrive2.SetPosition(0,0.1);
-  odrive2.SetPosition(1,0.1);
-  delay(100);/*
-  kinematics(1,0,0,350,0,0,0,0,1000);
-  delay (5000);
-  kinematics(1,0,0,240,0,0,0,0,1000);
-  */
+  odrive2.SetPosition(1,0.1);*/
+  kinematics(1,0,0,350,0,0,0,0,0);
+  delay(1000);
+  kinematics(1,0,0,240,0,0,0,0,0);
  /*
   kinematics(1,0,0,350,0,0,0,0,0);
   kinematics(2,0,0,240,0,0,0,0,0);
@@ -304,7 +303,7 @@ void testMovement(){
 
 //Main loop to be executed
 void loop() {
- currentMillis = millis();
+/* currentMillis = millis();
 
   if (currentMillis - previousMillis >= 10) {  // start timed event
 
@@ -312,7 +311,7 @@ void loop() {
 
       remoteState = 1;
     }    
-
+*/
 
   
   digitalWrite(led, LOW);                             //Set LED to off when no message has been recieved
@@ -332,6 +331,10 @@ void loop() {
     else if (keyWord == "SQ"){
       testMovement();
       Serial.println(padStr("Test Complete"));
+    }
+    else if (keyWord == "GM"){
+      modifyGains();
+      Serial.println(padStr("Gain Mode Set"));
     }
   }
   //updateMovement();
