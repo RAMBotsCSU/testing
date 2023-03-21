@@ -170,3 +170,11 @@ History:
  Added:    O-Drives/SinWaveTest 
 
 </pre>
+
+ **2023-03-20:**  
+ <pre>Created standalone kinematics to test kinematics function without a PS4 controller. Includes different functions to test
+ including range of motion, setting specific values, and testing functions. Kinematics helper was created to make our programming
+ mesh more easily with openDogV3 code. Includes functions to smooth out movement, as well as a triangle function to be used
+ in the regular walk cycle. Commented out a five second delay in openDogV3 kinematics code. 
+ Added:    teensy/standalone_Kinematics
+</pre>
