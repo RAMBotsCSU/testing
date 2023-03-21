@@ -4,6 +4,8 @@
   //**************************************************************************
 
 // init hips
+
+
 /*
 void OdriveInit1() {
 
@@ -143,7 +145,7 @@ void modifyGains() {                               // this function turns up the
           Serial6 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
           Serial6 << "w axis" << 1 << ".controller.config.vel_integrator_gain " << integrator << '\n';        
 */}
-/*
+
 //Requires Arduino Odrive Library
 
 void applyOffsets1() {
@@ -171,7 +173,6 @@ void applyOffsets2() {
 
 
 
-*/
 void driveJoints(int joint, float pos) {
           // takes into account the original setup offsets for motor postions, and also turns around directions so they are consistent
           // also constrains the motion limts for each joint    

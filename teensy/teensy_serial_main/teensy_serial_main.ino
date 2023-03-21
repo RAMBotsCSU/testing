@@ -14,9 +14,19 @@
 //Setup and set the pin for the LED
 int led = 13;
 int setInd = -1;
+int currentMode = -1;
+String currentModeString = "-1";
 float setVal = -1.1;
 float movementArr[7]; //0 = strafe, 1 = forback, 2 = roll, 3 = turn, 4 = pitch, 5 = height, 6 = yaw
 String keyWord = "00";
+int keyWord_int = 00;
+
+float bounded_x_test_leg = 0;
+float bounded_y_test_leg = 0;
+float bounded_z_test_leg = 295;
+String bounded_x_test_leg_string = "";
+String bounded_y_test_leg_string = "";
+String bounded_z_test_leg_string = "";
 
 
 
@@ -207,112 +217,28 @@ Interpolation interpBLY;
 Interpolation interpBLZ;
 Interpolation interpBLT;
 
-/*
-void updateMovement(){
-  kinematics(1,0,0,0,0,0,0,0,0);
-  kinematics(2,0,0,0,0,0,0,0,0);
-  kinematics(3,0,0,0,0,0,0,0,0);
-  kinematics(4,0,0,0,0,0,0,0,0);
-}
-*/
+
 void testMovement(){
   float pos0 = odrive1.GetPosition(0);
   float pos1 = odrive1.GetPosition(1);
   float pos2 = odrive2.GetPosition(0);
   float pos3 = odrive2.GetPosition(1);
-
-  /*
-  odrive1.SetPosition(0,0);
-  odrive1.SetPosition(1,0);
-  odrive2.SetPosition(0,0);
-  odrive2.SetPosition(1,0);
-  delay(1000);
-  
-  odrive1.SetPosition(0,0.1);
-  odrive1.SetPosition(1,0.1);
-  odrive2.SetPosition(0,0.1);
-  odrive2.SetPosition(1,0.1);
-  delay(100);
-
-  odrive1.SetPosition(0,0.2);
-  odrive1.SetPosition(1,0.2);
-  odrive2.SetPosition(0,0.2);
-  odrive2.SetPosition(1,0.2);
-  delay(100);
-
-  odrive1.SetPosition(0,0.3);
-  odrive1.SetPosition(1,0.3);
-  odrive2.SetPosition(0,0.3);
-  odrive2.SetPosition(1,0.3);
-  delay(100);
-
-  odrive1.SetPosition(0,0.4);
-  odrive1.SetPosition(1,0.4);
-  odrive2.SetPosition(0,0.4);
-  odrive2.SetPosition(1,0.4);
-  delay(100);
-
-  odrive1.SetPosition(0,0.5);
-  odrive1.SetPosition(1,0.5);
-  odrive2.SetPosition(0,0.5);
-  odrive2.SetPosition(1,0.5);
-  delay(100);
-
-  odrive1.SetPosition(0,0.4);
-  odrive1.SetPosition(1,0.4);
-  odrive2.SetPosition(0,0.4);
-  odrive2.SetPosition(1,0.4);
-  delay(100);
-
-  odrive1.SetPosition(0,0.3);
-  odrive1.SetPosition(1,0.3);
-  odrive2.SetPosition(0,0.3);
-  odrive2.SetPosition(1,0.3);
-  delay(100);
-
-  odrive1.SetPosition(0,0.2);
-  odrive1.SetPosition(1,0.2);
-  odrive2.SetPosition(0,0.2);
-  odrive2.SetPosition(1,0.2);
-  delay(100);
-
-  odrive1.SetPosition(0,0.1);
-  odrive1.SetPosition(1,0.1);
-  odrive2.SetPosition(0,0.1);
-  odrive2.SetPosition(1,0.1);*/
-  kinematics(1,0,0,350,0,0,0,0,0);
-  delay(1000);
-  kinematics(1,0,0,240,0,0,0,0,0);
- /*
-  kinematics(1,0,0,350,0,0,0,0,0);
-  kinematics(2,0,0,240,0,0,0,0,0);
-  kinematics(3,0,0,350,0,0,0,0,0);
-  kinematics(4,0,0,240,0,0,0,0,0);
-
-  kinematics(1,0,0,240,0,0,0,0,0);
-  kinematics(2,0,0,350,0,0,0,0,0);
-  kinematics(3,0,0,240,0,0,0,0,0);
-  kinematics(4,0,0,350,0,0,0,0,0);
-
-  kinematics(1,0,0,350,0,0,0,0,0);
-  kinematics(2,0,0,350,0,0,0,0,0);
-  kinematics(3,0,0,350,0,0,0,0,0);
-  kinematics(4,0,0,350,0,0,0,0,0);
- */
 }
+
+float mapValue(float val, float lower_range, float upper_range){ // map joystick range [-1,1] to [lower,upper]
+    float normalizedValue = (val + 1.00) / 2.00;
+    return lower_range + (normalizedValue * (upper_range - lower_range));
+}
+
+int keyword_to_int(String keyWord){ // convert 2 character keyword to an int value to use switch statements
+    return (keyWord[0] - '0') * 10 + (keyWord[1] - '0');
+}
+
 
 //Main loop to be executed
 void loop() {
-/* currentMillis = millis();
 
-  if (currentMillis - previousMillis >= 10) {  // start timed event
-
-    previousMillis = currentMillis;
-
-      remoteState = 1;
-    }    
-*/
-
+  
   
   digitalWrite(led, LOW);                             //Set LED to off when no message has been recieved
   //while (Serial.available() == 0) {}                //optional wait for serial input
@@ -322,20 +248,76 @@ void loop() {
   if (readStr != ""){                                 //readStr == "" if the serial read had nothing in it
     digitalWrite(led, HIGH);                          //Turn on the LED to show that a string with != "" has been recieved
     keyWord = readStr.substring(0,2);
-    if (keyWord == "AR"){
-      setInd = (readStr.substring(readStr.indexOf("R")+1,readStr.indexOf(":"))).toInt();
-      setVal = (readStr.substring(readStr.indexOf(":")+1,readStr.indexOf(","))).toFloat();
-      movementArr[setInd] = setVal;
-      Serial.println(padStr(getArrStr()));      //Print to the serial buffer
+    switch(keyword_to_int(keyWord)) { // convert to int so we can use speedy switch statements
+      case 204: // keyword_to_int("AR")
+        setInd = (readStr.substring(readStr.indexOf("R")+1,readStr.indexOf(":"))).toInt();
+        setVal = (readStr.substring(readStr.indexOf(":")+1,readStr.indexOf(","))).toFloat();
+        movementArr[setInd] = setVal;
+        if (currentMode == 1){
+          //moving index to transvalue
+
+          Serial.println(padStr("x: " + bounded_x_test_leg_string + " y: " + bounded_y_test_leg_string + " z: " + bounded_z_test_leg_string));      //Print to the serial buffer  
+        }
+        
+        else
+          Serial.println(padStr(getArrStr()));      //Print to the serial buffer
+        break;
+      case 383: // keyword_to_int("SQ")
+        testMovement();
+        Serial.println(padStr("Test Complete"));
+        break;
+      case 259: // keyword_to_int("GM")
+        applyOffsets1();
+        applyOffsets2();
+        modifyGains();
+        Serial.println(padStr("Gain Mode Set"));
+        break;
+      case 389: // keyword_to_int("TM") 
+        Serial.println(padStr("Terminate"));
+        while(1); // forever loop (halt teensy until reset)
+        break;
+      case 325: // keyword_to_int("MS") 
+        currentMode = readStr.substring(readStr.indexOf(":")+1,readStr.indexOf(":")+2).toInt();
+        currentModeString = String(currentMode);
+        Serial.println(padStr("Mode Select:" + currentModeString));
+        break;
+      default:
+        Serial.println(padStr("Unknown command: " + keyWord));
+        break;
     }
-    else if (keyWord == "SQ"){
-      testMovement();
-      Serial.println(padStr("Test Complete"));
-    }
-    else if (keyWord == "GM"){
-      modifyGains();
-      Serial.println(padStr("Gain Mode Set"));
-    }
+  }
+ switch(currentMode){
+    case 0:           
+      break;
+    case 1:   // movementArr[1] = 
+    //  transitionKinematics(bounded_x_test_leg, mapValue(arr[1],-100,100), bounded_y_test_leg, mapValue(arr[2],-100,100), 0, 0)
+        bounded_x_test_leg = mapValue(movementArr[1],-100,100);
+        bounded_x_test_leg_string = String(bounded_x_test_leg);
+        bounded_y_test_leg = -mapValue(movementArr[0],-100,100);
+        bounded_y_test_leg_string = String(bounded_y_test_leg);
+        bounded_z_test_leg = bounded_z_test_leg + (350+240)/2 * 0.2 *movementArr[5];
+        if (bounded_z_test_leg > 350){
+          bounded_z_test_leg = 350;
+        }
+        else if (bounded_z_test_leg < 240){
+          bounded_z_test_leg = 240;
+        }
+        bounded_z_test_leg_string = String(bounded_z_test_leg);
+        kinematics(1,bounded_x_test_leg,bounded_y_test_leg,bounded_z_test_leg,0,0,0,0,0);
+//        ztop =240
+//        zbot = 350
+//        transkine(x_BIG_VARIABLE,transfunction(arr[1],bounds,yfrom,yto,zfrom,zto
+//        x_BIG = transfunction(arr[1],bounds)
+//        y_big
+//        z_big = z_big+((ztop+zbot)/2*0.01*arr[z])
+      
+      break;
+
+  
+ 
+
+
+
   }
   //updateMovement();
   }

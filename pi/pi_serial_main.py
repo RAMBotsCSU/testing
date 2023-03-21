@@ -78,7 +78,7 @@ def serialRead_Write(output):
    
 #Function to round to the nearest 0.05 for joysticks and triggers
 def round_val(val):
-    roundTo = 0.2
+    roundTo = 0.1
     returnVal = round(round(val/roundTo)*roundTo,-int(math.floor(math.log10(roundTo))))
     if (returnVal < -1*roundTo and returnVal > roundTo):
         returnVal = 0.
@@ -113,7 +113,7 @@ def controllerCode(q):
             for event in events:
                 #print(event)
                 #Axis event
-                if (mode == 0): #0 means full controller
+                if (mode == 0 or mode == 1): #0 means full controller
                     if event.type == pygame.JOYAXISMOTION:
                         #for i in range(6):
                         i = event.axis
@@ -164,8 +164,8 @@ def controllerCode(q):
                             print("Triangle")
                         #Square
                         elif j.get_button(3):
-                            print("Movement Test")
-                            message = "SQ"
+                            print("Gains Mode")
+                            message = "GM"
                             q.put(message)
                         #L2 Half Way
                         elif j.get_button(6):
@@ -203,7 +203,7 @@ def controllerCode(q):
                             message = "AR{}:{},".format(5,0.2)
                             q.put(message)
                         elif(dy == -1):
-                            #print("Down")
+                            #print("Down")y
                             heightChange = 1
                             message = "AR{}:{},".format(5,-0.2)
                             q.put(message)
@@ -272,9 +272,11 @@ def driver(q):
                         serialRead_Write(message)
                     mode = item[item.index(":")+1:item.index(",")]
                     print("Setting mode to: " + mode)
+                    message = "MS:{}".format(mode,0)
+                    serialRead_Write(message)
                 #Test Movement
-                elif (keyWord == "SQ"):
-                    message = "SQ"
+                elif (keyWord == "GM"):
+                    message = "GM"
                     serialRead_Write(message)
                 #Terminate
                 elif (item == "TM"):

@@ -161,6 +161,7 @@ void loop() {
   if(input == -1){
     Serial2 << "w axis" << 0 << ".motor.config.direction " << 1 << '\n';
     modifyGains();
+    applyOffsets2();
     Serial.println("Gains Modified");
   }
   else if(input == -2){
@@ -183,16 +184,16 @@ void loop() {
   }
   else if(input== -4){
     tempVal = 0;
-    for(int i = -100; i < 0; i = i+25){
-      triangleWalk(1, i, tempVal, 350, 240, 100);
-      tempVal = tempVal - 25;
+    for(int i = -100; i < 0; i = i+25){               //x -> -100 to 100
+      triangleWalk(1, i, tempVal, 350, 240, 100);     //y -> -25 to 25
+      tempVal = tempVal - 25;                         //z -> 240 to 350
     }
     for(int i = 0; i < 100; i = i+25){
       triangleWalk(1, i, tempVal, 350, 240, 100);
       tempVal = tempVal + 25;
     }
   }
-  else if(input== -5){
+  else if(input== -5){ //Range
     for (int x = -390; x <= 1000; x=x+10){
       for (int z = 200; z <= 390; z = z+5){    
         Serial.print("X: ");
@@ -208,7 +209,18 @@ void loop() {
       }
     }
   }
-  else if(input== -6){
+  else if(input == -6){
+    float lastX = 0;
+    for (int x = -250; x <= 400; x = x+10){
+      Serial.print("X: ");
+      Serial.println(x);
+      transitionKinematics(1, lastX, x, 0, 0, 240, 390);
+      lastX = x;
+      transitionKinematics(1, x, lastX, 0, 0, 390, 240);
+    }
+    transitionKinematics(1,lastX,0,0,0,390,250);
+  }
+  else if(input== -7){
     kinematics(1,-50,0,240,0,0,0,0,0);
     //from to
     transitionKinematics(1, -50, 50, 0, 0, 240, 350);
