@@ -178,3 +178,13 @@ History:
  in the regular walk cycle. Commented out a five second delay in openDogV3 kinematics code. 
  Added:    teensy/standalone_Kinematics
 </pre>
+
+
+ **2023-03-21:**  
+ <pre>Updated teensy_serial_main to control a single leg with three axes of the PS4 controller. In mode 1 it will take values
+ from the Pi corresponding to x and y on the left joystick and up/down on the dpad, all within range [-1,1], then map those values
+ to each joint's range of movement and repeatedly call the openDog kinematics function using the new values. Testing was successful.  
+ Updated:    teensy/teensy_serial_main
+             pi/pi_serial_main
+</pre>
+
