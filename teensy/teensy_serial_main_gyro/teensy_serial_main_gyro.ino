@@ -49,7 +49,6 @@ int menuFlag;
 int modeConfirm;
 int modeConfirmFlag = 0;
 int runMode = 0;
-int setNum = 1;
 
 // Printing with stream operator
 template<class T> inline Print& operator <<(Print &obj,     T arg) { obj.print(arg);    return obj; }
@@ -95,6 +94,21 @@ ODriveArduino odrive6(odrive6Serial);
 
 ODriveArduino odrArr[6] = {odrive1, odrive2, odrive3, odrive4, odrive5, odrive6};
 
+#include <Wire.h>
+const int MPU = 0x68; // MPU6050 I2C address 0x68 for first mpu 0x69 for second
+float AccX, AccY, AccZ;
+float GyroX, GyroY, GyroZ;
+float AccX_old, AccY_old, AccZ_old;
+float GyroX_old, GyroY_old, GyroZ_old;
+float accAngleX, accAngleY, gyroAngleX, gyroAngleY, gyroAngleZ;
+float roll, pitch, yaw;
+String roll_string, pitch_string, yaw_string;
+float elapsedTime, currentTime, previousTime;
+
+int c =0;
+float AccErrorX, AccErrorY, GyroErrorX, GyroErrorY, GyroErrorZ;
+
+
 void setup() {
   pinMode(led, OUTPUT);
   Serial.begin(9600);
@@ -104,8 +118,42 @@ void setup() {
   odrive4Serial.begin(115200);
   odrive5Serial.begin(115200);
   odrive6Serial.begin(115200);
+
+  Wire.begin();                      // Initialize comunication
+  Wire.beginTransmission(MPU);       // Start communication with MPU6050 // MPU=0x68
+  Wire.write(0x6B);                  // Talk to the register 6B
+  Wire.write(0x00);                  // Make reset - place a 0 into the 6B register
+  Wire.endTransmission(true);        //end the transmission
+  calculate_IMU_error();
+  
+  delay(10);
+  
   //Serial7.begin(115200);
 
+  //odrive1Serial.print("sr\n");
+  //odrive2Serial.print("sr\n");
+  //odrive3Serial.print("sr\n");
+  //odrive4Serial.print("sr\n");
+  //odrive5Serial.print("sr\n");
+  //odrive6Serial.print("sr\n");
+/*
+  int closedLoop = 8;
+  for (int i = 0; i<2; i++){
+    for (int axis = 0; axis<2; axis++){ //each axis in the odrive
+      float indexFound = 0;
+      float found = 0;
+      while (found == 0){
+        indexFound = odrArr[i].IndexFound(axis);
+        if (indexFound > 0.){
+          found = 1;
+          delay(5);
+          odrArr[i].run_state(axis,closedLoop, false);
+          //Serial.print(i);
+          //Serial.println(axis);
+        }
+      }
+    } 
+  }*/
 }
 
 String getArrStr(){
@@ -216,6 +264,62 @@ int keyword_to_int(String keyWord){ // convert 2 character keyword to an int val
 //Main loop to be executed
 void loop() {
 
+   Wire.beginTransmission(MPU);
+  Wire.write(0x3B); // Start with register 0x3B (ACCEL_XOUT_H)
+  Wire.endTransmission(false);
+  Wire.requestFrom(MPU, 6, true); // Read 6 registers total, each axis value is stored in 2 registers
+  //For a range of +-2g, we need to divide the raw values by 16384, according to the datasheet
+  AccX = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0; // X-axis value
+  AccY = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0; // Y-axis value
+  AccZ = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0; // Z-axis value
+  
+  //apply offsets
+  AccX = AccX - AccErrorX;
+  AccY = AccY - AccErrorY;
+//  AccZ = AccZ - AccErrorZ;
+  
+  // === Read gyroscope data === //
+  
+  Wire.beginTransmission(MPU);
+  Wire.write(0x43); // Gyro data first register address 0x43
+  Wire.endTransmission(false);
+  Wire.requestFrom(MPU, 6, true); // Read 4 registers total, each axis value is stored in 2 registers
+  GyroX = TwosComp(Wire.read() << 8 | Wire.read()) / 131; // For a 1000deg/s range we have to divide first the raw value by 32.8, according to the datasheet
+  GyroY = TwosComp(Wire.read() << 8 | Wire.read()) / 131;
+  GyroZ = TwosComp(Wire.read() << 8 | Wire.read()) / 131;
+
+  //apply ofsets
+  GyroX = GyroX - GyroErrorX;
+  GyroY = GyroY - GyroErrorY;
+  GyroZ = GyroZ - GyroErrorZ;
+//  GyroX = GyroX+5.5;
+//  GyroY = GyroY+1;
+//  GyroZ = GyroZ;
+  
+  //for roll pitch and yaw
+  accAngleX = (atan(AccY / sqrt(pow(AccX, 2) + pow(AccZ, 2))) * 180 / PI); 
+  accAngleY = (atan(-1 * AccX / sqrt(pow(AccY, 2) + pow(AccZ, 2))) * 180 / PI);
+  // Currently the raw values are in degrees per seconds, deg/s, so we need to multiply by sendonds (s) to get the angle in degrees
+  previousTime = currentTime;        // Previous time is stored before the actual time read
+  currentTime = millis();            // Current time actual time read
+  elapsedTime = (currentTime - previousTime) / 1000; // Divide by 1000 to get seconds
+  
+  gyroAngleX = gyroAngleX + GyroX * elapsedTime; // deg/s * s = deg
+  gyroAngleY = gyroAngleY + GyroY * elapsedTime;
+  yaw =  yaw + GyroZ * elapsedTime;
+
+  roll = roll + GyroY * elapsedTime;
+  pitch = pitch + GyroX * elapsedTime; 
+
+
+
+
+
+
+
+
+
+  
   digitalWrite(led, LOW);                             //Set LED to off when no message has been recieved
   //while (Serial.available() == 0) {}                //optional wait for serial input
   String readStr = Serial.readString();               //Read the serial line and set to readStr
@@ -232,7 +336,10 @@ void loop() {
         if (currentMode == 1){
           //moving index to transvalue
 
-          Serial.println(padStr("x: " + bounded_x_test_leg_string + " y: " + bounded_y_test_leg_string + " z: " + bounded_z_test_leg_string));      //Print to the serial buffer  
+          Serial.println(padStr("x: " + bounded_x_test_leg_string + " y: " + bounded_y_test_leg_string + " z: " + bounded_z_test_leg_string) + " pitch: " + pitch_string + " roll: " + roll_string + " yaw: " + yaw_string);      //Print to the serial buffer  
+        } 
+        else if (currentMode == 2){
+          Serial.println(" roll: " + String(roll));
         }
         
         else
@@ -263,21 +370,7 @@ void loop() {
     }
   }
  switch(currentMode){
-    case 0:  //normal walking (ps4 control)
-//      fullWalk(movementArr, 1.0, setNum);
-      //if all of the movment array numbers are 0, next stage needs to be 1, unless we are going down, then do it next time
-      if(setNum == 5){
-        setNum = 2;
-      }
-//      else if(/*if stopping*/){
-//        setNum = 6;
-//      }
-      else if(setNum = 6){
-        setNum = 1;
-      }
-      else{
-        setNum ++;
-      }
+    case 0:           
       break;
     case 1:   // movementArr[1] = 
     //  transitionKinematics(bounded_x_test_leg, mapValue(arr[1],-100,100), bounded_y_test_leg, mapValue(arr[2],-100,100), 0, 0)
@@ -285,6 +378,10 @@ void loop() {
         bounded_x_test_leg_string = String(bounded_x_test_leg);
         bounded_y_test_leg = -mapValue(movementArr[0],-100,100);
         bounded_y_test_leg_string = String(bounded_y_test_leg);
+        pitch_string = String(pitch);      
+        roll_string = String(roll);      
+        yaw_string = String(yaw);      
+
         bounded_z_test_leg = bounded_z_test_leg + (350+240)/2 * 0.2 *movementArr[5];
         if (bounded_z_test_leg > 350){
           bounded_z_test_leg = 350;
@@ -294,7 +391,6 @@ void loop() {
         }
         bounded_z_test_leg_string = String(bounded_z_test_leg);
         kinematics(1,bounded_x_test_leg,bounded_y_test_leg,bounded_z_test_leg,0,0,0,0,0);
-        kinematics(4,bounded_x_test_leg,bounded_y_test_leg,bounded_z_test_leg,0,0,0,0,0);
 //        ztop =240
 //        zbot = 350
 //        transkine(x_BIG_VARIABLE,transfunction(arr[1],bounds,yfrom,yto,zfrom,zto
@@ -304,10 +400,66 @@ void loop() {
       
       break;
 
+
   
  
 
 
 
   }
+  //updateMovement();
+  }
+
+
+
+
+
+float TwosComp(short bin){
+  if(1 == bin>>15)
+  {
+    return ~bin +1;
+  }
+  return bin;
+}
+void calculate_IMU_error() {
+  // We can call this funtion in the setup section to calculate the accelerometer and gyro data error. From here we will get the error values used in the above equations printed on the Serial Monitor.
+  // Note that we should place the IMU flat in order to get the proper values, so that we then can the correct values
+  // Read accelerometer values 200 times
+  while (c < 200) {
+    Wire.beginTransmission(MPU);
+    Wire.write(0x3B);
+    Wire.endTransmission(false);
+    Wire.requestFrom(MPU, 6, true);
+    AccX = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0 ;
+    AccY = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0 ;
+    AccZ = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0 ;
+    // Sum all readings
+    AccErrorX = AccErrorX + ((atan((AccY) / sqrt(pow((AccX), 2) + pow((AccZ), 2))) * 180 / PI));
+    AccErrorY = AccErrorY + ((atan(-1 * (AccX) / sqrt(pow((AccY), 2) + pow((AccZ), 2))) * 180 / PI));
+    c++;
+  }
+  //Divide the sum by 200 to get the error value
+  AccErrorX = AccErrorX / 200;
+  AccErrorY = AccErrorY / 200;
+  c = 0;
+  // Read gyro values 200 times
+  while (c < 200) {
+    Wire.beginTransmission(MPU);
+    Wire.write(0x43);
+    Wire.endTransmission(false);
+    Wire.requestFrom(MPU, 6, true);
+    GyroX = TwosComp(Wire.read() << 8 | Wire.read());
+    GyroY = TwosComp(Wire.read() << 8 | Wire.read());
+    GyroZ = TwosComp(Wire.read() << 8 | Wire.read());
+    // Sum all readings
+    GyroErrorX = GyroErrorX + (GyroX / 131.0);
+    GyroErrorY = GyroErrorY + (GyroY / 131.0);
+    GyroErrorZ = GyroErrorZ + (GyroZ / 131.0);
+    c++;
+  }
+  //Divide the sum by 200 to get the error value
+  GyroErrorX = GyroErrorX / 200;
+  GyroErrorY = GyroErrorY / 200;
+  GyroErrorZ = GyroErrorZ / 200;
+
 }

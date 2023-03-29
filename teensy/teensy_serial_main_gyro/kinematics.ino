@@ -10,8 +10,8 @@
 
 
 void kinematics (int leg, float xIn, float yIn, float zIn, float roll, float pitch, float yawIn, int interOn, int dur) {
-      // leg 1  : front right
-      // leg 2  : front left
+      // leg 1  : front left
+      // leg 2  : front right
       // leg 3  : back left
       // leg 4  : back right
       //interOn = 1 --> interpolation is on
@@ -96,14 +96,14 @@ void kinematics (int leg, float xIn, float yIn, float zIn, float roll, float pit
       
             //If interpolation is on, the program will slowly iterate from the current position to the new position for the specified number of frames/time (dur)
             
-            if (leg == 1) {        // front left
+            if (leg == 1) {        // front right
                 z = interpFRZ.go(zIn,dur);
                 x = interpFRX.go(xIn,dur);
                 y = interpFRY.go(yIn,dur);
                 yaw = interpFRT.go(yawIn,dur);
             }
           
-            else if (leg == 2) {    // front right
+            else if (leg == 2) {    // front left
                 z = interpFLZ.go(zIn,dur);
                 x = interpFLX.go(xIn,dur);
                 y = interpFLY.go(yIn,dur); 
@@ -159,11 +159,11 @@ void kinematics (int leg, float xIn, float yIn, float zIn, float roll, float pit
       
       // put in offsets from robot's parameters so we can work out the radius of the foot from the robot's centre (jacobian calculation)
       //Distance aspect of the Jacobian (each leg tip to the center of the robot)
-      if (leg == 1) {         // front right leg
+      if (leg == 1) {         // front left leg
          y = y - (bodyWidth+hipOffset); 
          x = x - bodyLength;      
       }
-      else if (leg == 2) {    // front left leg
+      else if (leg == 2) {    // front right leg
          y = y + (bodyWidth+hipOffset);
          x = x - bodyLength; 
       }
@@ -171,7 +171,7 @@ void kinematics (int leg, float xIn, float yIn, float zIn, float roll, float pit
          y = y - (bodyWidth+hipOffset); 
          x = x + bodyLength;
       }
-      else if (leg == 4) {    // back right leg
+      else if (leg == 4) {    // back left leg
          y = y + (bodyWidth+hipOffset); 
          x = x + bodyLength;
       }
@@ -190,11 +190,11 @@ void kinematics (int leg, float xIn, float yIn, float zIn, float roll, float pit
       yy3 = radius * sin(demandYaw);
       
       // remove the offsets so we pivot around 0/0 x/y
-      if (leg == 1) {         // front right leg
+      if (leg == 1) {         // front left leg
          yy3 = yy3 + (bodyWidth+hipOffset); 
          xx3 = xx3 + bodyLength;      
       }
-      else if (leg == 2) {    // front left leg
+      else if (leg == 2) {    // front right leg
          yy3 = yy3 - (bodyWidth+hipOffset);
          xx3 = xx3 + bodyLength; 
       }

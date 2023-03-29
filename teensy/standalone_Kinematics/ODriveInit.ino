@@ -221,12 +221,13 @@ void driveJoints(int joint, float pos) {
               else if (joint == 10) {
                   pos = constrain(pos, -2.5,2.5);
                   //delay(5000);
-                  odrive1.SetPosition(0, pos+offSet10);    // hips - right front
+                  odrive1.SetPosition(0, pos-0.12); //----------minus: hip out    pos: hip in
+                  //odrive1.SetPosition(0, pos+offSet10);    // hips - right front 
                   delay(5);
               }
               else if (joint == 11) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive1.SetPosition(1, (pos*-1)+offSet11);    // hips - right rear
+                  odrive1.SetPosition(1, (pos*-1)+0.50);    // hips - right rear
               }
               else if (joint == 40) {
                   pos = constrain(pos, -2.5,2.5);

@@ -77,8 +77,11 @@ def serialRead_Write(output):
     print(inp)
    
 #Function to round to the nearest 0.05 for joysticks and triggers
-def round_val(val):
-    roundTo = 0.1
+def round_val(val, mode):
+    if mode == 1:        # run single leg demo with higher resolution
+        roundTo = 0.05 
+    else:
+        roundTo = 0.1
     returnVal = round(round(val/roundTo)*roundTo,-int(math.floor(math.log10(roundTo))))
     if (returnVal < -1*roundTo and returnVal > roundTo):
         returnVal = 0.
@@ -118,26 +121,26 @@ def controllerCode(q):
                         #for i in range(6):
                         i = event.axis
                         if (i == 1 or i == 4):
-                            newAxisArr[i] = -1.*round_val(j.get_axis(i))
+                            newAxisArr[i] = -1.*round_val(j.get_axis(i), mode)
                         #L2
                         elif (i == 2 and triggerLock != 1):
                             triggerLock = 2
-                            newAxisArr[i] = -1.*round_val((j.get_axis(i)+1.)/2)
+                            newAxisArr[i] = -1.*round_val((j.get_axis(i)+1.)/2, mode)
                             #print("newAxisArr: ", newAxisArr[i], "i:",i,"triggerLock:",triggerLock)
                             if (newAxisArr[i] > -0.2):
                                 triggerLock = 0
                             #print("triggerLock is now: ", triggerLock)
-                        #R2
+                        #R2/
                         elif (i == 5 and triggerLock != 2):
                             triggerLock = 1
                             i = 2
-                            newAxisArr[i] = round_val((j.get_axis(5)+1.)/2)
+                            newAxisArr[i] = round_val((j.get_axis(5)+1.)/2, mode)
                             #print("newAxisArr: ", newAxisArr[i], "i:",i,"triggerLock:",triggerLock)
                             if (newAxisArr[i] < 0.2):
                                 triggerLock = 0
                             #print("triggerLock is now: ", triggerLock)
                         elif (i == 0 or i == 3):
-                            newAxisArr[i] = round_val(j.get_axis(i))
+                            newAxisArr[i] = round_val(j.get_axis(i), mode)
                         if (i == 5):
                             i = 2
                         #print("newAxisArr: ", newAxisArr[i])

@@ -28,7 +28,49 @@ String bounded_x_test_leg_string = "";
 String bounded_y_test_leg_string = "";
 String bounded_z_test_leg_string = "";
 
+float RLR = 0;
+float RFB = 0;
+float LT = 0;
 
+float longLeg1;
+float shortLeg1;
+float legLength1;
+float longLeg2;
+float shortLeg2;
+float legLength2;
+float footOffset;
+
+int timer1;   // FB gait timer
+int timer2;   // LR gait timer
+int timer3;   // Yaw gait timer
+float timerScale;   // resulting timer after calcs
+float timerScale2;   // multiplier
+
+float RLRFiltered = 0;
+float RFBFiltered = 0;
+float RTFiltered = 340;
+float LLRFiltered = 0;
+float LFBFiltered = 0;
+float LTFiltered = 0;
+int filterFlag1 = 0;
+
+
+int stepFlag = 0;
+long previousStepMillis = 0;
+int stepStartFlag = 0;
+
+float fr_RFB;
+float fl_RFB;
+float bl_RFB;
+float br_RFB;
+float fr_RLR;
+float fl_RLR;
+float bl_RLR;
+float br_RLR;;
+float fr_LT;
+float fl_LT;
+float bl_LT;
+float br_LT;
 
 int interpFlag = 0;
 long previousInterpMillis = 0;    // set up timers
@@ -49,7 +91,10 @@ int menuFlag;
 int modeConfirm;
 int modeConfirmFlag = 0;
 int runMode = 0;
-int setNum = 1;
+
+String fr_RFB_string, fr_RLR_string, legLength1_string, legLength2_string,timerScale_string = "";
+String RFBFiltered_string, RLRFiltered_string, LTFiltered_string = "";
+
 
 // Printing with stream operator
 template<class T> inline Print& operator <<(Print &obj,     T arg) { obj.print(arg);    return obj; }
@@ -106,6 +151,30 @@ void setup() {
   odrive6Serial.begin(115200);
   //Serial7.begin(115200);
 
+  //odrive1Serial.print("sr\n");
+  //odrive2Serial.print("sr\n");
+  //odrive3Serial.print("sr\n");
+  //odrive4Serial.print("sr\n");
+  //odrive5Serial.print("sr\n");
+  //odrive6Serial.print("sr\n");
+/*
+  int closedLoop = 8;
+  for (int i = 0; i<2; i++){
+    for (int axis = 0; axis<2; axis++){ //each axis in the odrive
+      float indexFound = 0;
+      float found = 0;
+      while (found == 0){
+        indexFound = odrArr[i].IndexFound(axis);
+        if (indexFound > 0.){
+          found = 1;
+          delay(5);
+          odrArr[i].run_state(axis,closedLoop, false);
+          //Serial.print(i);
+          //Serial.println(axis);
+        }
+      }
+    } 
+  }*/
 }
 
 String getArrStr(){
@@ -216,6 +285,8 @@ int keyword_to_int(String keyWord){ // convert 2 character keyword to an int val
 //Main loop to be executed
 void loop() {
 
+  
+  
   digitalWrite(led, LOW);                             //Set LED to off when no message has been recieved
   //while (Serial.available() == 0) {}                //optional wait for serial input
   String readStr = Serial.readString();               //Read the serial line and set to readStr
@@ -232,7 +303,11 @@ void loop() {
         if (currentMode == 1){
           //moving index to transvalue
 
-          Serial.println(padStr("x: " + bounded_x_test_leg_string + " y: " + bounded_y_test_leg_string + " z: " + bounded_z_test_leg_string));      //Print to the serial buffer  
+
+          Serial.println(padStr("RFB: " + bounded_x_test_leg_string + " RLR: " + bounded_y_test_leg_string + " LT: " + bounded_z_test_leg_string + 
+                "fr_rfb: " + fr_RFB_string + " fr_rlr: " + fr_RLR_string + " leglength: " + legLength1_string));      //Print to the serial buffer    
+               // "RFB_filtered: " + RFBFiltered + " RLR_filtered: " + RLRFiltered + " LT_filtered: " + LTFiltered));      //Print to the serial buffer    
+
         }
         
         else
@@ -263,51 +338,183 @@ void loop() {
     }
   }
  switch(currentMode){
-    case 0:  //normal walking (ps4 control)
-//      fullWalk(movementArr, 1.0, setNum);
-      //if all of the movment array numbers are 0, next stage needs to be 1, unless we are going down, then do it next time
-      if(setNum == 5){
-        setNum = 2;
-      }
-//      else if(/*if stopping*/){
-//        setNum = 6;
-//      }
-      else if(setNum = 6){
-        setNum = 1;
-      }
-      else{
-        setNum ++;
-      }
+    case 0:           
       break;
-    case 1:   // movementArr[1] = 
-    //  transitionKinematics(bounded_x_test_leg, mapValue(arr[1],-100,100), bounded_y_test_leg, mapValue(arr[2],-100,100), 0, 0)
-        bounded_x_test_leg = mapValue(movementArr[1],-300,300);
-        bounded_x_test_leg_string = String(bounded_x_test_leg);
-        bounded_y_test_leg = -mapValue(movementArr[0],-100,100);
-        bounded_y_test_leg_string = String(bounded_y_test_leg);
-        bounded_z_test_leg = bounded_z_test_leg + (350+240)/2 * 0.2 *movementArr[5];
-        if (bounded_z_test_leg > 350){
-          bounded_z_test_leg = 350;
-        }
-        else if (bounded_z_test_leg < 240){
-          bounded_z_test_leg = 240;
-        }
-        bounded_z_test_leg_string = String(bounded_z_test_leg);
-        kinematics(1,bounded_x_test_leg,bounded_y_test_leg,bounded_z_test_leg,0,0,0,0,0);
-        kinematics(4,bounded_x_test_leg,bounded_y_test_leg,bounded_z_test_leg,0,0,0,0,0);
-//        ztop =240
-//        zbot = 350
-//        transkine(x_BIG_VARIABLE,transfunction(arr[1],bounds,yfrom,yto,zfrom,zto
-//        x_BIG = transfunction(arr[1],bounds)
-//        y_big
-//        z_big = z_big+((ztop+zbot)/2*0.01*arr[z])
+    case 1:   
+   
+    currentMillis = millis();
+    if (currentMillis - previousMillis >= 10) {  // start timed event
+
+      previousMillis = currentMillis;
+
+      RFB = mapValue(movementArr[1], -50,50);
+      bounded_x_test_leg_string = String(RFB);
+      RLR = -mapValue(movementArr[0],-25,25);
+      bounded_y_test_leg_string = String(RLR);
+      LT = mapValue(movementArr[2], -25,25);
+      bounded_z_test_leg_string = String(LT);
+
+    
+ 
+      RFBFiltered = filter(RFB, RFBFiltered, 15);
+      RLRFiltered = filter(RLR, RLRFiltered, 15);
+      LTFiltered = filter(LT, LTFiltered, 15);
+
+
+      longLeg1 = 340;
+      shortLeg1 = 250;
+      longLeg2 = 340;
+      shortLeg2 = 250;
+
+      footOffset = 0;
+      timer1 = 75;   // FB gait timer
+      //timer2 = 75;   // LR gait timer
+      //timer3 = 75;   // LR gait timer
+
+      if (RFBFiltered > -0.1 && RFBFiltered < 0.1 && RLRFiltered > -0.1 && RLRFiltered < 0.1  && LTFiltered > -0.1 && LTFiltered < 0.1 ) {    // controls are centred or near enough
+
+      
+      // position legs a default standing positionS
+          legLength1 = longLeg1;
+          legLength2 = longLeg2;
+          fr_RFB = 0;
+          fl_RFB = 0;
+          bl_RFB = 0;
+          br_RFB = 0;
+          fr_RLR = footOffset;
+          fl_RLR = -footOffset;
+          bl_RLR = -footOffset;
+          br_RLR = footOffset;
+          fr_LT = 0;
+          fl_LT = 0;
+          bl_LT = 0;
+          br_LT = 0;        
+      }
+      
+      //walking
+      else {
+
+
+          //Serial.println(timerScale);
+        
+          if (stepFlag == 0 && currentMillis - previousStepMillis > timerScale) {
+              legLength1  = shortLeg1;
+              legLength2 = longLeg2; 
+              fr_RFB = 0-RFBFiltered;
+              fl_RFB = RFBFiltered;
+              bl_RFB = 0-RFBFiltered;
+              br_RFB = RFBFiltered;
+              fr_RLR = (footOffset -RLRFiltered) + LT;
+              fl_RLR = (-footOffset +RLRFiltered) - LT;
+              bl_RLR = (-footOffset - RLRFiltered) - LT;
+              br_RLR = (footOffset + RLRFiltered) + LT;
+              //fr_RLR = LT;
+              //fl_RLR = 0-LT;
+              //bl_RLR = 0-LT;
+              //br_RLR = LT;
+              stepFlag = 1;              
+              previousStepMillis = currentMillis;
+          }
+
+          else if (stepFlag == 1 && currentMillis - previousStepMillis > timerScale) {
+              legLength1 = longLeg1;
+              legLength2 = longLeg2;
+              fr_RFB = 0-RFBFiltered;
+              fl_RFB = RFBFiltered;
+              bl_RFB = 0-RFBFiltered;
+              br_RFB = RFBFiltered;
+              fr_RLR = (footOffset -RLRFiltered) + LT;
+              fl_RLR = (-footOffset +RLRFiltered) - LT;
+              bl_RLR = (-footOffset -RLRFiltered) - LT;
+              br_RLR = (footOffset +RLRFiltered) + LT;
+              //fr_RLR = LT;
+              //fl_RLR = 0-LT;
+              //bl_RLR = 0-LT;
+              //br_RLR = LT;                        
+
+              stepFlag = 2;              
+              previousStepMillis = currentMillis;
+          }
+
+          else if (stepFlag == 2 && currentMillis - previousStepMillis > timerScale) {
+              legLength1 = longLeg1;
+              legLength2 = shortLeg2;
+              fr_RFB = RFBFiltered;
+              fl_RFB = 0-RFBFiltered;
+              bl_RFB = RFBFiltered;
+              br_RFB = 0-RFBFiltered;
+              fr_RLR = (footOffset +RLRFiltered) - LT;
+              fl_RLR = (-footOffset -RLRFiltered) + LT;
+              bl_RLR = (-footOffset +RLRFiltered) + LT;
+              br_RLR = (footOffset -RLRFiltered) - LT;
+              //fr_RLR = 0-LT;
+              //fl_RLR = LT;
+              //bl_RLR = LT;
+              // br_RLR = 0-LT; 
+              stepFlag = 3;              
+              previousStepMillis = currentMillis;
+          }
+
+          else if (stepFlag == 3 && currentMillis - previousStepMillis > timerScale) {
+              legLength1 = longLeg1;
+              legLength2 = longLeg2;
+              fr_RFB = RFBFiltered;
+              fl_RFB = 0-RFBFiltered;
+              bl_RFB = RFBFiltered;
+              br_RFB = 0-RFBFiltered;
+              fr_RLR = (footOffset +RLRFiltered) - LT;
+              fl_RLR = (-footOffset -RLRFiltered) + LT;
+              bl_RLR = (-footOffset +RLRFiltered) + LT;
+              br_RLR = (footOffset -RLRFiltered) - LT;
+              //fr_RLR = 0-LT;
+              //fl_RLR = LT;
+              //bl_RLR = LT;
+              //br_RLR = 0-LT; 
+              stepFlag = 0;              
+              previousStepMillis = currentMillis;
+          }
+
+           
+          float stepLength;
+          float stepWidth;
+          float stepAngle;
+          float stepHyp;
+
+          // timer calcs
+
+          stepLength = abs(fr_RFB);
+          stepWidth = abs(fr_RLR);
+
+          if (stepLength == 0.0) {
+            stepLength = 0.01;   // avoid divide by zero
+          }
+
+          stepAngle = atan(stepLength/stepWidth);  // radians       // work out actual distance of step
+          stepHyp = abs(stepLength/sin(stepAngle));    // mm
+
+          timerScale =  timer1 + (stepHyp/3.5);         
+          
+      }
+    
+      
+
+      fr_RFB_string = String(fr_RFB);
+      fr_RLR_string = String(fr_RLR);
+      legLength1_string = String(legLength1);
+      
+      kinematics (1, fr_RFB, fr_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // front right
+      //kinematics (2, fl_RFB, fl_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // front left
+      //kinematics (3, bl_RFB, bl_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // back left
+      //kinematics (4, br_RFB, br_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // back right 
+
       
       break;
 
   
  
 
-
+    }
 
   }
-}
+  //updateMovement();
+  }

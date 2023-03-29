@@ -2,48 +2,10 @@
 //template<class T> inline Print& operator <<(Print &obj,     T arg) { obj.print(arg);    return obj; }
 //template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(arg, 4); return obj; }
 
-//Map a value [-1:1] to a high and low value
-/*float mapValue(float val, float lower_range, float upper_range){ // map joystick range [-1,1] to [lower,upper]
-    float normalizedValue = (val + 1.00) / 2.00;
-    return lower_range + (normalizedValue * (upper_range - lower_range));
-}*/
 
-void fullWalk(float movementArr[7], float speedInc, int setNum){
-  //leg 1 = fr
-  //leg 2 = fl
-  //leg 3 = bl
-  //leg 4 = br
-
-  //make switch cases for the following
-  //1 fr, bl up + forward 
-  //2 fr, bl down
-  //3 fl, br up + forward & fr,bl back
-  //4 fl, br down
-  //5 fr, bl up + forward & fl,br back
-  //if keep going go to 2, else go to 6 
-  //6 all legs go to 0,0,tall
-  switch(currentMode){
-    case 1://1 fr, bl up + forward
-      //Todo
-      break;
-    case 2://2 fr, bl down
-      //Todo
-      break;
-    case 3://3 fl, br up + forward & fr,bl back
-      //Todo
-      break;
-    case 4://4 fl, br down
-      //Todo
-      break;
-    case 5://5 fr, bl up + forward & fl,br back
-      //Todo
-      break;
-    case 6://6 all legs go to 0,0,tall
-      //Todo
-      break;
-  }
+void height_Test(int val){
+  kinematics(1,0,0,val,0,0,0,0,0);
 }
-
 
 //Helper function to transistion from one location to the next
 //Takes a leg number and the two and from positions for all of the directions

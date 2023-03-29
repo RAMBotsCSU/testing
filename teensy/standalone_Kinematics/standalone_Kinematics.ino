@@ -155,13 +155,13 @@ int lastVal = 0;
 int tempVal = -1;
 
 void loop() {
-  Serial.println("\nHello! Please enter height (-1 for gains, -2 for range, short= 240, tall = 350)");
+  Serial.println("\nHello! Please enter height (-1 for gains, -2 for range, -3 leg 1 triangle walk,\n -4 xy triangle walk, -5 leg 1 and 4 triangle walk, -6 leg 1 range, -7 pre-programed motion)");
   while (Serial.available() == 0) {}
   input = Serial.parseInt();
   if(input == -1){
     Serial2 << "w axis" << 0 << ".motor.config.direction " << 1 << '\n';
     modifyGains();
-    applyOffsets2();
+    //applyOffsets2();
     Serial.println("Gains Modified");
   }
   else if(input == -2){
@@ -179,7 +179,7 @@ void loop() {
   }
   else if(input== -3){
     for(int i = 0; i<3; i++){
-      triangleWalk(1, -100,-75, 350, 240, 100);
+      triangleWalk(1, -200,0, 350, 240, 100);
     }
   }
   else if(input== -4){
@@ -193,23 +193,13 @@ void loop() {
       tempVal = tempVal + 25;
     }
   }
-  else if(input== -5){ //Range
-    for (int x = -390; x <= 1000; x=x+10){
-      for (int z = 200; z <= 390; z = z+5){    
-        Serial.print("X: ");
-        Serial.print(x);
-        Serial.print(" Z: ");
-        Serial.println(z);
-        kinematics(1,x,0,z,0,0,0,0,0);
-        delay(100);
-        lastVal = z;
-        }
-      for (int trans = lastVal; trans>= 200; trans--){
-        kinematics(1,x,0,trans,0,0,0,0,0);
-      }
+  else if(input== -5){ //leg 1 and 4 triangle walk
+    for(int i = 0; i<3; i++){
+      triangleWalk(1, -200,0, 350, 240, 100);
+      triangleWalk(4, -200,0, 350, 240, 100);
     }
   }
-  else if(input == -6){
+  else if (input == -6){
     float lastX = 0;
     for (int x = -250; x <= 400; x = x+10){
       Serial.print("X: ");
