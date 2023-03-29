@@ -188,3 +188,13 @@ History:
              pi/pi_serial_main
 </pre>
 
+ **2023-03-29:**  
+ <pre>Created programs pi_simple_controller and teensy_serial_main_opendog to directly interface the PS4 controller with openDogv3 code.
+ Pi_simple_controller improves upon pi_serial_main by switching from pygame to pyPS4Controller and using polling. Every 0.01ms the 
+ print_controller_values thread will take the current values in the controller class and print them to the teensy serial port. After every
+ message the Teensy will take these values and map them to ranges suitable for openDog walk cycle. This program appears to function correctly.
+ We only have two legs working right now, but with two more the robot should be walking. The next step is to implement polling into the original
+ controller/serial communication program. 
+ Added:      teensy/teensy_serial_main_opendog
+             pi/pi_simple_controller
+</pre>
