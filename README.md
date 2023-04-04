@@ -8,19 +8,27 @@ Visit us at our [website](https://projects-web.engr.colostate.edu/ece-sr-design/
 
 Files:
 ------
-
+&emsp;**Pi directory:**
 | File                       | Description           |
 | ---------------------------|-------------|
-| README                     | this file |
-| teensy/teensy_serial_main/...     | Serial communication between the Pi and Teensy from the Teensy's end      |
-| teensy/test_rambot_gyro/...    | Test of gyroscope implementation on the Teensy      |
-| teensy/test_stepper/...    | MechE's basic motor test program      |
-| teensy/MechETest/...    | MechE's test program for ODrive and encoder implementation     |
-| pi/pi_serial_main.py    | Serial communication between the Pi and Teensy from the Pi's end      |
-| pi/color_test.sh    | Bash script used to change LED color of the PS4 controller      |
-| pi/PiGUI/...   | RamBOT GUI for Pi touchscreen display      |
-| O-Drives/ConfigSteps  | Instructions for configuring an ODrive for initialization     |
+| pi_serial_main.py    | Serial communication between the Pi and Teensy from the Pi's end. Pair with teensy_serial_main.ino      |
+| &emsp;↳ color_test.sh    | Bash script used to change LED color of the PS4 controller      |
+| pi_simple_controller   | Poll controller inputs for opendog walk cycle. Pair with teensy_serial_main_opendog.ino      |
+| pi_gui   | RamBOT GUI for Pi touchscreen display. TODO      |
+| Sounds   | .mp3 files for use with pygame mixer and USB speaker     |
 
+&emsp;**Teensy directory:**
+| File                       | Description           |
+| ---------------------------|-------------|
+| teensy_serial_main    | Serial communication between the Pi and Teensy from the Teensy's end. Pair with pi_serial_main.py      |
+| teensy_serial_main_opendog    | Implementation of opendog walk cycle. Pair with pi_simple_controller.py      |
+| teensy_serial_main_gyro    | Gyroscope demo: control legs using gyroscope tilt      |
+| standalone_Kinematics    | Leg test program using serial monitor input instead of Pi program for ease of use    |
+
+&emsp;**O-Drive directory:**
+| File                       | Description           |
+| ---------------------------|-------------|
+| ConfigSteps  | Instructions for configuring an ODrive for initialization     |
 
 History:
 --------
@@ -197,4 +205,8 @@ History:
  controller/serial communication program. 
  Added:      teensy/teensy_serial_main_opendog
              pi/pi_simple_controller
+</pre>
+
+ **2023-04-03:**  
+ <pre>Repository cleanup and reorganization.
 </pre>
