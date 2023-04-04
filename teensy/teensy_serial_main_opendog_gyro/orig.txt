@@ -28,7 +28,49 @@ String bounded_x_test_leg_string = "";
 String bounded_y_test_leg_string = "";
 String bounded_z_test_leg_string = "";
 
+float RLR = 0;
+float RFB = 0;
+float LT = 0;
 
+float longLeg1;
+float shortLeg1;
+float legLength1;
+float longLeg2;
+float shortLeg2;
+float legLength2;
+float footOffset;
+
+int timer1;   // FB gait timer
+int timer2;   // LR gait timer
+int timer3;   // Yaw gait timer
+float timerScale;   // resulting timer after calcs
+float timerScale2;   // multiplier
+
+float RLRFiltered = 0;
+float RFBFiltered = 0;
+float RTFiltered = 340;
+float LLRFiltered = 0;
+float LFBFiltered = 0;
+float LTFiltered = 0;
+int filterFlag1 = 0;
+
+
+int stepFlag = 0;
+long previousStepMillis = 0;
+int stepStartFlag = 0;
+
+float fr_RFB;
+float fl_RFB;
+float bl_RFB;
+float br_RFB;
+float fr_RLR;
+float fl_RLR;
+float bl_RLR;
+float br_RLR;;
+float fr_LT;
+float fl_LT;
+float bl_LT;
+float br_LT;
 
 int interpFlag = 0;
 long previousInterpMillis = 0;    // set up timers
@@ -49,6 +91,10 @@ int menuFlag;
 int modeConfirm;
 int modeConfirmFlag = 0;
 int runMode = 0;
+
+String fr_RFB_string, fr_RLR_string, legLength1_string, legLength2_string,timerScale_string = "";
+String RFBFiltered_string, RLRFiltered_string, LTFiltered_string = "";
+
 
 // Printing with stream operator
 template<class T> inline Print& operator <<(Print &obj,     T arg) { obj.print(arg);    return obj; }
@@ -94,21 +140,6 @@ ODriveArduino odrive6(odrive6Serial);
 
 ODriveArduino odrArr[6] = {odrive1, odrive2, odrive3, odrive4, odrive5, odrive6};
 
-#include <Wire.h>
-const int MPU = 0x68; // MPU6050 I2C address 0x68 for first mpu 0x69 for second
-float AccX, AccY, AccZ;
-float GyroX, GyroY, GyroZ;
-float AccX_old, AccY_old, AccZ_old;
-float GyroX_old, GyroY_old, GyroZ_old;
-float accAngleX, accAngleY, gyroAngleX, gyroAngleY, gyroAngleZ;
-float roll, pitch, yaw;
-String roll_string, pitch_string, yaw_string;
-float elapsedTime, currentTime, previousTime;
-
-int c =0;
-float AccErrorX, AccErrorY, GyroErrorX, GyroErrorY, GyroErrorZ;
-
-
 void setup() {
   pinMode(led, OUTPUT);
   Serial.begin(9600);
@@ -118,16 +149,6 @@ void setup() {
   odrive4Serial.begin(115200);
   odrive5Serial.begin(115200);
   odrive6Serial.begin(115200);
-
-  Wire.begin();                      // Initialize comunication
-  Wire.beginTransmission(MPU);       // Start communication with MPU6050 // MPU=0x68
-  Wire.write(0x6B);                  // Talk to the register 6B
-  Wire.write(0x00);                  // Make reset - place a 0 into the 6B register
-  Wire.endTransmission(true);        //end the transmission
-  calculate_IMU_error();
-  
-  delay(10);
-  
   //Serial7.begin(115200);
 
   //odrive1Serial.print("sr\n");
@@ -264,61 +285,7 @@ int keyword_to_int(String keyWord){ // convert 2 character keyword to an int val
 //Main loop to be executed
 void loop() {
 
-   Wire.beginTransmission(MPU);
-  Wire.write(0x3B); // Start with register 0x3B (ACCEL_XOUT_H)
-  Wire.endTransmission(false);
-  Wire.requestFrom(MPU, 6, true); // Read 6 registers total, each axis value is stored in 2 registers
-  //For a range of +-2g, we need to divide the raw values by 16384, according to the datasheet
-  AccX = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0; // X-axis value
-  AccY = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0; // Y-axis value
-  AccZ = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0; // Z-axis value
   
-  //apply offsets
-  AccX = AccX - AccErrorX;
-  AccY = AccY - AccErrorY;
-//  AccZ = AccZ - AccErrorZ;
-  
-  // === Read gyroscope data === //
-  
-  Wire.beginTransmission(MPU);
-  Wire.write(0x43); // Gyro data first register address 0x43
-  Wire.endTransmission(false);
-  Wire.requestFrom(MPU, 6, true); // Read 4 registers total, each axis value is stored in 2 registers
-  GyroX = TwosComp(Wire.read() << 8 | Wire.read()) / 131; // For a 1000deg/s range we have to divide first the raw value by 32.8, according to the datasheet
-  GyroY = TwosComp(Wire.read() << 8 | Wire.read()) / 131;
-  GyroZ = TwosComp(Wire.read() << 8 | Wire.read()) / 131;
-
-  //apply ofsets
-  GyroX = GyroX - GyroErrorX;
-  GyroY = GyroY - GyroErrorY;
-  GyroZ = GyroZ - GyroErrorZ;
-//  GyroX = GyroX+5.5;
-//  GyroY = GyroY+1;
-//  GyroZ = GyroZ;
-  
-  //for roll pitch and yaw
-  accAngleX = (atan(AccY / sqrt(pow(AccX, 2) + pow(AccZ, 2))) * 180 / PI); 
-  accAngleY = (atan(-1 * AccX / sqrt(pow(AccY, 2) + pow(AccZ, 2))) * 180 / PI);
-  // Currently the raw values are in degrees per seconds, deg/s, so we need to multiply by sendonds (s) to get the angle in degrees
-  previousTime = currentTime;        // Previous time is stored before the actual time read
-  currentTime = millis();            // Current time actual time read
-  elapsedTime = (currentTime - previousTime) / 1000; // Divide by 1000 to get seconds
-  
-  gyroAngleX = gyroAngleX + GyroX * elapsedTime; // deg/s * s = deg
-  gyroAngleY = gyroAngleY + GyroY * elapsedTime;
-  yaw =  yaw + GyroZ * elapsedTime;
-
-  roll = roll + GyroY * elapsedTime;
-  pitch = pitch + GyroX * elapsedTime; 
-
-
-
-
-
-
-
-
-
   
   digitalWrite(led, LOW);                             //Set LED to off when no message has been recieved
   //while (Serial.available() == 0) {}                //optional wait for serial input
@@ -336,10 +303,11 @@ void loop() {
         if (currentMode == 1){
           //moving index to transvalue
 
-          Serial.println(padStr("x: " + bounded_x_test_leg_string + " y: " + bounded_y_test_leg_string + " z: " + bounded_z_test_leg_string) + " pitch: " + pitch_string + " roll: " + roll_string + " yaw: " + yaw_string);      //Print to the serial buffer  
-        } 
-        else if (currentMode == 2){
-          Serial.println(" roll: " + String(roll));
+
+          Serial.println(padStr("RFB: " + bounded_x_test_leg_string + " RLR: " + bounded_y_test_leg_string + " LT: " + bounded_z_test_leg_string + 
+                "fr_rfb: " + fr_RFB_string + " fr_rlr: " + fr_RLR_string + " leglength: " + legLength1_string));      //Print to the serial buffer    
+               // "RFB_filtered: " + RFBFiltered + " RLR_filtered: " + RLRFiltered + " LT_filtered: " + LTFiltered));      //Print to the serial buffer    
+
         }
         
         else
@@ -372,94 +340,181 @@ void loop() {
  switch(currentMode){
     case 0:           
       break;
-    case 1:   // movementArr[1] = 
-    //  transitionKinematics(bounded_x_test_leg, mapValue(arr[1],-100,100), bounded_y_test_leg, mapValue(arr[2],-100,100), 0, 0)
-        bounded_x_test_leg = mapValue(movementArr[1],-300,300);
-        bounded_x_test_leg_string = String(bounded_x_test_leg);
-        bounded_y_test_leg = -mapValue(movementArr[0],-100,100);
-        bounded_y_test_leg_string = String(bounded_y_test_leg);
-        pitch_string = String(pitch);      
-        roll_string = String(roll);      
-        yaw_string = String(yaw);      
+    case 1:   
+   
+    currentMillis = millis();
+    if (currentMillis - previousMillis >= 10) {  // start timed event
 
-        bounded_z_test_leg = bounded_z_test_leg + (350+240)/2 * 0.2 *movementArr[5];
-        if (bounded_z_test_leg > 350){
-          bounded_z_test_leg = 350;
-        }
-        else if (bounded_z_test_leg < 240){
-          bounded_z_test_leg = 240;
-        }
-        bounded_z_test_leg_string = String(bounded_z_test_leg);
-        kinematics(1,bounded_x_test_leg,bounded_y_test_leg,bounded_z_test_leg,0,0,0,0,0);
-//        ztop =240
-//        zbot = 350
-//        transkine(x_BIG_VARIABLE,transfunction(arr[1],bounds,yfrom,yto,zfrom,zto
-//        x_BIG = transfunction(arr[1],bounds)
-//        y_big
-//        z_big = z_big+((ztop+zbot)/2*0.01*arr[z])
+      previousMillis = currentMillis;
+
+      RFB = mapValue(movementArr[1], -50,50);
+      bounded_x_test_leg_string = String(RFB);
+      RLR = -mapValue(movementArr[0],-25,25);
+      bounded_y_test_leg_string = String(RLR);
+      LT = mapValue(movementArr[2], -25,25);
+      bounded_z_test_leg_string = String(LT);
+
+    
+ 
+      RFBFiltered = filter(RFB, RFBFiltered, 15);
+      RLRFiltered = filter(RLR, RLRFiltered, 15);
+      LTFiltered = filter(LT, LTFiltered, 15);
+
+
+      longLeg1 = 340;
+      shortLeg1 = 250;
+      longLeg2 = 340;
+      shortLeg2 = 250;
+
+      footOffset = 0;
+      timer1 = 75;   // FB gait timer
+      //timer2 = 75;   // LR gait timer
+      //timer3 = 75;   // LR gait timer
+
+      if (RFBFiltered > -0.1 && RFBFiltered < 0.1 && RLRFiltered > -0.1 && RLRFiltered < 0.1  && LTFiltered > -0.1 && LTFiltered < 0.1 ) {    // controls are centred or near enough
+
+      
+      // position legs a default standing positionS
+          legLength1 = longLeg1;
+          legLength2 = longLeg2;
+          fr_RFB = 0;
+          fl_RFB = 0;
+          bl_RFB = 0;
+          br_RFB = 0;
+          fr_RLR = footOffset;
+          fl_RLR = -footOffset;
+          bl_RLR = -footOffset;
+          br_RLR = footOffset;
+          fr_LT = 0;
+          fl_LT = 0;
+          bl_LT = 0;
+          br_LT = 0;        
+      }
+      
+      //walking
+      else {
+
+
+          //Serial.println(timerScale);
+        
+          if (stepFlag == 0 && currentMillis - previousStepMillis > timerScale) {
+              legLength1  = shortLeg1;
+              legLength2 = longLeg2; 
+              fr_RFB = 0-RFBFiltered;
+              fl_RFB = RFBFiltered;
+              bl_RFB = 0-RFBFiltered;
+              br_RFB = RFBFiltered;
+              fr_RLR = (footOffset -RLRFiltered) + LT;
+              fl_RLR = (-footOffset +RLRFiltered) - LT;
+              bl_RLR = (-footOffset - RLRFiltered) - LT;
+              br_RLR = (footOffset + RLRFiltered) + LT;
+              //fr_RLR = LT;
+              //fl_RLR = 0-LT;
+              //bl_RLR = 0-LT;
+              //br_RLR = LT;
+              stepFlag = 1;              
+              previousStepMillis = currentMillis;
+          }
+
+          else if (stepFlag == 1 && currentMillis - previousStepMillis > timerScale) {
+              legLength1 = longLeg1;
+              legLength2 = longLeg2;
+              fr_RFB = 0-RFBFiltered;
+              fl_RFB = RFBFiltered;
+              bl_RFB = 0-RFBFiltered;
+              br_RFB = RFBFiltered;
+              fr_RLR = (footOffset -RLRFiltered) + LT;
+              fl_RLR = (-footOffset +RLRFiltered) - LT;
+              bl_RLR = (-footOffset -RLRFiltered) - LT;
+              br_RLR = (footOffset +RLRFiltered) + LT;
+              //fr_RLR = LT;
+              //fl_RLR = 0-LT;
+              //bl_RLR = 0-LT;
+              //br_RLR = LT;                        
+
+              stepFlag = 2;              
+              previousStepMillis = currentMillis;
+          }
+
+          else if (stepFlag == 2 && currentMillis - previousStepMillis > timerScale) {
+              legLength1 = longLeg1;
+              legLength2 = shortLeg2;
+              fr_RFB = RFBFiltered;
+              fl_RFB = 0-RFBFiltered;
+              bl_RFB = RFBFiltered;
+              br_RFB = 0-RFBFiltered;
+              fr_RLR = (footOffset +RLRFiltered) - LT;
+              fl_RLR = (-footOffset -RLRFiltered) + LT;
+              bl_RLR = (-footOffset +RLRFiltered) + LT;
+              br_RLR = (footOffset -RLRFiltered) - LT;
+              //fr_RLR = 0-LT;
+              //fl_RLR = LT;
+              //bl_RLR = LT;
+              // br_RLR = 0-LT; 
+              stepFlag = 3;              
+              previousStepMillis = currentMillis;
+          }
+
+          else if (stepFlag == 3 && currentMillis - previousStepMillis > timerScale) {
+              legLength1 = longLeg1;
+              legLength2 = longLeg2;
+              fr_RFB = RFBFiltered;
+              fl_RFB = 0-RFBFiltered;
+              bl_RFB = RFBFiltered;
+              br_RFB = 0-RFBFiltered;
+              fr_RLR = (footOffset +RLRFiltered) - LT;
+              fl_RLR = (-footOffset -RLRFiltered) + LT;
+              bl_RLR = (-footOffset +RLRFiltered) + LT;
+              br_RLR = (footOffset -RLRFiltered) - LT;
+              //fr_RLR = 0-LT;
+              //fl_RLR = LT;
+              //bl_RLR = LT;
+              //br_RLR = 0-LT; 
+              stepFlag = 0;              
+              previousStepMillis = currentMillis;
+          }
+
+           
+          float stepLength;
+          float stepWidth;
+          float stepAngle;
+          float stepHyp;
+
+          // timer calcs
+
+          stepLength = abs(fr_RFB);
+          stepWidth = abs(fr_RLR);
+
+          if (stepLength == 0.0) {
+            stepLength = 0.01;   // avoid divide by zero
+          }
+
+          stepAngle = atan(stepLength/stepWidth);  // radians       // work out actual distance of step
+          stepHyp = abs(stepLength/sin(stepAngle));    // mm
+
+          timerScale =  timer1 + (stepHyp/3.5);         
+          
+      }
+    
+      
+
+      fr_RFB_string = String(fr_RFB);
+      fr_RLR_string = String(fr_RLR);
+      legLength1_string = String(legLength1);
+      
+      kinematics (2, fr_RFB, fr_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // front right
+      //kinematics (2, fl_RFB, fl_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // front left
+      //kinematics (3, bl_RFB, bl_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // back left
+      //kinematics (4, br_RFB, br_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // back right 
+
       
       break;
-
 
   
  
 
-
+    }
 
   }
   //updateMovement();
   }
-
-
-
-
-
-float TwosComp(short bin){
-  if(1 == bin>>15)
-  {
-    return ~bin +1;
-  }
-  return bin;
-}
-void calculate_IMU_error() {
-  // We can call this funtion in the setup section to calculate the accelerometer and gyro data error. From here we will get the error values used in the above equations printed on the Serial Monitor.
-  // Note that we should place the IMU flat in order to get the proper values, so that we then can the correct values
-  // Read accelerometer values 200 times
-  while (c < 200) {
-    Wire.beginTransmission(MPU);
-    Wire.write(0x3B);
-    Wire.endTransmission(false);
-    Wire.requestFrom(MPU, 6, true);
-    AccX = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0 ;
-    AccY = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0 ;
-    AccZ = TwosComp(Wire.read() << 8 | Wire.read()) / 16384.0 ;
-    // Sum all readings
-    AccErrorX = AccErrorX + ((atan((AccY) / sqrt(pow((AccX), 2) + pow((AccZ), 2))) * 180 / PI));
-    AccErrorY = AccErrorY + ((atan(-1 * (AccX) / sqrt(pow((AccY), 2) + pow((AccZ), 2))) * 180 / PI));
-    c++;
-  }
-  //Divide the sum by 200 to get the error value
-  AccErrorX = AccErrorX / 200;
-  AccErrorY = AccErrorY / 200;
-  c = 0;
-  // Read gyro values 200 times
-  while (c < 200) {
-    Wire.beginTransmission(MPU);
-    Wire.write(0x43);
-    Wire.endTransmission(false);
-    Wire.requestFrom(MPU, 6, true);
-    GyroX = TwosComp(Wire.read() << 8 | Wire.read());
-    GyroY = TwosComp(Wire.read() << 8 | Wire.read());
-    GyroZ = TwosComp(Wire.read() << 8 | Wire.read());
-    // Sum all readings
-    GyroErrorX = GyroErrorX + (GyroX / 131.0);
-    GyroErrorY = GyroErrorY + (GyroY / 131.0);
-    GyroErrorZ = GyroErrorZ + (GyroZ / 131.0);
-    c++;
-  }
-  //Divide the sum by 200 to get the error value
-  GyroErrorX = GyroErrorX / 200;
-  GyroErrorY = GyroErrorY / 200;
-  GyroErrorZ = GyroErrorZ / 200;
-
-}

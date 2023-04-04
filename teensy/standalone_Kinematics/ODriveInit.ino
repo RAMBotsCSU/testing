@@ -92,10 +92,10 @@ void modifyGains() {                               // this function turns up the
 
           Serial2 << "w axis" << 0 << ".controller.config.pos_gain " << posGainKnee << '\n';
           Serial2 << "w axis" << 1 << ".controller.config.pos_gain " << posGainShoulder << '\n';
-/*
+
           Serial3 << "w axis" << 0 << ".controller.config.pos_gain " << posGainKnee << '\n';
           Serial3 << "w axis" << 1 << ".controller.config.pos_gain " << posGainShoulder << '\n';
-
+/*
           Serial4 << "w axis" << 0 << ".controller.config.pos_gain " << posGainHips << '\n';
           Serial4 << "w axis" << 1 << ".controller.config.pos_gain " << posGainHips << '\n';
 
@@ -112,10 +112,10 @@ void modifyGains() {                               // this function turns up the
 
           Serial2 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
           Serial2 << "w axis" << 1 << ".controller.config.vel_gain " << velGain << '\n';
-/*
+
           Serial3 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
           Serial3 << "w axis" << 1 << ".controller.config.vel_gain " << velGain << '\n';
-
+/*
           Serial4 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
           Serial4 << "w axis" << 1 << ".controller.config.vel_gain " << velGain << '\n';
 
@@ -132,10 +132,10 @@ void modifyGains() {                               // this function turns up the
 
           Serial2 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
           Serial2 << "w axis" << 1 << ".controller.config.vel_integrator_gain " << integrator << '\n';
-/*
+
           Serial3 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
           Serial3 << "w axis" << 1 << ".controller.config.vel_integrator_gain " << integrator << '\n';
-
+/*
           Serial4 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
           Serial4 << "w axis" << 1 << ".controller.config.vel_integrator_gain " << integrator << '\n';
 
@@ -183,7 +183,7 @@ void driveJoints(int joint, float pos) {
 
               if (joint == 20) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive2.SetPosition(0, pos + offSet20);    // knee - right front
+                  odrive2.SetPosition(0, pos - 0.75);    // knee - right front
               }
               else if (joint == 30) {
                   pos = constrain(pos, -2.5,2.5);
@@ -202,7 +202,7 @@ void driveJoints(int joint, float pos) {
 
               else if (joint == 21) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive2.SetPosition(1, (pos*-1) + offSet21);    // shoulder - right front
+                  odrive2.SetPosition(1, (pos*-1) - 0.3);    // shoulder - right front
               }        
               else if (joint == 31) {
                   pos = constrain(pos, -2.5,2.5);
@@ -221,7 +221,7 @@ void driveJoints(int joint, float pos) {
               else if (joint == 10) {
                   pos = constrain(pos, -2.5,2.5);
                   //delay(5000);
-                  odrive1.SetPosition(0, pos-0.12); //----------minus: hip out    pos: hip in
+                  odrive1.SetPosition(0, pos-0.5); //----------minus: hip out    pos: hip in
                   //odrive1.SetPosition(0, pos+offSet10);    // hips - right front 
                   delay(5);
               }

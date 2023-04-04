@@ -194,10 +194,10 @@ void loop() {
     }
   }
   else if(input== -5){ //leg 1 and 4 triangle walk
-    for(int i = 0; i<3; i++){
+    //for(int i = 0; i<3; i++){
       triangleWalk(1, -200,0, 350, 240, 100);
       triangleWalk(4, -200,0, 350, 240, 100);
-    }
+    //}
   }
   else if (input == -6){
     float lastX = 0;

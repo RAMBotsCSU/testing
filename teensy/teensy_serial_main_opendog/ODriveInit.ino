@@ -4,6 +4,8 @@
   //**************************************************************************
 
 // init hips
+
+
 /*
 void OdriveInit1() {
 
@@ -171,7 +173,6 @@ void applyOffsets2() {
 
 
 
-
 void driveJoints(int joint, float pos) {
           // takes into account the original setup offsets for motor postions, and also turns around directions so they are consistent
           // also constrains the motion limts for each joint    
@@ -182,7 +183,7 @@ void driveJoints(int joint, float pos) {
 
               if (joint == 20) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive2.SetPosition(0, pos + offSet20);    // knee - right front
+                  odrive2.SetPosition(0, pos - 0.75);    // knee - right front
               }
               else if (joint == 30) {
                   pos = constrain(pos, -2.5,2.5);
@@ -201,7 +202,7 @@ void driveJoints(int joint, float pos) {
 
               else if (joint == 21) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive2.SetPosition(1, (pos*-1) + offSet21);    // shoulder - right front
+                  odrive2.SetPosition(1, (pos*-1) - 0/*.3*/);    // shoulder - right front
               }        
               else if (joint == 31) {
                   pos = constrain(pos, -2.5,2.5);
@@ -220,14 +221,13 @@ void driveJoints(int joint, float pos) {
               else if (joint == 10) {
                   pos = constrain(pos, -2.5,2.5);
                   //delay(5000);
-                  odrive1.SetPosition(0, pos-0.12); //----------minus: hip out    pos: hip in
-                  //odrive1.SetPosition(0, pos+offSet10);    // hips - right front
+                  odrive1.SetPosition(0, pos-0.50); //----------minus: hip out    pos: hip in
+                  //odrive1.SetPosition(0, pos+offSet10);    // hips - right front 
                   delay(5);
               }
               else if (joint == 11) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive1.SetPosition(1, (pos*-1)+0.50); // positive -> out, negative -> in
-                  //odrive1.SetPosition(1, (pos*-1)+offSet11);    // hips - right rear
+                  odrive1.SetPosition(1, (pos*-1)+0.50);    // hips - right rear
               }
               else if (joint == 40) {
                   pos = constrain(pos, -2.5,2.5);
