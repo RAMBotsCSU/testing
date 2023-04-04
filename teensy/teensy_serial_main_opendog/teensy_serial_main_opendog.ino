@@ -1,10 +1,8 @@
 //********************************************************
-//* This is a simple test for the teensy that recieves   *
-//* a string over the serial line, appends some values   *
-//* then sends it back over serial. This method includes *
-//* padding functions for the serial communication to    *
-//* speed up the communication.                          *
-//********************************************************
+//* This program receives serial input from the Pi (pi_simple_controller)  *
+//* and passes joystick axes into the opendog walk cycle, allowing         *
+//* the robot to be controlled with the PS4 controller.                    *
+//**************************************************************************
 
 // ramp lib
 #include <Ramp.h>
@@ -102,8 +100,6 @@ template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(a
 
 
 
-
-
 // ODrive offsets from power up
 // ratio is 10:1 so 1 'turn' is 36'.
 
@@ -151,30 +147,7 @@ void setup() {
   odrive6Serial.begin(115200);
   Serial7.begin(19200);
 
-  //odrive1Serial.print("sr\n");
-  //odrive2Serial.print("sr\n");
-  //odrive3Serial.print("sr\n");
-  //odrive4Serial.print("sr\n");
-  //odrive5Serial.print("sr\n");
-  //odrive6Serial.print("sr\n");
-/*
-  int closedLoop = 8;
-  for (int i = 0; i<2; i++){
-    for (int axis = 0; axis<2; axis++){ //each axis in the odrive
-      float indexFound = 0;
-      float found = 0;
-      while (found == 0){
-        indexFound = odrArr[i].IndexFound(axis);
-        if (indexFound > 0.){
-          found = 1;
-          delay(5);
-          odrArr[i].run_state(axis,closedLoop, false);
-          //Serial.print(i);
-          //Serial.println(axis);
-        }
-      }
-    } 
-  }*/
+
 }
 
 String getArrStr(){
@@ -271,16 +244,6 @@ void testMovement(){
   float pos3 = odrive2.GetPosition(1);
 }
 
-// should probably be using constrain() instead....
-float mapValue(float val, float lower_range, float upper_range){ // map joystick range [-1,1] to [lower,upper]
-    float normalizedValue = (val + 1.00) / 2.00;
-    return lower_range + (normalizedValue * (upper_range - lower_range));
-}
-
-int keyword_to_int(String keyWord){ // convert 2 character keyword to an int value to use switch statements
-    return (keyWord[0] - '0') * 10 + (keyWord[1] - '0');
-}
-
 int L3_x = 0;
 int L3_y = 0;
 int R3_x = 0;
@@ -296,48 +259,29 @@ void loop() {
     Serial7.println("hello world");
     serial_input = Serial.readString();  
     serial_input.trim();                                     //Remove any \r \n whitespace at the end of the String
-    serial_input = rmPadStr(serial_input);                        //Remove any padding from readStr
-    //Serial.println(serial_input);      //Print to the serial buffer 
+    serial_input = rmPadStr(serial_input);                   //Remove any padding from readStr
     printString =  "fr_RFB: " + fr_RFB_string + ", fr_RLR: " + fr_RLR_string + ", legLength1: " + legLength1_string;
-    Serial.println(printString);
-    //Serial.println("L3_x: " + String(L3_x) + ", L3_y: " + String(L3_y) + ", R3_x: " + String(R3_x) + ", R3_y: " + String(R3_y));
-    //Serial.println("fr_RFB: " + fr_RFB_string + ", fr_RLR: " + fr_RLR_string + ", legLength1: " + legLength1_string);
-    //Serial.println("fr_RFB: " + fr_RFB_string);
-
-    //3276
+    Serial.println(printString); //return arguments of kinematics function to Pi
     
     currentMillis = millis();
     if (currentMillis - previousMillis >= 10) {  // start timed event
 
-        previousMillis = currentMillis;
-        
-        //readStr = serial_input;
-        
-        // extract the four integers from the string
-         L3_x = serial_input.substring(serial_input.indexOf("(")+1, serial_input.indexOf(",")).toInt();
-         L3_y = serial_input.substring(serial_input.indexOf(",")+2, serial_input.indexOf(")")).toInt();
-         R3_x = serial_input.substring(serial_input.lastIndexOf("(")+1, serial_input.lastIndexOf(",")).toInt();
-         R3_y = serial_input.substring(serial_input.lastIndexOf(",")+2, serial_input.lastIndexOf(")")).toInt();
+        previousMillis = currentMillis; // timer for walk cycle
+                
+        // extract four integers from the serial string, each corresponding to a joystick axis
+        L3_x = serial_input.substring(serial_input.indexOf("(")+1, serial_input.indexOf(",")).toInt();
+        L3_y = serial_input.substring(serial_input.indexOf(",")+2, serial_input.indexOf(")")).toInt();
+        R3_x = serial_input.substring(serial_input.lastIndexOf("(")+1, serial_input.lastIndexOf(",")).toInt();
+        R3_y = serial_input.substring(serial_input.lastIndexOf(",")+2, serial_input.lastIndexOf(")")).toInt();
 
-         RFB = map(L3_y, -32767, 32767, -50, 50);
-         //mapValue(L3_y, -50,50);
-         RLR = map(L3_x, -32767, 32767, -25, 25);
-         //RLR = -mapValue(L3_x,-25,25);
-         //LT = mapValue(R3_x, -25,25);
-         LT = map(R3_x, -32767, 32767, -25, 25);
+        // map PS4 controller range to values suitable for opendog walk cycle
+        // RFB -> right joystick front back. RLR -> right joystick left right. LT -> left trigger
+        // These are James Bruton's variable names for his controller setup. Change at some point.
+        RFB = map(L3_y, -32767, 32767, -50, 50);
+        RLR = map(L3_x, -32767, 32767, -25, 25);
+        LT = map(R3_x, -32767, 32767, -25, 25);
 
-        
-      
-//      RFB = mapValue(movementArr[1], -50,50);
-//      bounded_x_test_leg_string = String(RFB);
-//      RLR = -mapValue(movementArr[0],-25,25);
-//      bounded_y_test_leg_string = String(RLR);
-//      LT = mapValue(movementArr[2], -25,25);
-//      bounded_z_test_leg_string = String(LT);
-//      RFB = 10;
-//      RLR = 0;
-//      LT = 0;
-    
+      // most code below is straight from from opendogV3: 
  
       RFBFiltered = filter(RFB, RFBFiltered, 15);
       RLRFiltered = filter(RLR, RLRFiltered, 15);

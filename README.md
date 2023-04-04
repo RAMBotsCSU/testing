@@ -208,5 +208,7 @@ History:
 </pre>
 
  **2023-04-03:**  
- <pre>Repository cleanup and reorganization.
+ <pre>Repository cleanup and reorganization. Added documentation to simple controller and serial opendog.
+  Updated:      teensy/teensy_serial_main_opendog
+                pi/pi_simple_controller
 </pre>
