@@ -22,7 +22,7 @@ def rmPadStr(val):
             outputStr += curChar
     return outputStr
 
-def serial_write(string):   # use time library to call every 10 ms in separate thread
+def serial_write(string): # use time library to call every 10 ms in separate thread
     ser.write(padStr(string).encode())
     
     inp = str(ser.readline())
@@ -54,7 +54,7 @@ class MyController(Controller):
         
     def on_L3_x_at_rest(self):
         self.l3_horizontal = 0
-        
+             
     def on_L3_y_at_rest(self):
         self.l3_vertical = 0
 
@@ -67,10 +67,10 @@ class MyController(Controller):
         self.r3_vertical = -value
 
     def on_R3_left(self, value):
-        self.r3_horizontal = value
+        self.r3_horizontal = -value
         
     def on_R3_right(self, value):
-        self.r3_horizontal = value
+        self.r3_horizontal = -value
         
     def on_R3_x_at_rest(self):
         self.r3_horizontal = 0

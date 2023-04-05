@@ -221,6 +221,7 @@ void setup() {
   odrive5Serial.begin(115200);
   odrive6Serial.begin(115200);
   Serial7.begin(19200);
+  modifyGains();
 
   //odrive1Serial.print("sr\n");
   //odrive2Serial.print("sr\n");
@@ -438,7 +439,7 @@ void loop() {
       shortLeg2 = 250;
 
       footOffset = 0;
-      timer1 = 75;   // FB gait timer
+      timer1 = 300;   // FB gait timer
       //timer2 = 75;   // LR gait timer
       //timer3 = 75;   // LR gait timer
 
@@ -585,19 +586,17 @@ void loop() {
       fr_RLR_string = String(fr_RLR);
       legLength1_string = String(legLength1);
       
-      kinematics (1, fr_RFB, fr_RLR, legLength1, KalmanAngleRoll,KalmanAnglePitch , 0, 1, (timerScale*0.8));   // front right
-      //kinematics (2, fl_RFB, fl_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // front left
-      //kinematics (3, bl_RFB, bl_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // back left
-      kinematics (4, br_RFB, br_RLR, legLength2, KalmanAngleRoll, KalmanAnglePitch, 0, 1, (timerScale*0.8));   // back right 
-
-      
-    
-
-  
- 
-
+      kinematics (1, fr_RFB, fr_RLR, legLength1, 1*KalmanAngleRoll, KalmanAnglePitch , 0, 1, (timerScale*0.8));   // front right
+      kinematics (2, fl_RFB, fl_RLR, legLength2, 1*KalmanAngleRoll, KalmanAnglePitch, 0, 1, (timerScale*0.8));   // front left
+      kinematics (3, bl_RFB, bl_RLR, legLength1, 1*KalmanAngleRoll, KalmanAnglePitch, 0, 1, (timerScale*0.8));   // back left
+      kinematics (4, br_RFB, br_RLR, legLength2, 1*KalmanAngleRoll, KalmanAnglePitch, 0, 1, (timerScale*0.8));   // back right 
     }
-
+    else{
+      kinematics (1, fr_RFB, fr_RLR, legLength1, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // front right
+      kinematics (2, fl_RFB, fl_RLR, legLength2, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // front left
+      kinematics (3, bl_RFB, bl_RLR, legLength1, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // back left
+      kinematics (4, br_RFB, br_RLR, legLength2, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // back right 
+    }
   }
   //updateMovement();
   

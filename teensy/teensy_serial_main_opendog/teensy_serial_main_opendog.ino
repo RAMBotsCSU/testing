@@ -4,7 +4,7 @@
 //* the robot to be controlled with the PS4 controller.                    *
 //**************************************************************************
 
-// ramp lib
+
 #include <Ramp.h>
 #include <ODriveArduino.h>
 #include <HardwareSerial.h>
@@ -146,8 +146,7 @@ void setup() {
   odrive5Serial.begin(115200);
   odrive6Serial.begin(115200);
   Serial7.begin(19200);
-
-
+  modifyGains();
 }
 
 String getArrStr(){
@@ -236,19 +235,11 @@ Interpolation interpBLY;
 Interpolation interpBLZ;
 Interpolation interpBLT;
 
-
-void testMovement(){
-  float pos0 = odrive1.GetPosition(0);
-  float pos1 = odrive1.GetPosition(1);
-  float pos2 = odrive2.GetPosition(0);
-  float pos3 = odrive2.GetPosition(1);
-}
-
 int L3_x = 0;
 int L3_y = 0;
 int R3_x = 0;
 int R3_y = 0;
-
+int idleFlag = 0;
 
 String serial_input = "";
 String readStr = "";
@@ -281,6 +272,12 @@ void loop() {
         RLR = map(L3_x, -32767, 32767, -25, 25);
         LT = map(R3_x, -32767, 32767, -25, 25);
 
+        //offset to account for the dogs natural rotation
+/*        if(RFB != 0){
+//          LT = (LT+2); //if its just an offset TODO: find the constant
+//          LT = (LT+(0.5*RFB); //if its linearly dependant of the FB sspeed TODO: find the constant
+//          LT = (LT+(0.01*RFB*RFB)); //if its exponentially dependant on the FB speed TODO:find the constant        }
+        }*/
       // most code below is straight from from opendogV3: 
  
       RFBFiltered = filter(RFB, RFBFiltered, 15);
@@ -288,13 +285,13 @@ void loop() {
       LTFiltered = filter(LT, LTFiltered, 15);
 
 
-      longLeg1 = 340;
-      shortLeg1 = 250;
-      longLeg2 = 340;
-      shortLeg2 = 250;
+      longLeg1 = 380;
+      shortLeg1 = 270;
+      longLeg2 = 380;
+      shortLeg2 = 270;
 
       footOffset = 0;
-      timer1 = 75;   // FB gait timer
+      timer1 = 300;   // FB gait timer -- this changes step speed (default 75)
       //timer2 = 75;   // LR gait timer
       //timer3 = 75;   // LR gait timer
 
@@ -320,10 +317,7 @@ void loop() {
       
       //walking
       else {
-
-
-          //Serial.println(timerScale);
-        
+        //Serial.println(timerScale);
           if (stepFlag == 0 && currentMillis - previousStepMillis > timerScale) {
               legLength1  = shortLeg1;
               legLength2 = longLeg2; 
@@ -421,27 +415,24 @@ void loop() {
 
           timerScale =  timer1 + (stepHyp/3.5);         
           
-      }
-    
+        }
       
-
       fr_RFB_string = String(fr_RFB);
       fr_RLR_string = String(fr_RLR);
       legLength1_string = String(legLength1);
+
+      
       
       kinematics (1, fr_RFB, fr_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // front right
-      //kinematics (2, fl_RFB, fl_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // front left
-      //kinematics (3, bl_RFB, bl_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // back left
-      kinematics (4, br_RFB, br_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // back right 
-
-      
-    
-
-  
- 
-
+      kinematics (2, fl_RFB, fl_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // front left
+      kinematics (3, bl_RFB, bl_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // back left
+      kinematics (4, br_RFB, br_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // back right    
+      delay(10);
     }
-
+    else{
+      kinematics (1, fr_RFB, fr_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // front right
+      kinematics (2, fl_RFB, fl_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // front left
+      kinematics (3, bl_RFB, bl_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // back left
+      kinematics (4, br_RFB, br_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // back right
+    }
   }
-  //updateMovement();
-  

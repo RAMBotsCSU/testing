@@ -1,12 +1,18 @@
-//********************************************************
-//* This is a simple test for the teensy that recieves   *
-//* a string over the serial line, appends some values   *
-//* then sends it back over serial. This method includes *
-//* padding functions for the serial communication to    *
-//* speed up the communication.                          *
-//********************************************************
+//********************************************************************************
+//* This program creates a movement array of the format                          *
+//* [strafe, forback, roll, turn, pitch, height, yaw] and maintains it           *
+//* using serial messages from the Pi. Included in these messages are            *
+//* different modes of operation that will result in different program           *
+//* behavior. Depending on the selected mode, the Teensy will translate          *
+//* the movement array into o-drive movement via the kinematics function         *
+//* created by James Bruton.                                                     *
+//*                                                                              *
+//* ODriveInit initializes the o-drives with offsets specific to the Rambot.     *
+//*                                                                              *
+//* Kinematics_Helper_Suite provides an alternative interpolation method         *
+//* to James Bruton's.                                                           *
+//********************************************************************************
 
-// ramp lib
 #include <Ramp.h>
 #include <ODriveArduino.h>
 #include <HardwareSerial.h>
@@ -202,7 +208,7 @@ void testMovement(){
   float pos3 = odrive2.GetPosition(1);
 }
 
-// should probably be using constrain() instead....
+// should probably be using map() instead
 float mapValue(float val, float lower_range, float upper_range){ // map joystick range [-1,1] to [lower,upper]
     float normalizedValue = (val + 1.00) / 2.00;
     return lower_range + (normalizedValue * (upper_range - lower_range));

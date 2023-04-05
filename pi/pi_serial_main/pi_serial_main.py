@@ -1,12 +1,18 @@
-      #**********************************************************************************
-      #* pi_serial_main.py  :Created 10/2022 by Evan Hassman with contribtuions from    *
-      #*  Eric Percin and Thomas Veldhuizen                                             *
-      #*                                                                                *
-      #* This program _____                                                             *
-      #*                                                                                *
-      #*                                                                                *
-      #*                                                                                *
-      #**********************************************************************************
+      #****************************************************************************************************
+      #* pi_serial_main.py  :Created 10/2022 by Evan Hassman with contribtuions from                      *
+      #*  Eric Percin and Thomas Veldhuizen                                                               *
+      #*                                                                                                  *
+      #* This program updates the teensy with changes to important vartiables.                            *
+      #* These important variables include the mode that the robot is running in (MS),                    *
+      #* changes to the movement array (AR), termination of the program (TM),                             *
+      #* or setting the gains mode (GM). This was done in a way to be expandable                          *
+      #* to future modes. This program also includes threading in a way to activate and terminate         *
+      #* threads that control the various modes. This will allow the Pi to start or stop threads based    *
+      #* on the mode to save resources by the driver thread. These modes are intended to control by the   *
+      #* updating the movement array. The modes can be tied to the color on the ps4 controller by         *
+      #* calling the rgb function with the mode.                                                          *
+      #****************************************************************************************************
+
 import serial
 from multiprocessing import Process, Queue
 import pygame

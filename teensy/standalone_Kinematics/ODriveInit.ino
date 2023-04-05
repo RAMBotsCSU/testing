@@ -95,7 +95,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial3 << "w axis" << 0 << ".controller.config.pos_gain " << posGainKnee << '\n';
           Serial3 << "w axis" << 1 << ".controller.config.pos_gain " << posGainShoulder << '\n';
-/*
+
           Serial4 << "w axis" << 0 << ".controller.config.pos_gain " << posGainHips << '\n';
           Serial4 << "w axis" << 1 << ".controller.config.pos_gain " << posGainHips << '\n';
 
@@ -104,7 +104,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial6 << "w axis" << 0 << ".controller.config.pos_gain " << posGainKnee << '\n';
           Serial6 << "w axis" << 1 << ".controller.config.pos_gain " << posGainShoulder << '\n';
-*/
+
           // ******
 
           Serial1 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
@@ -115,7 +115,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial3 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
           Serial3 << "w axis" << 1 << ".controller.config.vel_gain " << velGain << '\n';
-/*
+
           Serial4 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
           Serial4 << "w axis" << 1 << ".controller.config.vel_gain " << velGain << '\n';
 
@@ -124,7 +124,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial6 << "w axis" << 0 << ".controller.config.vel_gain " << velGain << '\n';
           Serial6 << "w axis" << 1 << ".controller.config.vel_gain " << velGain << '\n';
-*/
+
           // ******
 
           Serial1 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
@@ -135,7 +135,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial3 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
           Serial3 << "w axis" << 1 << ".controller.config.vel_integrator_gain " << integrator << '\n';
-/*
+
           Serial4 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
           Serial4 << "w axis" << 1 << ".controller.config.vel_integrator_gain " << integrator << '\n';
 
@@ -144,7 +144,7 @@ void modifyGains() {                               // this function turns up the
 
           Serial6 << "w axis" << 0 << ".controller.config.vel_integrator_gain " << integrator << '\n';
           Serial6 << "w axis" << 1 << ".controller.config.vel_integrator_gain " << integrator << '\n';        
-*/}
+}
 
 //Requires Arduino Odrive Library
 
@@ -195,7 +195,7 @@ void driveJoints(int joint, float pos) {
               }
               else if (joint == 60) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive6.SetPosition(0, pos + offSet60);    // knee - left back
+                  odrive6.SetPosition(0, pos - 0.75);    // knee - left back
               }
 
               // shoulder
@@ -210,11 +210,11 @@ void driveJoints(int joint, float pos) {
               }        
               else if (joint == 51) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive5.SetPosition(1, pos + offSet51);    // shoulder - left front
+                  odrive5.SetPosition(1, pos - 0.1);    // shoulder - left front
               }        
               else if (joint == 61) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive6.SetPosition(1, (pos*-1) + offSet61);    // shoulder - left rear      
+                  odrive6.SetPosition(1, (pos*-1) - 0.55);    // shoulder - left rear      
               }
 
               // hips
@@ -227,15 +227,15 @@ void driveJoints(int joint, float pos) {
               }
               else if (joint == 11) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive1.SetPosition(1, (pos*-1)+0.50);    // hips - right rear
+                  odrive1.SetPosition(1, (pos*-1)+0.45);    // hips - right rear
               }
               else if (joint == 40) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive4.SetPosition(0, pos+offSet40);    // hips - knee - left front
+                  odrive4.SetPosition(0, pos+0.45);    // hips - knee - left front
               }
               else if (joint == 41) {
                   pos = constrain(pos, -2.5,2.5);
-                  odrive4.SetPosition(1, (pos*-1)+offSet41);    // hips - left rear
+                  odrive4.SetPosition(1, (pos*-1)+0.15);    // hips - left rear
               }
               
             
