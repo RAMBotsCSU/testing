@@ -8,19 +8,27 @@ Visit us at our [website](https://projects-web.engr.colostate.edu/ece-sr-design/
 
 Files:
 ------
-
+&emsp;**Pi directory:**
 | File                       | Description           |
 | ---------------------------|-------------|
-| README                     | this file |
-| teensy/teensy_serial_main/...     | Serial communication between the Pi and Teensy from the Teensy's end      |
-| teensy/test_rambot_gyro/...    | Test of gyroscope implementation on the Teensy      |
-| teensy/test_stepper/...    | MechE's basic motor test program      |
-| teensy/MechETest/...    | MechE's test program for ODrive and encoder implementation     |
-| pi/pi_serial_main.py    | Serial communication between the Pi and Teensy from the Pi's end      |
-| pi/color_test.sh    | Bash script used to change LED color of the PS4 controller      |
-| pi/PiGUI/...   | RamBOT GUI for Pi touchscreen display      |
-| O-Drives/ConfigSteps  | Instructions for configuring an ODrive for initialization     |
+| pi_serial_main.py    | Serial communication between the Pi and Teensy from the Pi's end. Pair with teensy_serial_main.ino      |
+| &emsp;↳ color_test.sh    | Bash script used to change LED color of the PS4 controller      |
+| pi_simple_controller   | Poll controller inputs for opendog walk cycle. Pair with teensy_serial_main_opendog.ino      |
+| pi_gui   | RamBOT GUI for Pi touchscreen display. TODO      |
+| Sounds   | .mp3 files for use with pygame mixer and USB speaker     |
 
+&emsp;**Teensy directory:**
+| File                       | Description           |
+| ---------------------------|-------------|
+| teensy_serial_main    | Serial communication between the Pi and Teensy from the Teensy's end. Pair with pi_serial_main.py      |
+| teensy_serial_main_opendog    | Implementation of opendog walk cycle. Pair with pi_simple_controller.py      |
+| teensy_serial_main_gyro    | Gyroscope demo: control legs using gyroscope tilt      |
+| standalone_Kinematics    | Leg test program using serial monitor input instead of Pi program for ease of use    |
+
+&emsp;**O-Drive directory:**
+| File                       | Description           |
+| ---------------------------|-------------|
+| ConfigSteps  | Instructions for configuring an ODrive for initialization     |
 
 History:
 --------
@@ -169,4 +177,38 @@ History:
  <pre>Imported contents of the mechs' temporary repository.
  Added:    O-Drives/SinWaveTest 
 
+</pre>
+
+ **2023-03-20:**  
+ <pre>Created standalone kinematics to test kinematics function without a PS4 controller. Includes different functions to test
+ including range of motion, setting specific values, and testing functions. Kinematics helper was created to make our programming
+ mesh more easily with openDogV3 code. Includes functions to smooth out movement, as well as a triangle function to be used
+ in the regular walk cycle. Commented out a five second delay in openDogV3 kinematics code. 
+ Added:    teensy/standalone_Kinematics
+</pre>
+
+
+ **2023-03-21:**  
+ <pre>Updated teensy_serial_main to control a single leg with three axes of the PS4 controller. In mode 1 it will take values
+ from the Pi corresponding to x and y on the left joystick and up/down on the dpad, all within range [-1,1], then map those values
+ to each joint's range of movement and repeatedly call the openDog kinematics function using the new values. Testing was successful.  
+ Updated:    teensy/teensy_serial_main
+             pi/pi_serial_main
+</pre>
+
+ **2023-03-29:**  
+ <pre>Created programs pi_simple_controller and teensy_serial_main_opendog to directly interface the PS4 controller with openDogv3 code.
+ Pi_simple_controller improves upon pi_serial_main by switching from pygame to pyPS4Controller and using polling. Every 0.01ms the 
+ print_controller_values thread will take the current values in the controller class and print them to the teensy serial port. After every
+ message the Teensy will take these values and map them to ranges suitable for openDog walk cycle. This program appears to function correctly.
+ We only have two legs working right now, but with two more the robot should be walking. The next step is to implement polling into the original
+ controller/serial communication program. 
+ Added:      teensy/teensy_serial_main_opendog
+             pi/pi_simple_controller
+</pre>
+
+ **2023-04-03:**  
+ <pre>Repository cleanup and reorganization. Added documentation to simple controller and serial opendog.
+  Updated:      teensy/teensy_serial_main_opendog
+                pi/pi_simple_controller
 </pre>
