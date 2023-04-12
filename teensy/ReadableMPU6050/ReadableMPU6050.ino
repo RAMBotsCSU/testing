@@ -5,7 +5,7 @@
 //implement 2 gyros that automatically get compared to test a limb movement by taping one to the end
 
 #include <Wire.h>
-const int MPU = 0x69; // MPU6050 I2C address 0x68 for first mpu 0x69 for second
+const int MPU = 0x68; // MPU6050 I2C address 0x68 for first mpu 0x69 for second
 float AccX, AccY, AccZ;
 float GyroX, GyroY, GyroZ;
 float AccX_old, AccY_old, AccZ_old;
@@ -24,6 +24,14 @@ void setup() {
   Wire.write(0x6B);                  // Talk to the register 6B
   Wire.write(0x00);                  // Make reset - place a 0 into the 6B register
   Wire.endTransmission(true);        //end the transmission
+  Wire.beginTransmission(0x68);
+  Wire.write(0x1A);
+  Wire.write(0x05);
+  Wire.endTransmission();
+  Wire.beginTransmission(0x68);
+  Wire.write(0x1C);
+  Wire.write(0x00);
+  Wire.endTransmission();
   calculate_IMU_error();
   
   delay(10);
@@ -81,25 +89,25 @@ void loop() {
   // Print the values on the serial monitor
   Serial.print("0:");
   Serial.print(0);
-  Serial.print(" Yaw: ");
-  Serial.print(yaw);
-  Serial.print(" pitch: ");
-  Serial.print(pitch);
-  Serial.print(" roll: ");
-  Serial.println(roll);
+//  Serial.print(" Yaw: ");
+//  Serial.print(yaw);
+//  Serial.print(" pitch: ");
+//  Serial.print(pitch);
+//  Serial.print(" roll: ");
+//  Serial.println(roll);
 
-//  Serial.print(" AccX: ");
-//  Serial.print(AccX);
-//  Serial.print(" AccY: ");
-//  Serial.print(AccY);
-//  Serial.print(" AccZ: ");
-//  Serial.println(AccZ);
-//  Serial.print(" GyroX: ");
-//  Serial.print(GyroX);
-//  Serial.print(" GyroY: ");
-//  Serial.print(GyroY);
-//  Serial.print(" GyroZ: ");
-//  Serial.println(GyroZ);
+  Serial.print(" AccX: ");
+  Serial.print(AccX);
+  Serial.print(" AccY: ");
+  Serial.print(AccY);
+  Serial.print(" AccZ: ");
+  Serial.print(AccZ);
+  Serial.print(" GyroX: ");
+  Serial.print(GyroX);
+  Serial.print(" GyroY: ");
+  Serial.print(GyroY);
+  Serial.print(" GyroZ: ");
+  Serial.println(GyroZ);
 
 }
 float TwosComp(short bin){
