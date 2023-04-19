@@ -52,6 +52,8 @@ float RTFiltered = 340;
 float LLRFiltered = 0;
 float LFBFiltered = 0;
 float LTFiltered = 0;
+float LegRollFiltered = 0;
+float LegPitchFiltered = 0;
 int filterFlag1 = 0;
 
 
@@ -108,20 +110,22 @@ template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(a
 // ratio is 10:1 so 1 'turn' is 36'.
 
 
-float offSet20 = -0.3;      //ODrive 2, axis 0     // knee - right front
-float offSet30 = 0.6;      //ODrive 3, axis 0     // knee - right rear
-float offSet50 = 0.15;      //ODrive 5, axis 0     // knee - left front
-float offSet60 = 0.05;      //ODrive 6, axis 0     // knee - left rear
+float offSet20 = 0.3;      //ODrive 2, axis 0     // knee - right front
+float offSet30 = -0.2;      //ODrive 3, axis 0     // knee - right rear
+float offSet50 = -0.7;      //ODrive 5, axis 0     // knee - left front
+float offSet60 = 0.2;      //ODrive 6, axis 0     // knee - left rear
 
-float offSet21 = 0;      //ODrive 2, axis 1     // shoulder - right front
-float offSet31 = 0.35;      //ODrive 3, axis 1     // shoulder - right rear
-float offSet51 = 0.55;      //ODrive 5, axis 0     // shoulder - left front
-float offSet61 =  0.05;      //ODrive 6, axis 1     // shoulder - left rear
+float offSet21 = 0.1;      //ODrive 2, axis 1     // shoulder - right front
+float offSet31 = 0.0;      //ODrive 3, axis 1     // shoulder - right rear
+float offSet51 = -0.6;      //ODrive 5, axis 1     // shoulder - left front
+float offSet61 =  -0.1;      //ODrive 6, axis 1     // shoulder - left rear
 
-float offSet10 = 0.27;      //ODrive 1, axis 0     // hips - right front
-float offSet11 = 0.1;      //ODrive 1, axis 1     // hips - right back
-float offSet40 = 0.07;      //ODrive 4, axis 0     // hips - left front
-float offSet41 = 0.35;      //ODrive 4, axis 1     // hips - left back
+float offSet10 = -0.4;      //ODrive 1, axis 0     // hips - right front
+float offSet11 = 0.3;      //ODrive 1, axis 1     // hips - right back
+float offSet40 = 0.25;      //ODrive 4, axis 0     // hips - left front
+float offSet41 = 0.2;      //ODrive 4, axis 1     // hips - left back
+
+
 
 /*
 The contents of this code and instructions are the intellectual property of Carbon Aeronautics. 
@@ -133,7 +137,6 @@ with respect to any loss or damage caused or declared to be caused directly or i
 the software and hardware described in it. As Carbon Aeronautics has no control over the use, setup, assembly, modification or misuse of the hardware, 
 software and information described in this manual, no liability shall be assumed nor accepted for any resulting damage or injury. 
 By the act of copying, use, setup or assembly, the user accepts all resulting liability.
-
 1.0  29 December 2022 -  initial release
 */
 
@@ -222,6 +225,8 @@ void setup() {
   odrive6Serial.begin(115200);
   Serial7.begin(19200);
   modifyGains();
+  applyOffsets1();
+  applyOffsets2();
 
   //odrive1Serial.print("sr\n");
   //odrive2Serial.print("sr\n");
@@ -433,10 +438,10 @@ void loop() {
       LTFiltered = filter(LT, LTFiltered, 15);
 
 
-      longLeg1 = 340;
-      shortLeg1 = 250;
-      longLeg2 = 340;
-      shortLeg2 = 250;
+      longLeg1 = 380;
+      shortLeg1 = 320;
+      longLeg2 = 380;
+      shortLeg2 = 320;
 
       footOffset = 0;
       timer1 = 300;   // FB gait timer
@@ -585,18 +590,20 @@ void loop() {
       fr_RFB_string = String(fr_RFB);
       fr_RLR_string = String(fr_RLR);
       legLength1_string = String(legLength1);
+      LegRollFiltered = filter(KalmanAngleRoll,LegRollFiltered,5);
+      LegPitchFiltered = filter(KalmanAnglePitch,LegPitchFiltered,5);
       
-      kinematics (1, fr_RFB, fr_RLR, legLength1, 1*KalmanAngleRoll, KalmanAnglePitch , 0, 1, (timerScale*0.8));   // front right
-      kinematics (2, fl_RFB, fl_RLR, legLength2, 1*KalmanAngleRoll, KalmanAnglePitch, 0, 1, (timerScale*0.8));   // front left
-      kinematics (3, bl_RFB, bl_RLR, legLength1, 1*KalmanAngleRoll, KalmanAnglePitch, 0, 1, (timerScale*0.8));   // back left
-      kinematics (4, br_RFB, br_RLR, legLength2, 1*KalmanAngleRoll, KalmanAnglePitch, 0, 1, (timerScale*0.8));   // back right 
+      kinematics (1, fr_RFB, fr_RLR, legLength1, -1*LegRollFiltered, LegPitchFiltered, 0, 1, (timerScale*0.8));   // front right
+      kinematics (2, fl_RFB, fl_RLR, legLength2, -1*LegRollFiltered, LegPitchFiltered, 0, 1, (timerScale*0.8));   // front left
+      kinematics (3, bl_RFB, bl_RLR, legLength1, -1*LegRollFiltered, LegPitchFiltered, 0, 1, (timerScale*0.8));   // back left
+      kinematics (4, br_RFB, br_RLR, legLength2, -1*LegRollFiltered, LegPitchFiltered, 0, 1, (timerScale*0.8));   // back right 
     }
-    else{
-      kinematics (1, fr_RFB, fr_RLR, legLength1, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // front right
-      kinematics (2, fl_RFB, fl_RLR, legLength2, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // front left
-      kinematics (3, bl_RFB, bl_RLR, legLength1, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // back left
-      kinematics (4, br_RFB, br_RLR, legLength2, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // back right 
-    }
+//    else{
+//      kinematics (1, fr_RFB, fr_RLR, legLength1, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // front right
+//      kinematics (2, fl_RFB, fl_RLR, legLength2, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // front left
+//      kinematics (3, bl_RFB, bl_RLR, legLength1, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // back left
+//      kinematics (4, br_RFB, br_RLR, legLength2, 1*KalmanAngleRoll, /*KalmanAnglePitch*/0, 0, 1, (timerScale*0.8));   // back right 
+//    }
   }
   //updateMovement();
   

@@ -21,7 +21,7 @@ void kinematics (int leg, float xIn, float yIn, float zIn, float roll, float pit
       //Defines all variables 
       
       // moving the foot sideways on the end plane
-      float hipOffset = 108;     // distance from the hip pivot to the centre of the leg
+      float hipOffset = 108;     // distance fmodifyGainsrom the hip pivot to the centre of the leg
       float lengthY;
       float hipAngle1a;
       float hipAngle1b;

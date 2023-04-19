@@ -1,79 +1,42 @@
-//********************************************************
-//* This program receives serial input from the Pi (pi_simple_controller)  *
-//* and passes joystick axes into the opendog walk cycle, allowing         *
-//* the robot to be controlled with the PS4 controller.                    *
-//**************************************************************************
-
+//********************************************************************************
+//* Something about this code                                                    *
+//*                                                                              *
+//* ODriveInit initializes the o-drives with offsets specific to the Rambot.     *
+//*                                                                              *
+//* Kinematics_Helper_Suite provides an alternative interpolation method         *
+//* to James Bruton's.                                                           *
+//********************************************************************************
 
 #include <Ramp.h>
 #include <ODriveArduino.h>
 #include <HardwareSerial.h>
+#include <Wire.h>
 
 //Setup and set the pin for the LED
 int led = 13;
-int setInd = -1;
-int currentMode = -1;
-String currentModeString = "-1";
-float setVal = -1.1;
-float movementArr[7]; //0 = strafe, 1 = forback, 2 = roll, 3 = turn, 4 = pitch, 5 = height, 6 = yaw
-String keyWord = "00";
-int keyWord_int = 00;
 
-float bounded_x_test_leg = 0;
-float bounded_y_test_leg = 0;
-float bounded_z_test_leg = 295;
-String bounded_x_test_leg_string = "";
-String bounded_y_test_leg_string = "";
-String bounded_z_test_leg_string = "";
+//Temp Variables for setting values
+int tempInt1 = -1;
+int tempInt2 = -1;
+float tempFloat = -1.1;
+long tempLong = 0;
+String tempString = "-1";
 
-float RLR = 0;
-float RFB = 0;
-float LT = 0;
+//Actual variables
+int runningMode = -1;
+float joystickArr[5]; //0 = L3LR, 1 = L3UD, 2 = Triggers, 3 = R3LR, 4 = R3UD
+int dpadArr[4]; //L,R,U,D 1=pressed 0=not pressed
+int shapeButtonArr[4]; //Sq, Tr, Cir, X 1=pressed 0=not pressed
+int miscButtonArr[5]; //Share, Options, PS, L3, R3 1=pressed 0=not pressed
+bool gainsFlag = true;
+bool pauseFlag = true; //false means paused
+bool pauseChangeFlag = true;
 
-float longLeg1;
-float shortLeg1;
-float legLength1;
-float longLeg2;
-float shortLeg2;
-float legLength2;
-float footOffset;
-
-int timer1;   // FB gait timer
-int timer2;   // LR gait timer
-int timer3;   // Yaw gait timer
-float timerScale;   // resulting timer after calcs
-float timerScale2;   // multiplier
-
-float RLRFiltered = 0;
-float RFBFiltered = 0;
-float RTFiltered = 340;
-float LLRFiltered = 0;
-float LFBFiltered = 0;
-float LTFiltered = 0;
-int filterFlag1 = 0;
-
-
-int stepFlag = 0;
-long previousStepMillis = 0;
-int stepStartFlag = 0;
-
-float fr_RFB;
-float fl_RFB;
-float bl_RFB;
-float br_RFB;
-float fr_RLR;
-float fl_RLR;
-float bl_RLR;
-float br_RLR;
-float fr_LT;
-float fl_LT;
-float bl_LT;
-float br_LT;
-
+//Required variables for kinematics
 int interpFlag = 0;
 long previousInterpMillis = 0;    // set up timers
 
-unsigned long currentMillis;
+unsigned long currentMillis = 0;
 long previousMillis = 0;    // set up timers
 long interval = 10;        // time constant for timer
 unsigned long count;
@@ -81,44 +44,26 @@ int toggleTopOld;
 int remoteState;
 int remoteStateOld;  
 
-int requested_state;
-int mode;
-int modeOld;
-int modeFlag;
-int menuFlag;
-int modeConfirm;
-int modeConfirmFlag = 0;
-int runMode = 0;
+//gyro variables
+float LegRollFiltered = 0;
+float LegPitchFiltered = 0;
+float RateRoll, RatePitch, RateYaw;
+float RateCalibrationRoll, RateCalibrationPitch, RateCalibrationYaw;
+int RateCalibrationNumber;
+float AccX, AccY, AccZ;
+float AngleRoll, AnglePitch;
 
-String fr_RFB_string, fr_RLR_string, legLength1_string, legLength2_string,timerScale_string = "";
-String RFBFiltered_string, RLRFiltered_string, LTFiltered_string = "";
+float KalmanAngleRoll=0, KalmanUncertaintyAngleRoll=2*2;
+float KalmanAnglePitch=0, KalmanUncertaintyAnglePitch=2*2;
+float Kalman1DOutput[]={0,0};
+
 
 
 // Printing with stream operator
 template<class T> inline Print& operator <<(Print &obj,     T arg) { obj.print(arg);    return obj; }
 template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(arg, 4); return obj; }
 
-
-
-// ODrive offsets from power up
-// ratio is 10:1 so 1 'turn' is 36'.
-
-
-float offSet20 = -0.3;      //ODrive 2, axis 0     // knee - right front
-float offSet30 = 0.6;      //ODrive 3, axis 0     // knee - right rear
-float offSet50 = 0.15;      //ODrive 5, axis 0     // knee - left front
-float offSet60 = 0.05;      //ODrive 6, axis 0     // knee - left rear
-
-float offSet21 = 0;      //ODrive 2, axis 1     // shoulder - right front
-float offSet31 = 0.35;      //ODrive 3, axis 1     // shoulder - right rear
-float offSet51 = 0.55;      //ODrive 5, axis 0     // shoulder - left front
-float offSet61 =  0.05;      //ODrive 6, axis 1     // shoulder - left rear
-
-float offSet10 = 0.27;      //ODrive 1, axis 0     // hips - right front
-float offSet11 = 0.1;      //ODrive 1, axis 1     // hips - right back
-float offSet40 = 0.07;      //ODrive 4, axis 0     // hips - left front
-float offSet41 = 0.35;      //ODrive 4, axis 1     // hips - left back
-
+//Serial Objects
 HardwareSerial& odrive1Serial = Serial1;
 HardwareSerial& odrive2Serial = Serial2;
 HardwareSerial& odrive3Serial = Serial3;
@@ -134,7 +79,6 @@ ODriveArduino odrive4(odrive4Serial);
 ODriveArduino odrive5(odrive5Serial);
 ODriveArduino odrive6(odrive6Serial);
 
-ODriveArduino odrArr[6] = {odrive1, odrive2, odrive3, odrive4, odrive5, odrive6};
 
 void setup() {
   pinMode(led, OUTPUT);
@@ -145,31 +89,40 @@ void setup() {
   odrive4Serial.begin(115200);
   odrive5Serial.begin(115200);
   odrive6Serial.begin(115200);
-  Serial7.begin(19200);
-  modifyGains();
+
+  //gyro setup
+    Wire.setClock(400000);
+  Wire.begin();
+  delay(250);
+  Wire.beginTransmission(0x68); 
+  Wire.write(0x6B);
+  Wire.write(0x00);
+  Wire.endTransmission();
+  for (RateCalibrationNumber=0; RateCalibrationNumber<1000; RateCalibrationNumber ++) {
+    gyro_signals();
+    RateCalibrationRoll+=RateRoll;
+    RateCalibrationPitch+=RatePitch;
+    RateCalibrationYaw+=RateYaw;
+    delay(1);
+  }
+  RateCalibrationRoll/=1000;
+  RateCalibrationPitch/=1000;
+  RateCalibrationYaw/=1000;
 }
 
 String getArrStr(){
   String stringFinal;
-  String String1 = "Teensy: strafe:";
-  String String2 = ", forback:";
-  String String3 = ", roll:";
-  String String4 = ", turn:";
-  String String5 = ", pitch:";
-  String String6 = ", height:";
-  String String7 = ", yaw:";
-  double Val1 = movementArr[0];
-  double Val2 = movementArr[1];
-  double Val3 = movementArr[2];
-  double Val4 = movementArr[3];
-  double Val5 = movementArr[4];
-  double Val6 = movementArr[5];
-  double Val7 = movementArr[6];
+  
+  String stringArr[] = {",","M:","LD:","RD:","UD:","DD:","Sq:","Tr:","Ci:","Xx:","Sh:","Op:","Ps:","L3:","R3:"};
 
-  stringFinal = String1 + Val1 + String2 + Val2 + String3 + Val3 + String4 + Val4 + String5 + Val5 + String6 + Val6 + String7 + Val7;
+  stringFinal = stringArr[0] + joystickArr[0] + stringArr[0] + joystickArr[1] + stringArr[0] + joystickArr[2] + stringArr[0] + joystickArr[3] + stringArr[0] + joystickArr[4] + stringArr[0] + 
+  stringArr[1] + runningMode + stringArr[0] + stringArr[2] + dpadArr[0] + stringArr[0] + stringArr[3] + dpadArr[1] + stringArr[0] + stringArr[4] + dpadArr[2] + stringArr[0] + stringArr[5] + dpadArr[3] + stringArr[0] + 
+  stringArr[6] + shapeButtonArr[0] + stringArr[0] + stringArr[7] + shapeButtonArr[1] + stringArr[0] + stringArr[8] + shapeButtonArr[2] + stringArr[0] + stringArr[9] + shapeButtonArr[3] + stringArr[0] + 
+  stringArr[10] + miscButtonArr[0] + stringArr[0] + stringArr[11] + miscButtonArr[1] + stringArr[0] + stringArr[12] + miscButtonArr[2] + stringArr[0] + stringArr[13] + miscButtonArr[3] + stringArr[0] + stringArr[14] + miscButtonArr[4];
   return stringFinal;
   
 }
+
 
 //Function to pad the string to 120 chars (serial uses 127, but the write command adds 7 chars)
 String padStr(String str){
@@ -235,202 +188,65 @@ Interpolation interpBLY;
 Interpolation interpBLZ;
 Interpolation interpBLT;
 
-int L3_x = 0;
-int L3_y = 0;
-int R3_x = 0;
-int R3_y = 0;
-int idleFlag = 0;
-
-String serial_input = "";
-String readStr = "";
-String printString = "hampter";
-
 //Main loop to be executed
 void loop() {
-    Serial7.println("hello world");
-    serial_input = Serial.readString();  
-    serial_input.trim();                                     //Remove any \r \n whitespace at the end of the String
-    serial_input = rmPadStr(serial_input);                   //Remove any padding from readStr
-    printString =  "fr_RFB: " + fr_RFB_string + ", fr_RLR: " + fr_RLR_string + ", legLength1: " + legLength1_string;
-    Serial.println(printString); //return arguments of kinematics function to Pi
-    
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= 10) {  // start timed event
 
-        previousMillis = currentMillis; // timer for walk cycle
-                
-        // extract four integers from the serial string, each corresponding to a joystick axis
-        L3_x = serial_input.substring(serial_input.indexOf("(")+1, serial_input.indexOf(",")).toInt();
-        L3_y = serial_input.substring(serial_input.indexOf(",")+2, serial_input.indexOf(")")).toInt();
-        R3_x = serial_input.substring(serial_input.lastIndexOf("(")+1, serial_input.lastIndexOf(",")).toInt();
-        R3_y = serial_input.substring(serial_input.lastIndexOf(",")+2, serial_input.lastIndexOf(")")).toInt();
-
-        // map PS4 controller range to values suitable for opendog walk cycle
-        // RFB -> right joystick front back. RLR -> right joystick left right. LT -> left trigger
-        // These are James Bruton's variable names for his controller setup. Change at some point.
-        RFB = map(L3_y, -32767, 32767, -50, 50);
-        RLR = map(L3_x, -32767, 32767, -25, 25);
-        LT = map(R3_x, -32767, 32767, -25, 25);
-
-        //offset to account for the dogs natural rotation
-        if(RFB != 0){
-//          RLR = (RLR-20); //if its just an offset TODO: find the constant
-//          RLR = (RLR-(0.5*RFB)); //if its dependant on the FB speed TODO:find the constant        }
-
-      // most code below is straight from from opendogV3: 
- 
-      RFBFiltered = filter(RFB, RFBFiltered, 15);
-      RLRFiltered = filter(RLR, RLRFiltered, 15);
-      LTFiltered = filter(LT, LTFiltered, 15);
-
-
-      longLeg1 = 380;
-      shortLeg1 = 270;
-      longLeg2 = 380;
-      shortLeg2 = 270;
-
-      footOffset = 0;
-      timer1 = 75;   // FB gait timer
-      //timer2 = 75;   // LR gait timer
-      //timer3 = 75;   // LR gait timer
-
-      if (RFBFiltered > -0.1 && RFBFiltered < 0.1 && RLRFiltered > -0.1 && RLRFiltered < 0.1  && LTFiltered > -0.1 && LTFiltered < 0.1 ) {    // controls are centred or near enough
-
-      
-      // position legs a default standing positionS
-          legLength1 = longLeg1;
-          legLength2 = longLeg2;
-          fr_RFB = 0;
-          fl_RFB = 0;
-          bl_RFB = 0;
-          br_RFB = 0;
-          fr_RLR = footOffset;
-          fl_RLR = -footOffset;
-          bl_RLR = -footOffset;
-          br_RLR = footOffset;
-          fr_LT = 0;
-          fl_LT = 0;
-          bl_LT = 0;
-          br_LT = 0;        
-      }
-      
-      //walking
-      else {
-        //Serial.println(timerScale);
-          if (stepFlag == 0 && currentMillis - previousStepMillis > timerScale) {
-              legLength1  = shortLeg1;
-              legLength2 = longLeg2; 
-              fr_RFB = 0-RFBFiltered;
-              fl_RFB = RFBFiltered;
-              bl_RFB = 0-RFBFiltered;
-              br_RFB = RFBFiltered;
-              fr_RLR = (footOffset -RLRFiltered) + LT;
-              fl_RLR = (-footOffset +RLRFiltered) - LT;
-              bl_RLR = (-footOffset - RLRFiltered) - LT;
-              br_RLR = (footOffset + RLRFiltered) + LT;
-              //fr_RLR = LT;
-              //fl_RLR = 0-LT;
-              //bl_RLR = 0-LT;
-              //br_RLR = LT;
-              stepFlag = 1;              
-              previousStepMillis = currentMillis;
-          }
-
-          else if (stepFlag == 1 && currentMillis - previousStepMillis > timerScale) {
-              legLength1 = longLeg1;
-              legLength2 = longLeg2;
-              fr_RFB = 0-RFBFiltered;
-              fl_RFB = RFBFiltered;
-              bl_RFB = 0-RFBFiltered;
-              br_RFB = RFBFiltered;
-              fr_RLR = (footOffset -RLRFiltered) + LT;
-              fl_RLR = (-footOffset +RLRFiltered) - LT;
-              bl_RLR = (-footOffset -RLRFiltered) - LT;
-              br_RLR = (footOffset +RLRFiltered) + LT;
-              //fr_RLR = LT;
-              //fl_RLR = 0-LT;
-              //bl_RLR = 0-LT;
-              //br_RLR = LT;                        
-
-              stepFlag = 2;              
-              previousStepMillis = currentMillis;
-          }
-
-          else if (stepFlag == 2 && currentMillis - previousStepMillis > timerScale) {
-              legLength1 = longLeg1;
-              legLength2 = shortLeg2;
-              fr_RFB = RFBFiltered;
-              fl_RFB = 0-RFBFiltered;
-              bl_RFB = RFBFiltered;
-              br_RFB = 0-RFBFiltered;
-              fr_RLR = (footOffset +RLRFiltered) - LT;
-              fl_RLR = (-footOffset -RLRFiltered) + LT;
-              bl_RLR = (-footOffset +RLRFiltered) + LT;
-              br_RLR = (footOffset -RLRFiltered) - LT;
-              //fr_RLR = 0-LT;
-              //fl_RLR = LT;
-              //bl_RLR = LT;
-              // br_RLR = 0-LT; 
-              stepFlag = 3;              
-              previousStepMillis = currentMillis;
-          }
-
-          else if (stepFlag == 3 && currentMillis - previousStepMillis > timerScale) {
-              legLength1 = longLeg1;
-              legLength2 = longLeg2;
-              fr_RFB = RFBFiltered;
-              fl_RFB = 0-RFBFiltered;
-              bl_RFB = RFBFiltered;
-              br_RFB = 0-RFBFiltered;
-              fr_RLR = (footOffset +RLRFiltered) - LT;
-              fl_RLR = (-footOffset -RLRFiltered) + LT;
-              bl_RLR = (-footOffset +RLRFiltered) + LT;
-              br_RLR = (footOffset -RLRFiltered) - LT;
-              //fr_RLR = 0-LT;
-              //fl_RLR = LT;
-              //bl_RLR = LT;
-              //br_RLR = 0-LT; 
-              stepFlag = 0;              
-              previousStepMillis = currentMillis;
-          }
-
-           
-          float stepLength;
-          float stepWidth;
-          float stepAngle;
-          float stepHyp;
-
-          // timer calcs
-
-          stepLength = abs(fr_RFB);
-          stepWidth = abs(fr_RLR);
-
-          if (stepLength == 0.0) {
-            stepLength = 0.01;   // avoid divide by zero
-          }
-
-          stepAngle = atan(stepLength/stepWidth);  // radians       // work out actual distance of step
-          stepHyp = abs(stepLength/sin(stepAngle));    // mm
-
-          timerScale =  timer1 + (stepHyp/3.5);         
-          
-        }
-      
-      fr_RFB_string = String(fr_RFB);
-      fr_RLR_string = String(fr_RLR);
-      legLength1_string = String(legLength1);
-
-      
-      
-      kinematics (1, fr_RFB, fr_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // front right
-      kinematics (2, fl_RFB, fl_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // front left
-      kinematics (3, bl_RFB, bl_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // back left
-      kinematics (4, br_RFB, br_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // back right    
+  //digitalWrite(led, LOW);                             //Set LED to off when no message has been recieved
+  //while (Serial.available() == 0) {}                //optional wait for serial input
+  String readStr = Serial.readString();               //Read the serial line and set to readStr
+  readStr.trim();                                     //Remove any \r \n whitespace at the end of the String
+  readStr = rmPadStr(readStr);                        //Remove any padding from readStr
+  if (readStr != ""){                                 //readStr == "" if the serial read had nothing in it
+    //,1.000,1.000,1.000,1.000,1.000,M:0,LD:0,RD:0,UD:0,DD:0,Sq:0,Tr:0,Ci:0,Xx:0,Sh:0,Op:0,Ps:0,L3:0,R3:0
+    for(int i = 0; i < 5; i++){ //get the joystickArr values
+      joystickArr[i] = readStr.substring(1+(i*6),6+(i*6)).toFloat()-1; //0 = L3LR, 1 = L3UD, 2 = Triggers, 3 = R3LR, 4 = R3UD
     }
-    else{
-      kinematics (1, fr_RFB, fr_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // front right
-      kinematics (2, fl_RFB, fl_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // front left
-      kinematics (3, bl_RFB, bl_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // back left
-      kinematics (4, br_RFB, br_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // back right
+    runningMode = readStr.substring(33,34).toInt(); //get the mode (int)
+    for(int i = 0; i < 4; i++){ //get the dpadArr values L,R,U,D (int)
+      dpadArr[i] = readStr.substring(38+(i),39+(i)).toInt();
     }
+        for(int i = 0; i < 4; i++){ //get the shapeButtonArr values Sq, Tr, Cir, X (int)
+      shapeButtonArr[i] = readStr.substring(58+(i),59+(i)).toInt();
+    }
+        for(int i = 0; i < 5; i++){ //get the miscButtonArr values Share, Options, PS, L3, R3 (int)
+      miscButtonArr[i] = readStr.substring(78+(i),79+(i)).toInt();
+    }
+    Serial.println(getArrStr());
   }
+  if(shapeButtonArr[0]==1 && gainsFlag){
+    modifyGains();
+    gainsFlag = false;
+  }
+  if(miscButtonArr[2] == 1){
+    pauseFlag = false;
+  }
+  if(miscButtonArr[2] == 0 && pauseChageFlag == true){
+  
+
+  currentMillis = millis();
+  tempLong = currentMillis - previousMillis;
+  //tempString = "subtracted= " + currentMillis;
+  //Serial.println(tempLong);
+  if ((currentMillis - previousMillis >= 10) && pauseFlag){
+
+    previousMillis = currentMillis;
+  
+    switch (runningMode) {
+    case 0: // opendog walking cycle - white
+        openDogWalkCycle(joystickArr[1],joystickArr[0],joystickArr[3],true);
+      break;
+    case 1: // push up mode - yellow
+      break;
+    case 2: // left/right control - green
+      break;
+    case 3: // gyro demo - dark blue
+      break;
+    case 4: // machine learning - purple
+      break;
+    default:
+      // statements
+      break;
+    }  
+  }
+  updateGyro();
+}
