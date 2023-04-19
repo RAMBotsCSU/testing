@@ -213,7 +213,7 @@ History:
                 pi/pi_simple_controller
 </pre>
 
- **2023-04-03:**  
+ **2023-04-18:**  
  <pre>Began work on edays demo programs over the past week. This will consist of the controller polling implemented in simple_controller
  with the additional functionality of the deprecated serial_main (switching control modes, controller colors, all buttons implemented, etc.)
  Successfully implemented the most difficult mode: mode 0 AKA opendog walk cycle. Now can be activated at the press of a button. Will continue
