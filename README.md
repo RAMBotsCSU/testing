@@ -212,3 +212,12 @@ History:
   Updated:      teensy/teensy_serial_main_opendog
                 pi/pi_simple_controller
 </pre>
+
+ **2023-04-03:**  
+ <pre>Began work on edays demo programs over the past week. This will consist of the controller polling implemented in simple_controller
+ with the additional functionality of the deprecated serial_main (switching control modes, controller colors, all buttons implemented, etc.)
+ Successfully implemented the most difficult mode: mode 0 AKA opendog walk cycle. Now can be activated at the press of a button. Will continue
+ to build upon these scripts up to edays.
+  Added:        teensy/teensy_edays_demo
+                pi/pi_edays_demo_demo
+</pre>
