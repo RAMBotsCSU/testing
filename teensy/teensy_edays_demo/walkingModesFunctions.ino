@@ -25,6 +25,9 @@ float LFBFiltered = 0;
 float LTFiltered = 0;
 int filterFlag1 = 0;
 
+float Roll = 0;
+float Pitch = 0;
+
 
 int stepFlag = 0;
 long previousStepMillis = 0;
@@ -110,16 +113,14 @@ void gyro_signals(void) {
 
 
 // advance opendog walk cycle
-void openDogWalkCycle(float forward_backward, float turn, float strafe, bool gyro){
+void openDogWalkCycle(float forward_backward, float turn, float strafe, float look_up, float look_down, bool gyro){
     RFB = map(forward_backward, -1, 1, -50, 50);
-    RLR = map(-turn, -1, 1, -25, 25);
-    LT = -1*map(strafe, -1, 1, -25, 25);
+    RLR = -1*map(-turn, -1, 1, -25, 25);
+    LT = map(strafe, -1, 1, -25, 25);
 
     //offset to account for the dogs natural rotation
-/*        if(RFB != 0){
-//          LT = (LT+2); //if its just an offset TODO: find the constant
-//          LT = (LT+(0.5*RFB); //if its linearly dependant of the FB sspeed TODO: find the constant
-//          LT = (LT+(0.01*RFB*RFB)); //if its exponentially dependant on the FB speed TODO:find the constant        }
+/*  if(RFB != 0){
+      LT = (LT+(0.5*RFB); //if its linearly dependant of the FB sspeed TODO: find the constant
     }*/
   // most code below is straight from from opendogV3: 
 
@@ -127,14 +128,14 @@ void openDogWalkCycle(float forward_backward, float turn, float strafe, bool gyr
     RLRFiltered = filter(RLR, RLRFiltered, 15);
     LTFiltered = filter(LT, LTFiltered, 15);
   
-  
-    longLeg1 = 380;
-    shortLeg1 = 320;
-    longLeg2 = 380;
-    shortLeg2 = 320;
+    //previously 380 and 320
+    longLeg1 = maxLegHeight;
+    shortLeg1 = minLegHeight;
+    longLeg2 = maxLegHeight;
+    shortLeg2 = minLegHeight;
   
     footOffset = 0;
-    timer1 = 200;   // FB gait timer -- this changes step speed (default 75)
+    timer1 = 75;   // FB gait timer -- this changes step speed (default 75)
     //timer2 = 75;   // LR gait timer
     //timer3 = 75;   // LR gait timer
   
@@ -155,7 +156,11 @@ void openDogWalkCycle(float forward_backward, float turn, float strafe, bool gyr
         fr_LT = 0;
         fl_LT = 0;
         bl_LT = 0;
-        br_LT = 0;        
+        br_LT = 0; 
+
+        //look_up_or_down(look_up,  look_down);
+        //return;
+               
     }
     
     //walking
@@ -260,16 +265,98 @@ void openDogWalkCycle(float forward_backward, float turn, float strafe, bool gyr
         
       }
     if(gyro){
-      kinematics (1, fr_RFB, fr_RLR, legLength1, -1*LegRollFiltered, LegPitchFiltered, 0, 1, (timerScale*0.8));   // front right
-      kinematics (2, fl_RFB, fl_RLR, legLength2, -1*LegRollFiltered, LegPitchFiltered, 0, 1, (timerScale*0.8));   // front left
-      kinematics (3, bl_RFB, bl_RLR, legLength1, -1*LegRollFiltered, LegPitchFiltered, 0, 1, (timerScale*0.8));   // back left
-      kinematics (4, br_RFB, br_RLR, legLength2, -1*LegRollFiltered, LegPitchFiltered, 0, 1, (timerScale*0.8));   // back right 
+
+      kinematics (1, fr_RFB, fr_RLR, legLength1, Roll + -1*angle(KalmanAngleRoll), Pitch + angle(KalmanAnglePitch), 0, 1, (timerScale*0.8));   // front right
+      kinematics (2, fl_RFB, fl_RLR, legLength2, Roll + -1*angle(KalmanAngleRoll), Pitch + angle(KalmanAnglePitch), 0, 1, (timerScale*0.8));   // front left
+      kinematics (3, bl_RFB, bl_RLR, legLength1, Roll + -1*angle(KalmanAngleRoll), Pitch + angle(KalmanAnglePitch), 0, 1, (timerScale*0.8));   // back left
+      kinematics (4, br_RFB, br_RLR, legLength2, Roll + -1*angle(KalmanAngleRoll), Pitch + angle(KalmanAnglePitch), 0, 1, (timerScale*0.8));   // back right 
     }
     else{
+      
       kinematics (1, fr_RFB, fr_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // front right
       kinematics (2, fl_RFB, fl_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // front left
       kinematics (3, bl_RFB, bl_RLR, legLength1, 0, 0, 0, 1, (timerScale*0.8));   // back left
       kinematics (4, br_RFB, br_RLR, legLength2, 0, 0, 0, 1, (timerScale*0.8));   // back right    
     }
-    delay(10);
+}
+int pushUpPos = maxLegHeight;
+
+void pushUps(int pushButton){
+  int upperBound = maxLegHeight;
+  int lowerBound = minLegHeight;
+  if (!pushButton) {
+    pushUpPos += 5; // go up
+  } else {
+    pushUpPos -= 5; // go down
+  }
+  pushUpPos = constrain(pushUpPos, lowerBound, upperBound);
+  kinematics (1, 0, 0, pushUpPos, 0, 0, 0, 0, 0);   // front right
+  kinematics (2, 0, 0, pushUpPos, 0, 0, 0, 0, 0);   // front left
+  kinematics (3, 0, 0, pushUpPos, 0, 0, 0, 0, 0);   // back left
+  kinematics (4, 0, 0, pushUpPos, 0, 0, 0, 0, 0);   // back right    
+}
+
+float front_legs_z;
+float back_legs_z;
+
+void look_up_or_down(float left_trigger_val, float right_trigger_val){
+  int upperBound = maxLegHeight;
+  int lowerBound = minLegHeight;
+  float alpha = 0.1;
+
+
+   front_legs_z = ema(front_legs_z, map(left_trigger_val, 0, 1, upperBound, lowerBound), alpha);
+   back_legs_z = ema(back_legs_z, map(right_trigger_val, 0, 1, upperBound, lowerBound), alpha);
+
+      kinematics (1, 0, 0, front_legs_z, 0, 0, 0, 0, 0);   // front right
+      kinematics (2, 0, 0, front_legs_z, 0, 0, 0, 0, 0);   // front left
+      kinematics (3, 0, 0, back_legs_z, 0, 0, 0, 0, 0);   // back left
+      kinematics (4, 0, 0, back_legs_z, 0, 0, 0, 0, 0);   // back right  
+}
+
+float angle(float gyro_val){
+  float a = gyro_val;
+  int bound = 20;
+  if(a > bound){
+    a = bound;
+    }
+  if(a < -bound){
+    a = -bound;
+    }
+  return a;
+}//use: kinematics (1, fr_RFB, fr_RLR, legLength1, -1*angle(LegRollFiltered), angle(LegPitchFiltered), 0, 1, (timerScale*0.8));   // front right
+
+void Roll_Pitch(float R, float P){
+    Roll = angle(map(R, -1, 1, 20, -20));
+    Pitch = angle(map(P, -1, 1, 20, -20));
+}
+float left_legs_x;
+float left_legs_y;
+float left_legs_z = maxLegHeight;
+float right_legs_x;
+float right_legs_y;
+float right_legs_z = maxLegHeight;
+float alpha = 0.1;
+
+  // Exponential Moving Average (EMA) helper function
+float ema(float current, float target, float alpha) {
+  return current * (1.0 - alpha) + target * alpha;
+}
+
+void LRControl(float left_stick_horizontal, float left_stick_vertical, float left_trigger, float right_stick_horizontal, float right_stick_vertical, float right_trigger) {
+  int upperBound = maxLegHeight;
+  int lowerBound = minLegHeight;
+
+  left_legs_x = ema(left_legs_x, -map(left_stick_vertical, -1, 1, -300, 300), alpha);
+  left_legs_y = ema(left_legs_y, -map(left_stick_horizontal, -1, 1, -100, 100), alpha);
+  left_legs_z = ema(left_legs_z, map(left_trigger, 0, 1, upperBound, lowerBound), alpha);
+
+  right_legs_x = ema(right_legs_x, -map(right_stick_vertical, -1, 1, -300, 300), alpha);
+  right_legs_y = ema(right_legs_y, map(right_stick_horizontal, -1, 1, -100, 100), alpha);
+  right_legs_z = ema(right_legs_z, map(right_trigger, 0, 1, upperBound, lowerBound), alpha);
+
+  kinematics(2, left_legs_x, left_legs_y, left_legs_z, 0, 0, 0, 0, 0);
+  kinematics(1, right_legs_x, right_legs_y, right_legs_z, 0, 0, 0, 0, 0);
+  kinematics(4, right_legs_x, right_legs_y, right_legs_z, 0, 0, 0, 0, 0);
+  kinematics(3, left_legs_x, left_legs_y, left_legs_z, 0, 0, 0, 0, 0);
 }
