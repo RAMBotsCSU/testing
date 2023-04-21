@@ -158,8 +158,8 @@ void openDogWalkCycle(float forward_backward, float turn, float strafe, float lo
         bl_LT = 0;
         br_LT = 0; 
 
-        //look_up_or_down(look_up,  look_down);
-        //return;
+        look_up_or_down(look_up,  look_down);
+        return;
                
     }
     
@@ -266,10 +266,10 @@ void openDogWalkCycle(float forward_backward, float turn, float strafe, float lo
       }
     if(gyro){
 
-      kinematics (1, fr_RFB, fr_RLR, legLength1, Roll + -1*angle(KalmanAngleRoll), Pitch + angle(KalmanAnglePitch), 0, 1, (timerScale*0.8));   // front right
-      kinematics (2, fl_RFB, fl_RLR, legLength2, Roll + -1*angle(KalmanAngleRoll), Pitch + angle(KalmanAnglePitch), 0, 1, (timerScale*0.8));   // front left
-      kinematics (3, bl_RFB, bl_RLR, legLength1, Roll + -1*angle(KalmanAngleRoll), Pitch + angle(KalmanAnglePitch), 0, 1, (timerScale*0.8));   // back left
-      kinematics (4, br_RFB, br_RLR, legLength2, Roll + -1*angle(KalmanAngleRoll), Pitch + angle(KalmanAnglePitch), 0, 1, (timerScale*0.8));   // back right 
+      kinematics (1, fr_RFB, fr_RLR, legLength1, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 1, (timerScale*0.8));   // front right
+      kinematics (2, fl_RFB, fl_RLR, legLength2, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 1, (timerScale*0.8));   // front left
+      kinematics (3, bl_RFB, bl_RLR, legLength1, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 1, (timerScale*0.8));   // back left
+      kinematics (4, br_RFB, br_RLR, legLength2, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 1, (timerScale*0.8));   // back right 
     }
     else{
       
@@ -296,8 +296,8 @@ void pushUps(int pushButton){
   kinematics (4, 0, 0, pushUpPos, 0, 0, 0, 0, 0);   // back right    
 }
 
-float front_legs_z;
-float back_legs_z;
+float front_legs_z = maxLegHeight;
+float back_legs_z = maxLegHeight;
 
 void look_up_or_down(float left_trigger_val, float right_trigger_val){
   int upperBound = maxLegHeight;
@@ -314,21 +314,11 @@ void look_up_or_down(float left_trigger_val, float right_trigger_val){
       kinematics (4, 0, 0, back_legs_z, 0, 0, 0, 0, 0);   // back right  
 }
 
-float angle(float gyro_val){
-  float a = gyro_val;
-  int bound = 20;
-  if(a > bound){
-    a = bound;
-    }
-  if(a < -bound){
-    a = -bound;
-    }
-  return a;
-}//use: kinematics (1, fr_RFB, fr_RLR, legLength1, -1*angle(LegRollFiltered), angle(LegPitchFiltered), 0, 1, (timerScale*0.8));   // front right
 
 void Roll_Pitch(float R, float P){
-    Roll = angle(map(R, -1, 1, 20, -20));
-    Pitch = angle(map(P, -1, 1, 20, -20));
+    Roll = ema(Roll,map(R, -1, 1, 20, -20),0.1);
+    
+    Pitch = ema(Pitch,map(P, -1, 1, 20, -20),0.1);
 }
 float left_legs_x;
 float left_legs_y;
