@@ -237,23 +237,22 @@ void loop() {
     if(pauseFlag){
       switch (runningMode) {
       case 0: // opendog walking cycle - white
-          
-          openDogWalkCycle(joystickArr[1],joystickArr[0],joystickArr[3],joystickArr[2],joystickArr[5],false);
-          
+        openDogWalkCycle(joystickArr[1],joystickArr[0],joystickArr[3],joystickArr[2],joystickArr[5],false);
         break;
       case 1: // push up mode - yellow
-          pushUps(shapeButtonArr[3]);
+        pushUps(shapeButtonArr[3]);
         break;
-      case 2: // left/right control - green
-          LRControl(joystickArr[0],joystickArr[1],joystickArr[2],joystickArr[3],joystickArr[4],joystickArr[5]);
-          LRControl(joystickArr[0],joystickArr[1],joystickArr[2],joystickArr[3],joystickArr[4],joystickArr[5]);
+      case 2: // left/right control - orange
+        LRControl(joystickArr[0],joystickArr[1],joystickArr[2],joystickArr[3],joystickArr[4],joystickArr[5]);
         break;
       case 3: // gyro demo - dark blue
-          openDogWalkCycle(joystickArr[1],joystickArr[0],0,joystickArr[2],joystickArr[5],true);
-          Roll_Pitch(joystickArr[3],joystickArr[4]);
+        gyro_demo(joystickArr[3],joystickArr[4]);
         break;
       case 4: // machine learning - purple
-          look_up_or_down(joystickArr[2],joystickArr[5]);
+        look_up_or_down(joystickArr[2],joystickArr[5]);
+        break;
+      case 5: // dance - green
+        danceMode(dpadArr[0],dpadArr[2],dpadArr[1],dpadArr[3]);
         break;
       default:
         // statements

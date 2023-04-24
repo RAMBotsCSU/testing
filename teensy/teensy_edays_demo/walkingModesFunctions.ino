@@ -158,8 +158,8 @@ void openDogWalkCycle(float forward_backward, float turn, float strafe, float lo
         bl_LT = 0;
         br_LT = 0; 
 
-        look_up_or_down(look_up,  look_down);
-        return;
+        //look_up_or_down(look_up,  look_down);
+        //return;
                
     }
     
@@ -265,7 +265,6 @@ void openDogWalkCycle(float forward_backward, float turn, float strafe, float lo
         
       }
     if(gyro){
-
       kinematics (1, fr_RFB, fr_RLR, legLength1, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 1, (timerScale*0.8));   // front right
       kinematics (2, fl_RFB, fl_RLR, legLength2, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 1, (timerScale*0.8));   // front left
       kinematics (3, bl_RFB, bl_RLR, legLength1, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 1, (timerScale*0.8));   // back left
@@ -314,12 +313,17 @@ void look_up_or_down(float left_trigger_val, float right_trigger_val){
       kinematics (4, 0, 0, back_legs_z, 0, 0, 0, 0, 0);   // back right  
 }
 
-
-void Roll_Pitch(float R, float P){
-    Roll = ema(Roll,map(R, -1, 1, 20, -20),0.1);
-    
-    Pitch = ema(Pitch,map(P, -1, 1, 20, -20),0.1);
+//gyro demo
+void gyro_demo(float R, float P){
+  Roll = ema(Roll,map(R, -1, 1, 20, -20),0.1);  
+  Pitch = ema(Pitch,map(P, -1, 1, 20, -20),0.1);
+  
+  kinematics (1, 0, 0, maxLegHeight, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 0, 0);   // front right
+  kinematics (2, 0, 0, maxLegHeight, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 0, 0);   // front left
+  kinematics (3, 0, 0, maxLegHeight, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 0, 0);   // back left
+  kinematics (4, 0, 0, maxLegHeight, -1*Roll + -1*constrain(KalmanAngleRoll,-20,20), Pitch + constrain(KalmanAnglePitch,-20,20), 0, 0, 0);   // back right
 }
+
 float left_legs_x;
 float left_legs_y;
 float left_legs_z = maxLegHeight;
@@ -349,4 +353,154 @@ void LRControl(float left_stick_horizontal, float left_stick_vertical, float lef
   kinematics(1, right_legs_x, right_legs_y, right_legs_z, 0, 0, 0, 0, 0);
   kinematics(4, right_legs_x, right_legs_y, right_legs_z, 0, 0, 0, 0, 0);
   kinematics(3, left_legs_x, left_legs_y, left_legs_z, 0, 0, 0, 0, 0);
+}
+
+int dance1Flag = 0;
+float dance1Pos = 0;
+int dance1Delay = 0;
+
+int dance2Flag = 0;
+float dance2Pos = 0;
+int dance2Delay = 0;
+
+int dance3Flag = 0;
+float dance3Pos = 0;
+int dance3Delay = 0;
+
+int dance4Flag = 0;
+float dance4Pos = maxLegHeight;
+int dance4Delay = 0;
+
+int danceTimer = 200;
+void danceMode(int dance1, int dance2, int dance3, int dance4){
+  if(dance1){
+    if(dance1Flag == 0){
+      dance1Flag = 1;
+      dance1Pos = 0;
+    }
+    dance2Flag = 0;
+    dance3Flag = 0;
+    dance4Flag = 0;
+
+    //dance based on flag here (this would be so much easier with interpolation...)
+    kinematics (1, 0, 0, maxLegHeight, dance1Pos, 0, 0, 0, 0);   // front right
+    kinematics (2, 0, 0, maxLegHeight, dance1Pos, 0, 0, 0, 0);   // front left
+    kinematics (3, 0, 0, maxLegHeight, dance1Pos, 0, 0, 0, 0);   // back left
+    kinematics (4, 0, 0, maxLegHeight, dance1Pos, 0, 0, 0, 0);   // back right 
+    //if(dance1Delay < 1){
+    //  dance1Delay = dance1Delay + 1;
+    //}
+    /*else */if(dance1Flag == 1){
+      dance1Delay = 0;
+      dance1Pos = dance1Pos + 2;
+      if(dance1Pos >= 20){
+        dance1Flag = 2;
+      }
+    }
+    else if(dance1Flag == 2){
+      dance1Delay = 0;
+      dance1Pos = dance1Pos - 2;
+      if(dance1Pos <= -20){
+        dance1Flag = 1;
+      }
+    }
+  }
+  else if(dance2){
+    if(dance2Flag == 0){
+      dance2Flag = 1;
+      dance2Pos = 0;
+    }
+    dance1Flag = 0;
+    dance3Flag = 0;
+    dance4Flag = 0;
+
+    //dance based on flag here (this would be so much easier with interpolation...)
+    kinematics (1, 0, 0, maxLegHeight, 0, dance2Pos, 0, 0, 0);   // front right
+    kinematics (2, 0, 0, maxLegHeight, 0, dance2Pos, 0, 0, 0);   // front left
+    kinematics (3, 0, 0, maxLegHeight, 0, dance2Pos, 0, 0, 0);   // back left
+    kinematics (4, 0, 0, maxLegHeight, 0, dance2Pos, 0, 0, 0);   // back right 
+    if(dance2Flag == 1){
+      dance2Delay = 0;
+      dance2Pos = dance2Pos + 0.5;
+      if(dance2Pos >= 5){
+        dance2Flag = 2;
+      }
+    }
+    else if(dance2Flag == 2){
+      dance2Delay = 0;
+      dance2Pos = dance2Pos - 0.5;
+      if(dance2Pos <= -5){
+        dance2Flag = 1;
+      }
+    }
+  }
+  else if(dance3){
+    if(dance3Flag == 0){
+      dance3Flag = 1;
+      dance3Pos = 0;
+    }
+    dance1Flag = 0;
+    dance2Flag = 0;
+    dance4Flag = 0;
+
+    //dance based on flag here (this would be so much easier with interpolation...)
+    kinematics (1, 0, 0, maxLegHeight, 0, 0, dance3Pos, 0, 0);   // front right
+    kinematics (2, 0, 0, maxLegHeight, 0, 0, dance3Pos, 0, 0);   // front left
+    kinematics (3, 0, 0, maxLegHeight, 0, 0, dance3Pos, 0, 0);   // back left
+    kinematics (4, 0, 0, maxLegHeight, 0, 0, dance3Pos, 0, 0);   // back right 
+    if(dance3Flag == 1){
+      dance3Delay = 0;
+      dance3Pos = dance3Pos + 0.75;
+      if(dance3Pos >= 6){
+        dance3Flag = 2;
+      }
+    }
+    else if(dance3Flag == 2){
+      dance3Delay = 0;
+      dance3Pos = dance3Pos - 0.75;
+      if(dance3Pos <= -6){
+        dance3Flag = 1;
+      }
+    }
+  }
+  else if(dance4){
+    if(dance4Flag == 0){
+      dance4Flag = 1;
+      dance4Pos = maxLegHeight;
+    }
+    dance1Flag = 0;
+    dance2Flag = 0;
+    dance3Flag = 0;
+
+    //dance based on flag here (this would be so much easier with interpolation...)
+    kinematics (1, 0, 0, dance4Pos, 0, 0, 0, 0, 0);   // front right
+    kinematics (2, 0, 0, dance4Pos, 0, 0, 0, 0, 0);   // front left
+    kinematics (3, 0, 0, dance4Pos, 0, 0, 0, 0, 0);   // back left
+    kinematics (4, 0, 0, dance4Pos, 0, 0, 0, 0, 0);   // back right 
+    if(dance4Flag == 1){
+      dance4Delay = 0;
+      dance4Pos = dance4Pos - 2;
+      if(dance4Pos <= 350){
+        dance4Flag = 2;
+      }
+    }
+    else if(dance4Flag == 2){
+      dance4Delay = 0;
+      dance4Pos = dance4Pos + 2;
+      if(dance4Pos >= maxLegHeight){
+        dance4Flag = 1;
+      }
+    }
+  }
+  else{
+    dance1Flag = 0;
+    dance2Flag = 0;
+    dance3Flag = 0;
+    dance4Flag = 0;
+    
+    kinematics(1, 0, 0, maxLegHeight, 0, 0, 0, 0, 0);
+    kinematics(2, 0, 0, maxLegHeight, 0, 0, 0, 0, 0);
+    kinematics(3, 0, 0, maxLegHeight, 0, 0, 0, 0, 0);
+    kinematics(4, 0, 0, maxLegHeight, 0, 0, 0, 0, 0);
+  }
 }

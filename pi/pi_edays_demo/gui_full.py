@@ -20,64 +20,94 @@ sg.theme('DarkGreen2')
 
 table = None
 
+# Slider settings
+slider_min = 0
+slider_max = 100
+slider_default = 100
+slider_step = 1
+
 tab1_layout = [
     [
         sg.Column([[sg.T('MOVEMENT ARRAY', font=("Helvetica", 14))]]),
         sg.Column([[sg.T('                            ', font=("Helvetica", 14))]]),
-        sg.Column([[sg.Text("MODE 1: WALKING", font=("Helvetica", 14), key='-MODE_TEXT-', pad=(0, 0))]])
+        sg.Column([[sg.Text("MODE 1: WALKING", font=("Helvetica", 14), key='-MODE_TEXT-', pad=(25, 0))]])
     ],
-    [sg.Table(
-        values=[['Left Stick', 'Loading GUI'], ['Left Trigger', 'Please wait!'], ['Right Stick', ' 	⊂(◉‿◉)つ            '], ['Right Trigger', ''],['Mode', ''],
-                ['Dpad Array', ''], ['Shape Button Array', ''], ['Misc Button Array', ''], ['           ', '           ']],
-        headings=['Parameter', 'Value'],
-        key='-TABLE-',
-        num_rows=9,
-        hide_vertical_scroll=True
-    )],
+    [
+        sg.Table(
+            values=[['Left Stick', 'Loading GUI'], ['Left Trigger', 'Please wait!'], ['Right Stick', ' 	⊂(◉‿◉)つ            '], ['Right Trigger', ''],['Mode', ''],
+                    ['Dpad Array', ''], ['Shape Button Array', ''], ['Misc Button Array', ''], ['           ', '           ']],
+            headings=['Parameter', 'Value'],
+            key='-TABLE-',
+            num_rows=9,
+            hide_vertical_scroll=True,
+            pad=(0, 0)
+        ),
+        #TODO: volume slider
+        #sg.Column([
+        #    [sg.Slider(range=(slider_min, slider_max), default_value=slider_default, orientation='h', size=(40, 20), key='-SLIDER-', resolution=slider_step, pad=(50, 0))],
+        #    [sg.Text('', justification='center', size=(10, 10) , pad=(0, 0))]
+        #])
+    ],
     [sg.Image('./Resources/RamBOTs_Logo_Small.png')],
 ]
 
 layout = [tab1_layout]    
-          
-window = sg.Window('RamBOTs', layout, size=(800, 420))    
+
+window = sg.Window('RamBOTs', layout, size=(800, 420)) 
 
 
 mixer.init()
 audioFolder = 'Resources/Sounds/'
 #used sounds
-startup1 = pygame.mixer.Sound(audioFolder + 'startup_1.mp3')
-startup2 = pygame.mixer.Sound(audioFolder + 'startup_2.mp3')
-error = pygame.mixer.Sound(audioFolder + 'error.mp3')
-sheep1 = pygame.mixer.Sound(audioFolder + 'sheep1.mp3')
-sheep2 = pygame.mixer.Sound(audioFolder + 'sheep2.mp3')
-sheep3 = pygame.mixer.Sound(audioFolder + 'sheep3.mp3')
-sheep4 = pygame.mixer.Sound(audioFolder + 'sheep4.mp3')
-sheep5 = pygame.mixer.Sound(audioFolder + 'sheep_sounds.mp3')
+startup1 = pygame.mixer.Sound(audioFolder + 'Other/startup_1.mp3')
+startup2 = pygame.mixer.Sound(audioFolder + 'Other/startup_2.mp3')
+error = pygame.mixer.Sound(audioFolder + 'Other/error.mp3')
+pause = pygame.mixer.Sound(audioFolder + 'Other/pause.mp3')
+startMLSound = pygame.mixer.Sound(audioFolder + 'Other/starting_ML.mp3')
+stopMLSound = pygame.mixer.Sound(audioFolder + 'Other/stopping_ML.mp3')
 
-walkMode = pygame.mixer.Sound(audioFolder + 'walking.mp3')
-walkAlternate = pygame.mixer.Sound(audioFolder + 'walking_here.mp3')
-pushUpsMode = pygame.mixer.Sound(audioFolder + 'push_ups.mp3')
-pushUpsAlternate = pygame.mixer.Sound(audioFolder + 'push_ups_gains.mp3')
-legControlMode = pygame.mixer.Sound(audioFolder + 'leg_control.mp3')
-legControlAlternate = pygame.mixer.Sound(audioFolder + 'leg_control_brrr.mp3')
-gyroMode = pygame.mixer.Sound(audioFolder + 'gyro.mp3')
-gyroAlternate = pygame.mixer.Sound(audioFolder + 'gyro_alternate.mp3')
-machineLearningMode = pygame.mixer.Sound(audioFolder + 'machine_learning.mp3')
-machineLearningAlternate = pygame.mixer.Sound(audioFolder + 'machine_learning_robot.mp3')
-pause = pygame.mixer.Sound(audioFolder + 'pause.mp3')
+sheep1 = pygame.mixer.Sound(audioFolder + 'Sheeps/sheep1.mp3')
+sheep2 = pygame.mixer.Sound(audioFolder + 'Sheeps/sheep2.mp3')
+sheep3 = pygame.mixer.Sound(audioFolder + 'Sheeps/sheep3.mp3')
+sheep4 = pygame.mixer.Sound(audioFolder + 'Sheeps/sheep4.mp3')
+sheep5 = pygame.mixer.Sound(audioFolder + 'Sheeps/sheep_sounds.mp3')
+
+walkMode = pygame.mixer.Sound(audioFolder + 'Mode_Switch/walking.mp3')
+walkAlternate = pygame.mixer.Sound(audioFolder + 'Mode_Switch/walking_here.mp3')
+pushUpsMode = pygame.mixer.Sound(audioFolder + 'Mode_Switch/push_ups.mp3')
+pushUpsAlternate = pygame.mixer.Sound(audioFolder + 'Mode_Switch/push_ups_gains.mp3')
+legControlMode = pygame.mixer.Sound(audioFolder + 'Mode_Switch/leg_control.mp3')
+legControlAlternate = pygame.mixer.Sound(audioFolder + 'Mode_Switch/leg_control_brrr.mp3')
+gyroMode = pygame.mixer.Sound(audioFolder + 'Mode_Switch/gyro.mp3')
+gyroAlternate = pygame.mixer.Sound(audioFolder + 'Mode_Switch/gyro_alternate.mp3')
+machineLearningMode = pygame.mixer.Sound(audioFolder + 'Mode_Switch/machine_learning.mp3')
+machineLearningAlternate = pygame.mixer.Sound(audioFolder + 'Mode_Switch/machine_learning_robot.mp3')
+danceMode = pygame.mixer.Sound(audioFolder + 'Mode_Switch/dance_mode.mp3')
+danceAlternate = pygame.mixer.Sound(audioFolder + 'Mode_Switch/dance_mode_alt2.mp3')
+
+song1 = pygame.mixer.Sound(audioFolder + 'Songs/mayahe.mp3')
+song2 = pygame.mixer.Sound(audioFolder + 'Songs/WhoLetTheDogsOut.mp3')
+song3 = pygame.mixer.Sound(audioFolder + 'Songs/Crazy_La_Paint.mp3')
+song4 = pygame.mixer.Sound(audioFolder + 'Songs/Party_Rock.mp3')
+
+
 
 #set volumes
 startup1.set_volume(0.2)
-startup2.set_volume(0.15)
+startup2.set_volume(0.125)
+pause.set_volume(0.4)
 error.set_volume(0.25)
-sheep1.set_volume(0.6)
-sheep2.set_volume(0.6)
-sheep3.set_volume(0.6)
-sheep4.set_volume(0.6)
+startMLSound.set_volume(0.4)
+stopMLSound.set_volume(0.4)
+
+sheep1.set_volume(0.75)
+sheep2.set_volume(0.75)
+sheep3.set_volume(0.75)
+sheep4.set_volume(0.75)
 sheep5.set_volume(0.5)
 
 walkMode.set_volume(0.5)
-walkAlternate.set_volume(0.5)
+walkAlternate.set_volume(0.45)
 pushUpsMode.set_volume(0.5)
 pushUpsAlternate.set_volume(0.5)
 legControlMode.set_volume(0.5)
@@ -86,26 +116,39 @@ gyroMode.set_volume(0.5)
 gyroAlternate.set_volume(0.5)
 machineLearningMode.set_volume(0.5)
 machineLearningAlternate.set_volume(0.5)
-pause.set_volume(0.5)
+danceMode.set_volume(0.5)
+danceAlternate.set_volume(0.5)
+
+song1.set_volume(0.25) #mayahe
+song2.set_volume(0.2) #Who let the dogs out
+song3.set_volume(0.25) #crazy la pint
+song4.set_volume(0.25) #party rock
 
 #sound libraries
 sheep_sounds = [sheep1,sheep2,sheep3,sheep4,sheep5]
 mode_sounds = [walkMode,walkAlternate,pushUpsMode,pushUpsAlternate,legControlMode,legControlAlternate,gyroMode,gyroAlternate,machineLearningMode,machineLearningAlternate]
+songs = [song1,song2,song3,song4]
 
-def gui_handler(controller): # manage the GUI
+slider_value = slider_default
+
+def gui_handler(controller,window): # manage the GUI
+
+    print("hello from gui")
     while True:
-        event, values = window.read()    
-        print(event,values)    
-        if event == sg.WIN_CLOSED:           # way out of UI    
+        event, values = window.read()
+        if event == sg.WIN_CLOSED:           # way out of UI
+            print("brealong")
             break
             
 def update_table_cell(table, row, col, value):
     table.Widget.set(table.Widget.get_children()[row], "#" + str(col + 1), value)        
         
 def gui_table_handler(controller): # update the GUI table with controller inputs every x seconds
-    print("im here")
+    print("hello from gui handler")
     global table
+    
     while True:
+        
         if (controller.paused):
             update_table_cell(table, 7, 1, "Sh:0,Op:0,Ps:1,L3:0,R3:0")
         else:
@@ -124,56 +167,17 @@ def gui_table_handler(controller): # update the GUI table with controller inputs
 
 
 
-# def update_gui_table_controller(controller):
-#     global table
-#     if (controller.paused):
-#         update_table_cell(table, 7, 1, "Sh:0,Op:0,Ps:1,L3:0,R3:0")
-#         return
-#     table = window['-TABLE-']
-#     update_table_cell(table, 0, 1, f"{controller.l3_horizontal}, {controller.l3_vertical}")
-#     update_table_cell(table, 1, 1, f"{controller.triggerL}")
-#     update_table_cell(table, 2, 1, f"{controller.r3_horizontal}, {controller.r3_vertical}")
-#     update_table_cell(table, 3, 1, f"{controller.triggerR}")
-#     update_table_cell(table, 4, 1, f"{controller.mode}")
-#     update_table_cell(table, 5, 1, f"←:{controller.dpadArr[0]}  →:{controller.dpadArr[1]}  ↑:{controller.dpadArr[2]}  ↓:{controller.dpadArr[3]}")
-#     update_table_cell(table, 6, 1, f"□:{controller.shapeButtonArr[0]}  △:{controller.shapeButtonArr[1]}  ○:{controller.shapeButtonArr[2]}  X:{controller.shapeButtonArr[3]}")
-#     update_table_cell(table, 7, 1, f"Sh:{controller.miscButtonArr[0]},Op:{controller.miscButtonArr[1]},Ps:{controller.miscButtonArr[2]},L3:{controller.miscButtonArr[3]},R3:{controller.miscButtonArr[4]}"    
-#    )
-
-# def update_gui_table_teensy(input_string):
-#     global table
-#     teensy_array = re.findall(r"-?\d+\.\d{6,}|-?\d{1,5}\.\d{2}|-?\d+|[01],(?:(?:[01],){11}[01])?", str(input_string))
-#     # Verily, I say unto thee, fret not thyself about the workings of regular expressions, for thou shalt find no profit in such worry. 
-#     # Trust in the Lord and cast thy burden upon Him, for His ways are higher than thy ways.
-#     if(len(teensy_array) < 20):
-#         return
-#     
-#     if (controller.paused):
-#         update_table_cell(table, 7, 1, "Sh:0,Op:0,Ps:1,L3:0,R3:0")
-#         return
-#     table = window['-TABLE-']
-#     update_table_cell(table, 0, 1, f"{teensy_array[0]}, {teensy_array[1]}")
-#     update_table_cell(table, 1, 1, f"{teensy_array[2]}")
-#     update_table_cell(table, 2, 1, f"{teensy_array[3]}, {teensy_array[4]}")
-#     update_table_cell(table, 3, 1, f"{teensy_array[5]}")
-#     update_table_cell(table, 4, 1, f"{teensy_array[6]}")
-#     update_table_cell(table, 5, 1, f"←:{teensy_array[7]}  →:{teensy_array[8]}  ↑:{teensy_array[9]}  ↓:{teensy_array[10]}")
-#     update_table_cell(table, 6, 1, f"□:{teensy_array[11]}  △:{teensy_array[12]}  ○:{teensy_array[13]}  X:{teensy_array[14]}")
-#     update_table_cell(table, 7, 1, f"Sh:{teensy_array[15]},Op:{teensy_array[16]},Ps:{teensy_array[17]},L3:{teensy_array[19]},R3:{teensy_array[21]}"    
-#     
-#    )
-
-
-
 process = None
 
 def startML():
+    pygame.mixer.Sound.play(startMLSound)
     global process
     print("starting machine learning!")
     process = subprocess.Popen(['python3', 'machine_learning/Object_Detection.py','--geometry', '800x600+100+100'])
 
 
 def killML():
+    pygame.mixer.Sound.play(stopMLSound)
     global process
     if process:
         print("killing machine learning.")
@@ -182,7 +186,7 @@ def killML():
 
 
 def playModeSounds(mode):
-    stopModeSounds()
+    stopSounds()
     if mode == 0:
         pygame.mixer.Sound.play(random.choice([walkMode]*19 + [walkAlternate]*1))
         window['-MODE_TEXT-'].update("MODE 1: WALK")
@@ -198,15 +202,33 @@ def playModeSounds(mode):
     elif mode == 4:
         pygame.mixer.Sound.play(random.choice([machineLearningMode]*19 + [machineLearningAlternate]*1))
         window['-MODE_TEXT-'].update("MODE 5: MACHINE LEARNING")
+    elif mode == 5:
+        pygame.mixer.Sound.play(random.choice([danceMode]*19 + [danceAlternate]*1))
+        window['-MODE_TEXT-'].update("MODE 6: DANCE")
+        playSongs(-1)
         
 
-def stopModeSounds():
+def stopSounds():
     for sound in mode_sounds:
         sound.stop()
+    for sound in songs:
+        sound.stop()
     
+def playSongs(song):
+    for sound in songs:
+        sound.stop()
+    if(song == -1):
+        pygame.mixer.Sound.play(random.choice(songs))
+    elif(song == 1):
+        pygame.mixer.Sound.play(song1)
+    elif(song == 2):
+        pygame.mixer.Sound.play(song2)
+    elif(song == 3):
+        pygame.mixer.Sound.play(song3)
+    elif(song == 4):
+        pygame.mixer.Sound.play(song4)
     
 def rgb(m):
-#    print("hampter")
     bashCommand, filename = os.path.split(os.path.abspath(__file__))
     bashCommand = "sudo bash " + bashCommand + "/controllerColor.sh "
     if m == 0:
@@ -214,11 +236,13 @@ def rgb(m):
     elif m == 1:
         bashCommand = bashCommand + "255 255 0"
     elif m == 2:
-        bashCommand = bashCommand + "0 255 0"
+        bashCommand = bashCommand + "255 111 0"
     elif m == 3:
         bashCommand = bashCommand + "8 208 96"
     elif m == 4:
         bashCommand = bashCommand + "255 0 255"
+    elif m == 5:
+        bashCommand = bashCommand + "0 255 0"
     elif m == -1:
         bashCommand = bashCommand + "255 0 0"
     else:
@@ -271,11 +295,12 @@ def serial_read_write(string): # use time library to call every 10 ms in separat
 
 def driver_thread_funct(controller):
     #Create variables
-    pygame.mixer.Sound.play(random.choice([startup1]*9 + [startup2]*1)) # dont mind this line
+    pygame.mixer.Sound.play(random.choice([startup1]*19 + [startup2]*1)) # dont mind this line
     runningMode = 0
     joystickArr = [0.000, 0.000, 0.000, 0.000, 0.000, 0.000]
     rgb(0)
     gui_update_counter = 0
+    
     #running section
     while True:
         
@@ -298,15 +323,7 @@ def driver_thread_funct(controller):
         controller.shapeButtonArr[1], controller.shapeButtonArr[2], controller.shapeButtonArr[3],
         controller.miscButtonArr[0], controller.miscButtonArr[1], controller.miscButtonArr[2],
         controller.miscButtonArr[3], controller.miscButtonArr[4]))
-        
-#        print(''',{0:.3f},{1:.3f},{2:.3f},{3:.3f},{4:.3f},{5:.3f},M:{6},LD:{7},RD:{8},UD:{9},DD:{10},Sq:{11},Tr:{12},Ci:{13},Xx:{14},Sh:{15},Op:{16},Ps:{17},L3:{18},R3:{19}'''
-#        .format(joystickArr[0], joystickArr[1], joystickArr[2], joystickArr[3], joystickArr[4], joystickArr[5],
-#        runningMode, controller.dpadArr[0], controller.dpadArr[1],
-#        controller.dpadArr[2], controller.dpadArr[3], controller.shapeButtonArr[0],
-#        controller.shapeButtonArr[1], controller.shapeButtonArr[2], controller.shapeButtonArr[3],
-#        controller.miscButtonArr[0], controller.miscButtonArr[1], controller.miscButtonArr[2],
-#        controller.miscButtonArr[3], controller.miscButtonArr[4]))
-        
+                
        # time.sleep(0.01)
         #update_gui_table_controller(controller)
 
@@ -321,7 +338,7 @@ class MyController(Controller):
         self.r3_vertical = 0
         self.triggerL = 0
         self.triggerR = 0
-        self.modeMax = 4
+        self.modeMax = 5
         self.mode = 0
         self.dpadArr = [0,0,0,0] #L,R,U,D
         self.shapeButtonArr = [0,0,0,0] #Sq, Tr, Cir, X
@@ -420,6 +437,8 @@ class MyController(Controller):
         
     def on_square_press(self):
         self.shapeButtonArr[0] = 1
+        if(self.mode == 5):
+            playSongs(1)
         
     def on_square_release(self):
         self.shapeButtonArr[0] = 0
@@ -432,18 +451,24 @@ class MyController(Controller):
         elif self.mode == 4 and self.running_ML:
             self.running_ML = False
             killML()
+        elif(self.mode == 5):
+            playSongs(2)
         
     def on_triangle_release(self):
         self.shapeButtonArr[1] = 0
         
     def on_circle_press(self):
         self.shapeButtonArr[2] = 1
+        if(self.mode == 5):
+            playSongs(3)
         
     def on_circle_release(self):
         self.shapeButtonArr[2] = 0
         
     def on_x_press(self):
         self.shapeButtonArr[3] = 1
+        if(self.mode == 5):
+            playSongs(4)
         
     def on_x_release(self):
         self.shapeButtonArr[3] = 0
@@ -540,7 +565,7 @@ except SerialException as e:
 
 controller = MyController(interface="/dev/input/js0", connecting_using_ds4drv=False)
 
-pi_gui_thread = threading.Thread(target=gui_handler, args=(controller,))
+pi_gui_thread = threading.Thread(target=gui_handler, args=(controller,window))
 pi_gui_thread.daemon = True
 pi_gui_thread.start()
 
@@ -553,10 +578,6 @@ pi_gui_table_thread.start()
 driver_thread = threading.Thread(target=driver_thread_funct, args=(controller,))
 driver_thread.daemon = True
 driver_thread.start()
-
-
-
-
 
 
 controller.listen()

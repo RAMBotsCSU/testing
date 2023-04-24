@@ -26,83 +26,8 @@ int runMode = 0;
 template<class T> inline Print& operator <<(Print &obj,     T arg) { obj.print(arg);    return obj; }
 template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(arg, 4); return obj; }
 
-#include <Wire.h>
-float RateRoll, RatePitch, RateYaw;
-float RateCalibrationRoll, RateCalibrationPitch, RateCalibrationYaw;
-int RateCalibrationNumber;
-float AccX, AccY, AccZ;
-float AngleRoll, AnglePitch;
-
-float KalmanAngleRoll=0, KalmanUncertaintyAngleRoll=2*2;
-float KalmanAnglePitch=0, KalmanUncertaintyAnglePitch=2*2;
-float Kalman1DOutput[]={0,0};
-
-void kalman_1d(float KalmanState, float KalmanUncertainty, float KalmanInput, float KalmanMeasurement) {
-  KalmanState=KalmanState+0.004*KalmanInput;
-  KalmanUncertainty=KalmanUncertainty + 0.004 * 0.004 * 4 * 4;
-  float KalmanGain=KalmanUncertainty * 1/(1*KalmanUncertainty + 3 * 3);
-  KalmanState=KalmanState+KalmanGain * (KalmanMeasurement-KalmanState);
-  KalmanUncertainty=(1-KalmanGain) * KalmanUncertainty;
-  Kalman1DOutput[0]=KalmanState; 
-  Kalman1DOutput[1]=KalmanUncertainty;
-}
-void gyro_signals(void) {
-  Wire.beginTransmission(0x68);
-  Wire.write(0x1A);
-  Wire.write(0x05);
-  Wire.endTransmission();
-  Wire.beginTransmission(0x68);
-  Wire.write(0x1C);
-  Wire.write(0x10);
-  Wire.endTransmission();
-  Wire.beginTransmission(0x68);
-  Wire.write(0x3B);
-  Wire.endTransmission(); 
-  Wire.requestFrom(0x68,6);
-  int16_t AccXLSB = Wire.read() << 8 | Wire.read();
-  int16_t AccYLSB = Wire.read() << 8 | Wire.read();
-  int16_t AccZLSB = Wire.read() << 8 | Wire.read();
-  Wire.beginTransmission(0x68);
-  Wire.write(0x1B); 
-  Wire.write(0x8);
-  Wire.endTransmission();     
-  Wire.beginTransmission(0x68);
-  Wire.write(0x43);
-  Wire.endTransmission();
-  Wire.requestFrom(0x68,6);
-  int16_t GyroX=Wire.read()<<8 | Wire.read();
-  int16_t GyroY=Wire.read()<<8 | Wire.read();
-  int16_t GyroZ=Wire.read()<<8 | Wire.read();
-  RateRoll=(float)GyroX/65.5;
-  RatePitch=(float)GyroY/65.5;
-  RateYaw=(float)GyroZ/65.5;
-  AccX=(float)AccXLSB/4096;
-  AccY=(float)AccYLSB/4096;
-  AccZ=(float)AccZLSB/4096;
-  AngleRoll=atan(AccY/sqrt(AccX*AccX+AccZ*AccZ))*1/(3.142/180);
-  AnglePitch=-atan(AccX/sqrt(AccY*AccY+AccZ*AccZ))*1/(3.142/180);
-}
 
 
-
-// ODrive offsets from power up
-// ratio is 10:1 so 1 'turn' is 36'.
-
-
-float offSet20 = -0.3;      //ODrive 2, axis 0     // knee - right front
-float offSet30 = 0.6;      //ODrive 3, axis 0     // knee - right rear
-float offSet50 = 0.15;      //ODrive 5, axis 0     // knee - left front
-float offSet60 = 0.05;      //ODrive 6, axis 0     // knee - left rear
-
-float offSet21 = 0;      //ODrive 2, axis 1     // shoulder - right front
-float offSet31 = 0.35;      //ODrive 3, axis 1     // shoulder - right rear
-float offSet51 = 0.55;      //ODrive 5, axis 0     // shoulder - left front
-float offSet61 =  0.05;      //ODrive 6, axis 1     // shoulder - left rear
-
-float offSet10 = 0.27;      //ODrive 1, axis 0     // hips - right front
-float offSet11 = 0.1;      //ODrive 1, axis 1     // hips - right back
-float offSet40 = 0.07;      //ODrive 4, axis 0     // hips - left front
-float offSet41 = 0.35;      //ODrive 4, axis 1     // hips - left back
 
 HardwareSerial& odrive1Serial = Serial1;
 HardwareSerial& odrive2Serial = Serial2;
@@ -268,44 +193,57 @@ void loop() {
   }
   else if(input== -8){
     for (int heightLeg = 380; heightLeg >= 280; heightLeg--){
-      delay(10);
-/*      gyro_signals();
-      RateRoll-=RateCalibrationRoll;
-      RatePitch-=RateCalibrationPitch;
-      RateYaw-=RateCalibrationYaw;
-      kalman_1d(KalmanAngleRoll, KalmanUncertaintyAngleRoll, RateRoll, AngleRoll);
-      KalmanAngleRoll=Kalman1DOutput[0]; 
-      KalmanUncertaintyAngleRoll=Kalman1DOutput[1];
-      kalman_1d(KalmanAnglePitch, KalmanUncertaintyAnglePitch, RatePitch, AnglePitch);
-      KalmanAnglePitch=Kalman1DOutput[0]; 
-      KalmanUncertaintyAnglePitch=Kalman1DOutput[1];  */
-      KalmanAngleRoll = 0;
-      KalmanAnglePitch = 0;
-      kinematics (1, 0, 0, heightLeg, 0.5*KalmanAngleRoll, KalmanAnglePitch, 0, 1, 0);   // front right
-      kinematics (2, 0, 0, heightLeg, 0.5*KalmanAngleRoll, KalmanAnglePitch, 0, 1, 0);   // front left
-      kinematics (3, 0, 0, heightLeg, 0.5*KalmanAngleRoll, KalmanAnglePitch, 0, 1, 0);   // back left
-      kinematics (4, 0, 0, heightLeg, 0.5*KalmanAngleRoll, KalmanAnglePitch, 0, 1, 0);   // back right 
+      kinematics (1, 0, 0, heightLeg, 0, 0, 0, 0, 0);   // front right
+      kinematics (2, 0, 0, heightLeg, 0, 0, 0, 0, 0);   // front left
+      kinematics (3, 0, 0, heightLeg, 0, 0, 0, 0, 0);   // back left
+      kinematics (4, 0, 0, heightLeg, 0, 0, 0, 0, 0);   // back right 
     }
     for (int heightLeg = 280; heightLeg <= 380; heightLeg++){
-      delay(10);
-/*      gyro_signals();
-      RateRoll-=RateCalibrationRoll;
-      RatePitch-=RateCalibrationPitch;
-      RateYaw-=RateCalibrationYaw;
-      kalman_1d(KalmanAngleRoll, KalmanUncertaintyAngleRoll, RateRoll, AngleRoll);
-      KalmanAngleRoll=Kalman1DOutput[0]; 
-      KalmanUncertaintyAngleRoll=Kalman1DOutput[1];
-      kalman_1d(KalmanAnglePitch, KalmanUncertaintyAnglePitch, RatePitch, AnglePitch);
-      KalmanAnglePitch=Kalman1DOutput[0]; 
-      KalmanUncertaintyAnglePitch=Kalman1DOutput[1];  */
-      KalmanAngleRoll = 0;
-      KalmanAnglePitch = 0;
-      kinematics (1, 0, 0, heightLeg, 0.5*KalmanAngleRoll, KalmanAnglePitch, 0, 1, 0);   // front right
-      kinematics (2, 0, 0, heightLeg, 0.5*KalmanAngleRoll, KalmanAnglePitch, 0, 1, 0);   // front left
-      kinematics (3, 0, 0, heightLeg, 0.5*KalmanAngleRoll, KalmanAnglePitch, 0, 1, 0);   // back left
-      kinematics (4, 0, 0, heightLeg, 0.5*KalmanAngleRoll, KalmanAnglePitch, 0, 1, 0);   // back right 
+      kinematics (1, 0, 0, heightLeg, 0, 0, 0, 0, 0);   // front right
+      kinematics (2, 0, 0, heightLeg, 0, 0, 0, 0, 0);   // front left
+      kinematics (3, 0, 0, heightLeg, 0, 0, 0, 0, 0);   // back left
+      kinematics (4, 0, 0, heightLeg, 0, 0, 0, 0, 0);   // back right 
     } 
   }  
+  else if(input== -9){
+    for (float roll = 0; roll <= 20; roll = roll+0.5){
+      kinematics (1, 0, 0, 380, roll, 0, 0, 0, 0);   // front right
+      kinematics (2, 0, 0, 380, roll, 0, 0, 0, 0);   // front left
+      kinematics (3, 0, 0, 380, roll, 0, 0, 0, 0);   // back left
+      kinematics (4, 0, 0, 380, roll, 0, 0, 0, 0);   // back right 
+      //delay(500);
+    }
+    for (float roll = 20; roll >= -20; roll=roll-0.5){
+      kinematics (1, 0, 0, 380, roll, 0, 0, 0, 0);   // front right
+      kinematics (2, 0, 0, 380, roll, 0, 0, 0, 0);   // front left
+      kinematics (3, 0, 0, 380, roll, 0, 0, 0, 0);   // back left
+      kinematics (4, 0, 0, 380, roll, 0, 0, 0, 0);   // back right 
+      //delay(500);
+    }
+    for (float roll = -20; roll <= 0; roll=roll+0.5){
+      kinematics (1, 0, 0, 380, roll, 0, 0, 0, 0);   // front right
+      kinematics (2, 0, 0, 380, roll, 0, 0, 0, 0);   // front left
+      kinematics (3, 0, 0, 380, roll, 0, 0, 0, 0);   // back left
+      kinematics (4, 0, 0, 380, roll, 0, 0, 0, 0);   // back right 
+      //delay(500);
+    }/*
+    kinematics (1, 0, 0, 380, -10, 0, 0, 1, 0000000000000.1);   // front right
+    kinematics (2, 0, 0, 380, -10, 0, 0, 1, 0000000000000.1);   // front left
+    kinematics (3, 0, 0, 380, -10, 0, 0, 1, 0000000000000.1);   // back left
+    kinematics (4, 0, 0, 380, -10, 0, 0, 1, 0000000000000.1);   // back right 
+    delay(5000);
+
+    kinematics (1, 0, 0, 380, 10, 0, 0, 1, 1);   // front right
+    kinematics (2, 0, 0, 380, 10, 0, 0, 1, 1);   // front left
+    kinematics (3, 0, 0, 380, 10, 0, 0, 1, 1);   // back left
+    kinematics (4, 0, 0, 380, 10, 0, 0, 1, 1);   // back right 
+    delay(5000);
+
+    kinematics (1, 0, 0, 380, 0, 0, 0, 1, 10000000000000);   // front right
+    kinematics (2, 0, 0, 380, 0, 0, 0, 1, 10000000000000);   // front left
+    kinematics (3, 0, 0, 380, 0, 0, 0, 1, 10000000000000);   // back left
+    kinematics (4, 0, 0, 380, 0, 0, 0, 1, 10000000000000);   // back right */
+  }
   else if(input != 0){
     Serial.print("Running Kinematics with x: ");
     Serial.println(input);
@@ -315,15 +253,4 @@ void loop() {
   else{
     Serial.print("Skipping");
   }
-  //Gyro section:
-/*  gyro_signals();
-  RateRoll-=RateCalibrationRoll;
-  RatePitch-=RateCalibrationPitch;
-  RateYaw-=RateCalibrationYaw;
-  kalman_1d(KalmanAngleRoll, KalmanUncertaintyAngleRoll, RateRoll, AngleRoll);
-  KalmanAngleRoll=Kalman1DOutput[0]; 
-  KalmanUncertaintyAngleRoll=Kalman1DOutput[1];
-  kalman_1d(KalmanAnglePitch, KalmanUncertaintyAnglePitch, RatePitch, AnglePitch);
-  KalmanAnglePitch=Kalman1DOutput[0]; 
-  KalmanUncertaintyAnglePitch=Kalman1DOutput[1];  */
 }
