@@ -451,14 +451,14 @@ void danceMode(int dance1, int dance2, int dance3, int dance4){
     if(dance3Flag == 1){
       dance3Delay = 0;
       dance3Pos = dance3Pos + 0.75;
-      if(dance3Pos >= 6){
+      if(dance3Pos >= 5.25){
         dance3Flag = 2;
       }
     }
     else if(dance3Flag == 2){
       dance3Delay = 0;
       dance3Pos = dance3Pos - 0.75;
-      if(dance3Pos <= -6){
+      if(dance3Pos <= -5.25){
         dance3Flag = 1;
       }
     }

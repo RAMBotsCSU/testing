@@ -106,7 +106,7 @@ void driveJoints(int joint, float pos) {
   }
   else if (joint == 60) {
       pos = constrain(pos, -2.5,2.5);
-      odrive6.SetPosition(0, pos - 0.69);    // knee - left back
+      odrive6.SetPosition(0, pos - 1.05);    // knee - left back
   }
   
   // shoulder
