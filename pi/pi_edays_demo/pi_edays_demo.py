@@ -100,10 +100,10 @@ error.set_volume(0.25)
 startMLSound.set_volume(0.4)
 stopMLSound.set_volume(0.4)
 
-sheep1.set_volume(0.75)
-sheep2.set_volume(0.75)
-sheep3.set_volume(0.75)
-sheep4.set_volume(0.75)
+sheep1.set_volume(0.8)
+sheep2.set_volume(0.8)
+sheep3.set_volume(0.8)
+sheep4.set_volume(0.8)
 sheep5.set_volume(0.5)
 
 walkMode.set_volume(0.5)
@@ -116,12 +116,12 @@ gyroMode.set_volume(0.5)
 gyroAlternate.set_volume(0.5)
 machineLearningMode.set_volume(0.5)
 machineLearningAlternate.set_volume(0.5)
-danceMode.set_volume(0.5)
-danceAlternate.set_volume(0.5)
+danceMode.set_volume(0.45)
+danceAlternate.set_volume(0.45)
 
 song1.set_volume(0.25) #mayahe
 song2.set_volume(0.2) #Who let the dogs out
-song3.set_volume(0.25) #crazy la pint
+song3.set_volume(0.2) #crazy la pint
 song4.set_volume(0.25) #party rock
 
 #sound libraries
@@ -501,6 +501,7 @@ class MyController(Controller):
         self.miscButtonArr[3] = 0
         
     def on_R3_press(self):
+        stopSounds()
         self.miscButtonArr[4] = 1
         
     def on_R3_release(self):
