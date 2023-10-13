@@ -3,20 +3,76 @@
   //* to Odrives all utilizing serial bus                                    *
   //**************************************************************************
 
-float offSet20 = -0.3;      //ODrive 2, axis 0     // knee - right front
-float offSet30 = 0.6;      //ODrive 3, axis 0     // knee - right rear
-float offSet50 = 0.15;      //ODrive 5, axis 0     // knee - left front
-float offSet60 = 0.05;      //ODrive 6, axis 0     // knee - left rear
 
-float offSet21 = 0;      //ODrive 2, axis 1     // shoulder - right front
-float offSet31 = 0.35;      //ODrive 3, axis 1     // shoulder - right rear
-float offSet51 = 0.55;      //ODrive 5, axis 0     // shoulder - left front
-float offSet61 =  0.05;      //ODrive 6, axis 1     // shoulder - left rear
+float offSet20 = -0.6;      //ODrive 2, axis 0     // knee - right front
+float offSet30 = 0.8;       //ODrive 3, axis 0     // knee - right rear // Positive Increment = knee back
+float offSet50 = 1.22;      //ODrive 5, axis 0     // knee - left front
+float offSet60 = -0.5;      //ODrive 6, axis 0     // knee - left rear // Positive Increment = knee back
 
-float offSet10 = 0.27;      //ODrive 1, axis 0     // hips - right front
-float offSet11 = 0.1;      //ODrive 1, axis 1     // hips - right back
-float offSet40 = 0.07;      //ODrive 4, axis 0     // hips - left front
-float offSet41 = 0.35;      //ODrive 4, axis 1     // hips - left back
+// float offSet21 = -0.4;      //ODrive 2, axis 1     // shoulder - right front // Positive Increment = shoulder back
+// float offSet31 = 0.2;       //ODrive 3, axis 1     // shoulder - right rear
+// float offSet51 = 0.0;       //ODrive 5, axis 0     // shoulder - left front // Positive Increment = shoulder back
+// float offSet61 =  -0.2;     //ODrive 6, axis 1     // shoulder - left rear // Positive increment = shoulder forward
+
+float offSet10 = -0.5;      //ODrive 1, axis 0     // hips - right front
+float offSet11 = 0.45;      //ODrive 1, axis 1     // hips - right back
+float offSet40 = 0.45;      //ODrive 4, axis 0     // hips - left front
+float offSet41 = 0.15;      //ODrive 4, axis 1     // hips - left back
+
+// RESULTS: 
+// Right Front : shoulder lil back, knee forward
+// Right Back:   shoulder back lil
+// Left Front :  shoulder back
+// Left Back:    shoulder forward, knee back
+
+// float offSet21 = -0.5;      //ODrive 2, axis 1     // shoulder - right front // Positive Increment = shoulder back
+// float offSet31 = 0.1;       //ODrive 3, axis 1     // shoulder - right rear
+// float offSet51 = 0.2;       //ODrive 5, axis 0     // shoulder - left front // Positive Increment = shoulder back
+// float offSet61 =  0.0;     //ODrive 6, axis 1     // shoulder - left rear // Positive increment = shoulder forward
+
+// RESULTS: 
+// Right Front : shoulder good
+// Right Back:   shoulder forward
+// Left Front :  shoulder back lil
+// Left Back:    shoulder forward lot
+
+// float offSet21 = -0.5;      //ODrive 2, axis 1     // shoulder - right front // Positive Increment = shoulder back
+// float offSet31 = 0.18;       //ODrive 3, axis 1     // shoulder - right rear // Positive increment = shoulder forward
+// float offSet51 = 0.23;       //ODrive 5, axis 0     // shoulder - left front // Positive Increment = shoulder back
+// float offSet61 =  0.1;     //ODrive 6, axis 1     // shoulder - left rear // Positive increment = shoulder forward
+
+// RESULTS: 
+// Right Front : shoulder good
+// Right Back:   shoulder forward lot
+// Left Front :  shoulder back lil
+// Left Back:    shoulder forward lot
+
+// float offSet21 = -0.5;      //ODrive 2, axis 1     // shoulder - right front // Positive Increment = shoulder back
+// float offSet31 = 0.3;       //ODrive 3, axis 1     // shoulder - right rear // Positive increment = shoulder forward
+// float offSet51 = 0.3;       //ODrive 5, axis 0     // shoulder - left front // Positive Increment = shoulder back
+// float offSet61 =  0.4;     //ODrive 6, axis 1     // shoulder - left rear // Positive increment = shoulder forward
+
+// RESULTS: 
+// Right Front : shoulder good
+// Right Back:   shoulder back lil
+// Left Front :  shoulder back lil
+// Left Back:    shoulder forward lot
+
+// float offSet21 = -0.5;      //ODrive 2, axis 1     // shoulder - right front // Positive Increment = shoulder back
+// float offSet31 = 0.2;       //ODrive 3, axis 1     // shoulder - right rear // Positive increment = shoulder forward
+// float offSet51 = 0.4;       //ODrive 5, axis 0     // shoulder - left front // Positive Increment = shoulder back
+// float offSet61 =  -0.4;     //ODrive 6, axis 1     // shoulder - left rear // Positive increment = shoulder back
+
+// RESULTS: 
+// Right Front : shoulder good
+// Right Back:   shoulder good
+// Left Front :  shoulder back lil
+// Left Back:    shoulder forward lot
+
+float offSet21 = -0.5;      //ODrive 2, axis 1     // shoulder - right front // Positive Increment = shoulder back
+float offSet31 = 0.2;       //ODrive 3, axis 1     // shoulder - right rear // Positive increment = shoulder forward
+float offSet51 = 0.5;       //ODrive 5, axis 0     // shoulder - left front // Positive Increment = shoulder back
+float offSet61 =  -0.7;     //ODrive 6, axis 1     // shoulder - left rear // Positive increment = shoulder back
 
 void modifyGains() {  // this function turns up the gains when it is executed (menu option 4 via the remote)
   float posGainKnee = 20.0;
@@ -94,7 +150,7 @@ void driveJoints(int joint, float pos) {
   
   if (joint == 20) {
       pos = constrain(pos, -2.5,2.5);
-      odrive2.SetPosition(0, pos - 0.60);    // knee - right front
+      odrive2.SetPosition(0, pos + offSet20);    // knee - right front
   }
   else if (joint == 30) {
       pos = constrain(pos, -2.5,2.5);
@@ -102,18 +158,18 @@ void driveJoints(int joint, float pos) {
   }
   else if (joint == 50) {
       pos = constrain(pos, -2.5,2.5);
-      odrive5.SetPosition(0, (pos*-1) + 1.22);    // knee - left front
+      odrive5.SetPosition(0, (pos*-1) + offSet50);    // knee - left front
   }
   else if (joint == 60) {
       pos = constrain(pos, -2.5,2.5);
-      odrive6.SetPosition(0, pos - 1.05);    // knee - left back
+      odrive6.SetPosition(0, pos + offSet60);    // knee - left back
   }
   
   // shoulder
   
   else if (joint == 21) {
       pos = constrain(pos, -2.5,2.5);
-      odrive2.SetPosition(1, (pos*-1) - 0.36);    // shoulder - right front
+      odrive2.SetPosition(1, (pos*-1) + offSet21);    // shoulder - right front
   }        
   else if (joint == 31) {
       pos = constrain(pos, -2.5,2.5);
@@ -121,31 +177,31 @@ void driveJoints(int joint, float pos) {
   }        
   else if (joint == 51) {
       pos = constrain(pos, -2.5,2.5);
-      odrive5.SetPosition(1, pos - 0.17);    // shoulder - left front
+      odrive5.SetPosition(1, pos + offSet51);    // shoulder - left front
   }        
   else if (joint == 61) {
       pos = constrain(pos, -2.5,2.5);
-      odrive6.SetPosition(1, (pos*-1) - 0.495);    // shoulder - left rear      
+      odrive6.SetPosition(1, (pos*-1) + offSet61);    // shoulder - left rear      
   }
   
   // hips
   else if (joint == 10) {
       pos = constrain(pos, -2.5,2.5);
       //delay(5000);
-      odrive1.SetPosition(0, pos-0.5); //----------minus: hip out    pos: hip in
-      //odrive1.SetPosition(0, pos+offSet10);    // hips - right front 
+      // odrive1.SetPosition(0, pos-0.5); //----------minus: hip out    pos: hip in
+      odrive1.SetPosition(0, pos + offSet10);    // hips - right front 
       delay(5);
   }
   else if (joint == 11) {
       pos = constrain(pos, -2.5,2.5);
-      odrive1.SetPosition(1, (pos*-1)+0.45);    // hips - right rear
+      odrive1.SetPosition(1, (pos*-1) + offSet11);    // hips - right rear
   }
   else if (joint == 40) {
       pos = constrain(pos, -2.5,2.5);
-      odrive4.SetPosition(0, pos+0.45);    // hips - knee - left front
+      odrive4.SetPosition(0, pos + offSet40);    // hips - knee - left front
   }
   else if (joint == 41) {
       pos = constrain(pos, -2.5,2.5);
-      odrive4.SetPosition(1, (pos*-1)+0.15);    // hips - left rear
+      odrive4.SetPosition(1, (pos*-1) + offSet41);    // hips - left rear
   }
 }
