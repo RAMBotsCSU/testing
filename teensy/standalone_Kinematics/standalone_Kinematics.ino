@@ -137,18 +137,18 @@ void loop() {
     Serial.println("Testing Range");
     for (int i = 100; i<=400; i++){
       //delay(10);
-      kinematics(1,0,0,i,0,0,0,0,0);
+      kinematics(3,0,0,i,0,0,0,0,0);
     }
     delay(500);
     for (int i = 400; i>=100; i--){
       //delay(10);
-      kinematics(1,0,0,i,0,0,0,0,0);
+      kinematics(3,0,0,i,0,0,0,0,0);
     }
     Serial.println("Range done");
   }
   else if(input== -3){
     for(int i = 0; i<3; i++){
-      triangleWalk(1, -200,0, 350, 240, 100);
+      triangleWalk(3, -200,0, 350, 240, 100);
     }
   }
   else if(input== -4){
