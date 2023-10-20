@@ -167,18 +167,20 @@ int lastVal = 0;
 int tempVal = -1;
 
 int stage = 0;
+int gainFlag = 0;
 
 void loop() {
-  Serial.println("\nHello! Please enter height (-1 , -2 all leg triangle walk, -3 single leg triangle walk,\n -4 xy triangle walk, -5 all leg triangle walk, -6 leg 1 range, -7 pre-programed motion)");
+  Serial.println("\nHello! Please enter height (-1 , -2 all leg walk, -3 single leg walk, -4 Modify Offsets, -5 Print Offsets)");
   while (Serial.available() == 0) {}
   input = Serial.parseInt();
 
 
-  if(input == -1){
+  if(gainFlag == 0){
     Serial2 << "w axis" << 0 << ".motor.config.direction " << 1 << '\n';
     modifyGains();
     //applyOffsets2();
     Serial.println("Gains Modified");
+    gainFlag = 1;
   }
   else if(input == -2){ // All legs triangle walk
     triangleWalk(1, -200,0, 350, 240, 100); //fr
@@ -251,6 +253,59 @@ void loop() {
     }
     editOffset(legInput, jointInput, newOffset);
     triangleWalk(legToRun, -200,0, 350, 240, 100);
+  }
+  else if(input== -5){
+    Serial.println("Printing Offsets:");
+    Serial.println("");
+
+    Serial.print("float offSet10 = ");
+    Serial.print(offSet10);
+    Serial.println(";");
+
+    Serial.print("float offSet11 = ");
+    Serial.print(offSet11);
+    Serial.println(";");
+
+    Serial.print("float offSet40 = ");
+    Serial.print(offSet40);
+    Serial.println(";");
+
+    Serial.print("float offSet41 = ");
+    Serial.print(offSet41);
+    Serial.println(";");
+
+    Serial.print("float offSet21 = ");
+    Serial.print(offSet21);
+    Serial.println(";");
+
+    Serial.print("float offSet31 = ");
+    Serial.print(offSet31);
+    Serial.println(";");
+
+    Serial.print("float offSet51 = ");
+    Serial.print(offSet51);
+    Serial.println(";");
+
+    Serial.print("float offSet61 = ");
+    Serial.print(offSet61);
+    Serial.println(";");
+
+    Serial.print("float offSet20 = ");
+    Serial.print(offSet20);
+    Serial.println(";");
+
+    Serial.print("float offSet30 = ");
+    Serial.print(offSet30);
+    Serial.println(";");
+
+    Serial.print("float offSet50 = ");
+    Serial.print(offSet50);
+    Serial.println(";");
+
+    Serial.print("float offSet60 = ");
+    Serial.print(offSet60);
+    Serial.println(";");
+
   }
   else if(input != 0){
     Serial.print("Running Kinematics with x: ");
