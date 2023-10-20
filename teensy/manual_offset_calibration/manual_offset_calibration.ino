@@ -227,14 +227,24 @@ void loop() {
   else if(input== -3){
     Serial.println("Modify Offsets.");
     String legInput = getInput("Select a leg (LF, LB, RF, RB): ");
-    String jointInput = getInput("Select a joint (hip, shoulder, knee): ");
-    String directionInput = getInput("Direction to offset (F - forward or B - backward): ");
-    float offsetDelta = getFloatInput("Enter offset delta: ");
-    
-    editOffset(legInput, jointInput, directionInput, offsetDelta);
+    String jointInput  = "";
+    while (jointInput != "exit") {
+      Serial.print("Modifyig ");
+      Serial.print(legInput);
+      Serial.println(" leg, enter exit to leave.");
 
-    int legToRun = selectLeg(legInput);
-    triangleWalk(legToRun, -200,0, 350, 240, 100);
+      jointInput = getInput("Select a joint (hip, shoulder, knee): ");
+      String directionInput = getInput("Direction to offset (F - forward or B - backward): ");
+      float offsetDelta = getFloatInput("Enter offset delta: ");
+      
+      editOffset(legInput, jointInput, directionInput, offsetDelta);
+
+      int legToRun = selectLeg(legInput);
+      Serial.println("Applying Offset");
+      triangleWalk(legToRun, -200,0, 350, 240, 100);
+    }
+    
+    
   }
   else if(input== -4){
     String hip_end = ";  // HIP";
