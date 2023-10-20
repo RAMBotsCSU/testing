@@ -170,11 +170,7 @@ int stage = 0;
 int gainFlag = 0;
 
 void loop() {
-  Serial.println("\nHello! Please enter height (-1 , -2 all leg walk, -3 single leg walk, -4 Modify Offsets, -5 Print Offsets)");
-  while (Serial.available() == 0) {}
-  input = Serial.parseInt();
-
-
+  Serial.println("\nHello! (-1 , -2 all leg walk, -3 single leg walk, -4 Modify Offsets, -5 Print Offsets)");
   if(gainFlag == 0){
     Serial2 << "w axis" << 0 << ".motor.config.direction " << 1 << '\n';
     modifyGains();
@@ -182,7 +178,11 @@ void loop() {
     Serial.println("Gains Modified");
     gainFlag = 1;
   }
-  else if(input == -2){ // All legs triangle walk
+  while (Serial.available() == 0) {}
+  input = Serial.parseInt();
+
+
+  if(input == -2){ // All legs triangle walk
     triangleWalk(1, -200,0, 350, 240, 100); //fr
     triangleWalk(4, -200,0, 350, 240, 100); //fl?
     triangleWalk(2, -200,0, 350, 240, 100); //bl?
