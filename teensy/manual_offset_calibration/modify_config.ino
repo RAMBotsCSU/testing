@@ -53,54 +53,90 @@
 //   }
 // }
 
-void editOffset(String leg, String joint, float newOffset) {
-
+void editOffset(String leg, String joint, String direction, float offsetDelta) {
+  int direction_constant = 1;
   if (leg == "LF") {
     Serial.println("Left Front leg selected.");
     if (joint == "hip") {
-      offSet40 = newOffset;
+      if (direction == "F") {
+        direction_constant = -1;
+      }
+      offSet40 = offSet40 + (offsetDelta * direction_constant);
     }
     else if (joint == "shoulder") {
-      offSet51 = newOffset;
+      if (direction == "F") {
+        direction_constant = -1;
+      }
+      offSet51 = offSet51 + (offsetDelta * direction_constant);
     }
     else if (joint == "knee") {
-      offSet50 = newOffset;
+      if (direction == "B") {
+        direction_constant = -1;
+      }
+      offSet50 = offSet50 + (offsetDelta * direction_constant);
     }
   } 
   else if (leg == "LB") {
     Serial.print("Left Back leg selected.");
     if (joint == "hip") {
-      offSet41 = newOffset;
+      if (direction == "F") {
+        direction_constant = -1;
+      }
+      offSet41 = offSet41 + (offsetDelta * direction_constant);
     }
     else if (joint == "shoulder") {
-      offSet61 = newOffset;
+      if (direction == "F") {
+        direction_constant = -1;
+      }
+      offSet61 = offSet61 + (offsetDelta * direction_constant);
     }
     else if (joint == "knee") {
-      offSet60 = newOffset;
+      if (direction == "B") {
+        direction_constant = -1;
+      }
+      offSet60 = offSet60 + (offsetDelta * direction_constant);
     }
   }
   else if (leg == "RF") {
     Serial.print("Right Front leg selected.");
     if (joint == "hip") {
-      offSet10 = newOffset;
+      if (direction == "B") {
+        direction_constant = -1;
+      }
+      offSet10 = offSet10 + (offsetDelta * direction_constant);
     }
     else if (joint == "shoulder") {
-      offSet21 = newOffset;
+      if (direction == "B") {
+        direction_constant = -1;
+      }
+      offSet21 = offSet21 + (offsetDelta * direction_constant);
     }
     else if (joint == "knee") {
-      offSet20 = newOffset;
+      if (direction == "F") {
+        direction_constant = -1;
+      }
+      offSet20 = offSet20 + (offsetDelta * direction_constant);
     }
   }
   else if (leg == "RB") {
     Serial.print("Right Back leg selected.");
     if (joint == "hip") {
-      offSet11 = newOffset;
+      if (direction == "B") {
+        direction_constant = -1;
+      }
+      offSet11 = offSet11 + (offsetDelta * direction_constant);
     }
     else if (joint == "shoulder") {
-      offSet31 = newOffset;
+      if (direction == "B") {
+        direction_constant = -1;
+      }
+      offSet31 = offSet31 + (offsetDelta * direction_constant);
     }
     else if (joint == "knee") {
-      offSet30 = newOffset;
+      if (direction == "F") {
+        direction_constant = -1;
+      }
+      offSet30 = offSet30 + (offsetDelta * direction_constant);
     }
   }
   else {

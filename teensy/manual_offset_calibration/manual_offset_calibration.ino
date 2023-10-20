@@ -118,6 +118,8 @@ String getInput (String msg) {
 
   String inputVal = Serial.readString(); // Read the user input as a string
 
+  Serial.println(inputVal);
+
   return inputVal;
 }
 
@@ -151,6 +153,30 @@ float getFloatInput(String msg) {
   return inputVal.toFloat(); // Convert the string to a float and return it
 }
 
+int selectLeg(String legCode) {
+  int legToRun = 0;
+  if (legCode == "LF") {
+      Serial.println("Left Front leg selected.");
+      legToRun = 2;
+  }
+  else if (legCode == "LB") {
+    Serial.print("Left Back leg selected.");
+    legToRun = 3;
+  }
+  else if (legCode == "RF") {
+    Serial.print("Right Front leg selected.");
+    legToRun = 1;
+  }
+  else if (legCode == "RB") {
+    Serial.print("Right Back leg selected.");
+    legToRun = 4;
+  }
+  else {
+    Serial.println("Invalid leg identifier. Use (LF, LB, RF, RB). Process cancelled.");
+  }
+  return legToRun;
+}
+
 
 void setup() {
   Serial.begin(9600);
@@ -170,7 +196,7 @@ int stage = 0;
 int gainFlag = 0;
 
 void loop() {
-  Serial.println("\nHello! (-1 , -2 all leg walk, -3 single leg walk, -4 Modify Offsets, -5 Print Offsets)");
+  Serial.println("\nManual Configuration Started. (-1 all legs walk, -2 single leg walk, -3 Modify Offset, -4 Print Offsets)\n");
   if(gainFlag == 0){
     Serial2 << "w axis" << 0 << ".motor.config.direction " << 1 << '\n';
     modifyGains();
@@ -182,129 +208,101 @@ void loop() {
   input = Serial.parseInt();
 
 
-  if(input == -2){ // All legs triangle walk
+  if(input == -1){ // All legs triangle walk
+    Serial.println("All legs triangle walk.");
     triangleWalk(1, -200,0, 350, 240, 100); //fr
     triangleWalk(4, -200,0, 350, 240, 100); //fl?
     triangleWalk(2, -200,0, 350, 240, 100); //bl?
     triangleWalk(3, -200,0, 350, 240, 100); //br
   }
-  else if(input== -3){
+  else if(input== -2){
 
-    Serial.println("Single Leg triangle walk.");
+    Serial.println("Single leg triangle walk.");
     String receivedString = getInput("Select a leg (LF, LB, RF, RB): ");
     
-    int legToRun = 0;
-    // If a newline character is received, it indicates the end of the string
-    Serial.println(receivedString);
+    int legToRun = selectLeg(receivedString);
 
-    if (receivedString == "LF") {
-      Serial.println("Left Front leg selected.");
-      legToRun = 2;
-    }
-    else if (receivedString == "LB") {
-      Serial.print("Left Back leg selected.");
-      legToRun = 3;
-    }
-    else if (receivedString == "RF") {
-      Serial.print("Right Front leg selected.");
-      legToRun = 1;
-    }
-    else if (receivedString == "RB") {
-      Serial.print("Right Back leg selected.");
-      legToRun = 4;
-    }
-    else {
-      Serial.println("Invalid leg identifier. Use (LF, LB, RF, RB). Process cancelled.");
-    }
-
-    String directionInput = getInput("Direction to walk (F - forward or R - reverse): ");
-
-    if (directionInput == "R") {
-      triangleWalkReverse(legToRun, -200,0, 350, 240, 100);
-    } else if (directionInput == "F") {
-      triangleWalk(legToRun, -200,0, 350, 240, 100);
-    }
-
+    triangleWalk(legToRun, -200,0, 350, 240, 100);
   }
-  else if(input== -4){
+  else if(input== -3){
     Serial.println("Modify Offsets.");
     String legInput = getInput("Select a leg (LF, LB, RF, RB): ");
     String jointInput = getInput("Select a joint (hip, shoulder, knee): ");
-    float newOffset = getFloatInput("Enter a new offset: ");
-    int legToRun = 0;
-    if (legInput == "LF") {
-      Serial.println("Left Front leg selected.");
-      legToRun = 2;
-    }
-    else if (legInput == "LB") {
-      Serial.print("Left Back leg selected.");
-      legToRun = 3;
-    }
-    else if (legInput == "RF") {
-      Serial.print("Right Front leg selected.");
-      legToRun = 1;
-    }
-    else if (legInput == "RB") {
-      Serial.print("Right Back leg selected.");
-      legToRun = 4;
-    }
-    else {
-      Serial.println("Invalid leg identifier. Use (LF, LB, RF, RB). Process cancelled.");
-    }
-    editOffset(legInput, jointInput, newOffset);
+    String directionInput = getInput("Direction to offset (F - forward or B - backward): ");
+    float offsetDelta = getFloatInput("Enter offset delta: ");
+    
+    editOffset(legInput, jointInput, directionInput, offsetDelta);
+
+    int legToRun = selectLeg(legInput);
     triangleWalk(legToRun, -200,0, 350, 240, 100);
   }
-  else if(input== -5){
+  else if(input== -4){
+    String hip_end = ";  // HIP";
+    String shoulder_end = ";  // SHOULDER";
+    String knee_end = ";  // KNEEE";
+
     Serial.println("Printing Offsets:");
     Serial.println("");
 
-    Serial.print("float offSet10 = ");
-    Serial.print(offSet10);
-    Serial.println(";");
-
-    Serial.print("float offSet11 = ");
-    Serial.print(offSet11);
-    Serial.println(";");
-
+    Serial.println("// LEFT FRONT LEG");
     Serial.print("float offSet40 = ");
     Serial.print(offSet40);
-    Serial.println(";");
-
-    Serial.print("float offSet41 = ");
-    Serial.print(offSet41);
-    Serial.println(";");
-
-    Serial.print("float offSet21 = ");
-    Serial.print(offSet21);
-    Serial.println(";");
-
-    Serial.print("float offSet31 = ");
-    Serial.print(offSet31);
-    Serial.println(";");
+    Serial.println(hip_end);
 
     Serial.print("float offSet51 = ");
     Serial.print(offSet51);
-    Serial.println(";");
-
-    Serial.print("float offSet61 = ");
-    Serial.print(offSet61);
-    Serial.println(";");
-
-    Serial.print("float offSet20 = ");
-    Serial.print(offSet20);
-    Serial.println(";");
-
-    Serial.print("float offSet30 = ");
-    Serial.print(offSet30);
-    Serial.println(";");
+    Serial.println(shoulder_end);
 
     Serial.print("float offSet50 = ");
     Serial.print(offSet50);
-    Serial.println(";");
+    Serial.println(knee_end);
+
+
+    Serial.println("");
+
+    Serial.println("// LEFT BACK LEG");
+    Serial.print("float offSet41 = ");
+    Serial.print(offSet41);
+    Serial.println(hip_end);
+
+    Serial.print("float offSet61 = ");
+    Serial.print(offSet61);
+    Serial.println(shoulder_end);
 
     Serial.print("float offSet60 = ");
     Serial.print(offSet60);
-    Serial.println(";");
+    Serial.println(knee_end);
+
+
+    Serial.println("");
+
+    Serial.println("// RIGHT FRONT LEG");
+    Serial.print("float offSet10 = ");
+    Serial.print(offSet10);
+    Serial.println(hip_end);
+
+    Serial.print("float offSet21 = ");
+    Serial.print(offSet21);
+    Serial.println(shoulder_end);
+
+    Serial.print("float offSet20 = ");
+    Serial.print(offSet20);
+    Serial.println(knee_end);
+
+    Serial.println("");
+
+    Serial.println("// RIGHT BACK LEG");
+    Serial.print("float offSet11 = ");
+    Serial.print(offSet11);
+    Serial.println(hip_end);
+
+    Serial.print("float offSet31 = ");
+    Serial.print(offSet31);
+    Serial.println(shoulder_end);
+
+    Serial.print("float offSet30 = ");
+    Serial.print(offSet30);
+    Serial.println(knee_end);
 
   }
   else if(input != 0){
