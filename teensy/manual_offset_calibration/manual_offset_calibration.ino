@@ -123,23 +123,6 @@ String getInput (String msg) {
   return inputVal;
 }
 
-// String getInput(String msg) {
-//   Serial.print(msg);
-//   String inputVal = "";
-
-//   while (true) {
-//     if (Serial.available() > 0) {
-//       char c = Serial.read();
-//       if (c == '\n' || c == '\r') {
-//         break; // Exit the loop when a newline character is received
-//       } else {
-//         inputVal += c; // Add the character to the input string
-//       }
-//     }
-//   }
-
-//   return inputVal;
-// }
 
 float getFloatInput(String msg) {
   Serial.print(msg);
@@ -149,6 +132,8 @@ float getFloatInput(String msg) {
   }
 
   String inputVal = Serial.readString(); // Read the user input as a string
+
+  Serial.println(inputVal);
 
   return inputVal.toFloat(); // Convert the string to a float and return it
 }
@@ -249,7 +234,7 @@ void loop() {
   else if(input== -4){
     String hip_end = ";  // HIP";
     String shoulder_end = ";  // SHOULDER";
-    String knee_end = ";  // KNEEE";
+    String knee_end = ";  // KNEE";
 
     Serial.println("Printing Offsets:");
     Serial.println("");
