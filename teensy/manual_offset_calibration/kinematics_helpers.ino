@@ -52,6 +52,21 @@ void triangleWalk(int leg, float xDis, float yDis, float tallLeg, float shortLeg
   transitionKinematics(leg, xDis, 0, yDis, 0, tallLeg, tallLeg);
   delay(stepDelay);
 }
+
+void triangleWalkReverse(int leg, float xDis, float yDis, float tallLeg, float shortLeg, int stepDelay){
+  //forward, we go triangleupforward,down,back
+  //kinematics(leg,walkMinH,walkInY,walkMaxH,0,0,0,0,0);
+  //  Serial.println("Up and out");
+  transitionKinematics(leg, 0, xDis, 0, yDis, tallLeg, tallLeg);
+  delay(stepDelay);
+  
+  //  Serial.println("Down");
+  transitionKinematics(leg, xDis, xDis, yDis, yDis, tallLeg, shortLeg);
+  delay(stepDelay);
+  //  Serial.println("In");
+  transitionKinematics(leg, xDis, 0, yDis, 0, shortLeg, tallLeg);  
+  delay(stepDelay);
+}
 //Old function for triangular walking on leg 1 (depricated)
 //Takes: dir (1: forward, -1: back), longLegLength, shortLegLength,
 //XAwayFromBody, XIntoBody, YOffset, delay

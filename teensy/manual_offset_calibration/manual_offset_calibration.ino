@@ -112,7 +112,7 @@ void printVals(ODriveArduino odrive, int x, int y, int z){
 String getInput (String msg) {
   Serial.print(msg);
 
-  while (!Serial.available()) {
+  while (Serial.available() == 0) {
     // Wait for user input
   }
 
@@ -121,10 +121,28 @@ String getInput (String msg) {
   return inputVal;
 }
 
+// String getInput(String msg) {
+//   Serial.print(msg);
+//   String inputVal = "";
+
+//   while (true) {
+//     if (Serial.available() > 0) {
+//       char c = Serial.read();
+//       if (c == '\n' || c == '\r') {
+//         break; // Exit the loop when a newline character is received
+//       } else {
+//         inputVal += c; // Add the character to the input string
+//       }
+//     }
+//   }
+
+//   return inputVal;
+// }
+
 float getFloatInput(String msg) {
   Serial.print(msg);
 
-  while (!Serial.available()) {
+  while (Serial.available() == 0) {
     // Wait for user input
   }
 
@@ -175,15 +193,15 @@ void loop() {
     
     int legToRun = 0;
     // If a newline character is received, it indicates the end of the string
-    Serial.print("Leg Selected: ");
+    Serial.println(receivedString);
 
     if (receivedString == "LF") {
       Serial.println("Left Front leg selected.");
-      legToRun = 4;
+      legToRun = 2;
     }
     else if (receivedString == "LB") {
       Serial.print("Left Back leg selected.");
-      legToRun = 2;
+      legToRun = 3;
     }
     else if (receivedString == "RF") {
       Serial.print("Right Front leg selected.");
@@ -191,7 +209,7 @@ void loop() {
     }
     else if (receivedString == "RB") {
       Serial.print("Right Back leg selected.");
-      legToRun = 3;
+      legToRun = 4;
     }
     else {
       Serial.println("Invalid leg identifier. Use (LF, LB, RF, RB). Process cancelled.");
@@ -200,7 +218,7 @@ void loop() {
     String directionInput = getInput("Direction to walk (F - forward or R - reverse): ");
 
     if (directionInput == "R") {
-      triangleWalk(legToRun, 200,0, -350, 240, 100);
+      triangleWalkReverse(legToRun, -200,0, 350, 240, 100);
     } else if (directionInput == "F") {
       triangleWalk(legToRun, -200,0, 350, 240, 100);
     }
@@ -211,7 +229,28 @@ void loop() {
     String legInput = getInput("Select a leg (LF, LB, RF, RB): ");
     String jointInput = getInput("Select a joint (hip, shoulder, knee): ");
     float newOffset = getFloatInput("Enter a new offset: ");
+    int legToRun = 0;
+    if (legInput == "LF") {
+      Serial.println("Left Front leg selected.");
+      legToRun = 2;
+    }
+    else if (legInput == "LB") {
+      Serial.print("Left Back leg selected.");
+      legToRun = 3;
+    }
+    else if (legInput == "RF") {
+      Serial.print("Right Front leg selected.");
+      legToRun = 1;
+    }
+    else if (legInput == "RB") {
+      Serial.print("Right Back leg selected.");
+      legToRun = 4;
+    }
+    else {
+      Serial.println("Invalid leg identifier. Use (LF, LB, RF, RB). Process cancelled.");
+    }
     editOffset(legInput, jointInput, newOffset);
+    triangleWalk(legToRun, -200,0, 350, 240, 100);
   }
   else if(input != 0){
     Serial.print("Running Kinematics with x: ");

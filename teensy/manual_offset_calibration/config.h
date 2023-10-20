@@ -1,9 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-float offSet10 = -0.489;      //ODrive 1, axis 0     // hips - right front / Positive increment = up
+float offSet10 = -0.55;      //ODrive 1, axis 0     // hips - right front / Positive increment = up
 float offSet11 = 0.496;      //ODrive 1, axis 1     // hips - right back // Positive increment = up
-float offSet40 = 0.47;      //ODrive 4, axis 0     // hips - left front // Positive increment = down
+float offSet40 = 0.44;      //ODrive 4, axis 0     // hips - left front // Positive increment = down
 float offSet41 = 0.11;      //ODrive 4, axis 1     // hips - left back. // Positive increment = down
 
 float offSet21 = -0.2;      //ODrive 2, axis 1     // shoulder - right front // Positive Increment = shoulder forward
