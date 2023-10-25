@@ -1,7 +1,7 @@
 #TODO:
 #implement teensy_serial_main_demo [MAKE SURE TO SUBTRACT 1 FROM MOVEMENT ARR VALUES]
 #add trigger lock and roll
-#add bountds to mode 0=walk, 1=pushups, 2=left side right side control, 3=machine learning????, 4=gyro demo
+#add bounds to mode 0=walk, 1=pushups, 2=left side right side control, 3=machine learning????, 4=gyro demo
 
 from pyPS4Controller.controller import Controller
 import serial
