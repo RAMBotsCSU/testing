@@ -300,6 +300,10 @@ void loop() {
     Serial.println(knee_end);
 
   }
+  else if (input== -5) {
+    float tick = getFloatInput("Select encoder tick:");
+    driveJoints (60, tick);
+  }
   else if(input != 0){
     Serial.print("Running Kinematics with x: ");
     Serial.println(input);
