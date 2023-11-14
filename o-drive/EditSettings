@@ -1,0 +1,13 @@
+// Make both motors idle
+dev0.axis0.requested_state = AXIS_STATE_IDLE
+dev0.axis1.requested_state = AXIS_STATE_IDLE
+
+dev0.axis0.motor.config.current_lim_margin = 9.0
+dev0.axis1.motor.config.current_lim_margin = 9.0
+
+dev0.axis0.motor.config.current_lim = 22.0
+dev0.axis1.motor.config.current_lim = 22.0
+
+// Edit more settings here
+
+dev0.save_configuration()
