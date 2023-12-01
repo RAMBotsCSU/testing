@@ -20,7 +20,7 @@ output_file = 'lidar_data.csv'
 
 # Setup the RPLidar
 PORT_NAME = '/dev/ttyUSB0'
-lidar = RPLidar(None, PORT_NAME, timeout=3)
+lidar = RPLidar(None, PORT_NAME, timeout=5)
  
 #def open_lidar():
 #    try:
