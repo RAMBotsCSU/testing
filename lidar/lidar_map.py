@@ -59,7 +59,8 @@ try:
             # lidar_data.append(scan_data)
 
             # Read input from stdin
-            last_line = sys.stdin.readline().strip()
+            last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
+            # last_line = sys.stdin.readline().strip()
 
             # If no input is available, use a default value
             if not last_line:
