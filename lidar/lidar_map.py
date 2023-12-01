@@ -15,6 +15,10 @@ pygame.mouse.set_visible(False)
 lcd.fill((0,0,0))
 pygame.display.update()
 
+fifo_path = "/tmp/my_fifo"
+
+# Open the FIFO for reading
+fifo_read = open(fifo_path, "r")
 
 # CSV file name
 output_file = 'lidar_data.csv'
@@ -64,23 +68,24 @@ try:
 
             while True:
                 # Check if there is data available on stdin
-                if select.select([sys.stdin], [], [], 0.0)[0]:
-                    # Read a line from stdin
-                    last_line = sys.stdin.readline().strip()
-                    if not last_line:
-                        break  # Exit the loop if there is no more input
+                received_data = fifo_read.readline().strip()
+
+                if not received_data:
+                    print("No input available")
+                    received_data = "0.00,0.00,0.00,0.00,0.00,0.00"
+                    break  # Exit the loop if there is no more input
                     # Process the received line
-                    print(f"Received: {last_line}")
                 else:
                     # Do something else if there is no input
-                    print("No input available")
                     break
 
             # If no input is available, use a default value
-            if not last_line:
-                last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
+            # if not last_line:
+            #     last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
+            
+            print(f"Received: {received_data}")
 
-            line_arr = last_line.split(',')
+            line_arr = received_data.split(',')
             
             # Convert split values to float format
             float_line_arr = [float(value) for value in line_arr]
@@ -100,6 +105,7 @@ finally:
     # ... (finalize and write to CSV)
     lidar.stop()
     lidar.disconnect()
+    fifo_read.close()
     with open(output_file, 'w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
         csv_writer.writerows(lidar_data)
