@@ -5,6 +5,7 @@ import pygame
 import csv
 import sys
 from adafruit_rplidar import RPLidar
+import select
 
 # Set up pygame and the display
 os.putenv('SDL_FBDEV', '/dev/fb1')
@@ -56,15 +57,23 @@ try:
         for (_, angle, distance) in scan:
             scan_data[min([359, int(angle)])] = distance 
 
-        last_line = sys.stdin.readline().strip()
 
         if time.time() - start_time > .2:
             start_time = time.time()
             # lidar_data.append(scan_data)
 
-            # Read input from stdin
-            # last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
-            # 
+            while True:
+                # Check if there is data available on stdin
+                if select.select([sys.stdin], [], [], 0.0)[0]:
+                    # Read a line from stdin
+                    last_line = sys.stdin.readline().strip()
+                    if not last_line:
+                        break  # Exit the loop if there is no more input
+                    # Process the received line
+                    print(f"Received: {last_line}")
+                else:
+                    # Do something else if there is no input
+                    print("No input available")
 
             # If no input is available, use a default value
             if not last_line:
