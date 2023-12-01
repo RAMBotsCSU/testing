@@ -67,11 +67,12 @@ try:
             # lidar_data.append(scan_data)
 
             # Read input from stdin
-            last_line = sys.stdin.readline().strip()
+            # last_line = sys.stdin.readline().strip()
 
-            if last_line is None or last_line == "":
-                last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
+            # if last_line is None or last_line == "":
+            #     last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
 
+            last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
             line_arr = last_line.split(',')
             
             # Convert split values to float format
