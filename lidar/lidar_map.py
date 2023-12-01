@@ -74,6 +74,7 @@ try:
                 else:
                     # Do something else if there is no input
                     print("No input available")
+                    break
 
             # If no input is available, use a default value
             if not last_line:
