@@ -65,16 +65,15 @@ try:
         if time.time() - start_time > .2:
             start_time = time.time()
             # lidar_data.append(scan_data)
-            last_line = None
+
             # Read input from stdin
-            for line in sys.stdin:
-                # Update the last line with the current line
-                last_line = line.strip()
-            
-            if last_line == None:
-                  last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
+            last_line = sys.stdin.readline().strip()
+
+            if last_line is None or last_line == "":
+                last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
 
             line_arr = last_line.split(',')
+            
             # Convert split values to float format
             float_line_arr = [float(value) for value in line_arr]
 
