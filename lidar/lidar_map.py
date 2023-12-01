@@ -3,6 +3,7 @@ import os
 from math import cos, sin, pi, floor
 import pygame
 import csv
+import sys
 from adafruit_rplidar import RPLidar
 
 # Set up pygame and the display
@@ -64,8 +65,21 @@ try:
         if time.time() - start_time > .2:
             start_time = time.time()
             # lidar_data.append(scan_data)
-            lidar_data.append(process_data(scan_data))
-            print('Data written to csv.')
+            last_line = None
+            # Read input from stdin
+            for line in sys.stdin:
+                # Update the last line with the current line
+                last_line = line.strip()
+            
+            if last_line == None:
+                  last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
+
+            line_arr = last_line.split(',')
+            # Convert split values to float format
+            float_line_arr = [float(value) for value in line_arr]
+
+            lidar_data.append(process_data(scan_data) + float_line_arr)
+            print('Data written to csv: ', last_line)
         
         
         
