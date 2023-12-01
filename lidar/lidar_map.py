@@ -49,18 +49,22 @@ def process_data(data):
 scan_data = [0] * 360
 lidar_data = []
 start_time = 0
+last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
 try:
     print(lidar.info)
     for scan in lidar.iter_scans():
         for (_, angle, distance) in scan:
             scan_data[min([359, int(angle)])] = distance 
+
+        last_line = sys.stdin.readline().strip()
+
         if time.time() - start_time > .2:
             start_time = time.time()
             # lidar_data.append(scan_data)
 
             # Read input from stdin
-            last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
-            # last_line = sys.stdin.readline().strip()
+            # last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
+            # 
 
             # If no input is available, use a default value
             if not last_line:
