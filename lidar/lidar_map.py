@@ -20,16 +20,8 @@ output_file = 'lidar_data.csv'
 
 # Setup the RPLidar
 PORT_NAME = '/dev/ttyUSB0'
-lidar = RPLidar(None, PORT_NAME, timeout=5)
+lidar = RPLidar(None, PORT_NAME, timeout=7)
  
-#def open_lidar():
-#    try:
-#        lidar = RPLidar(None, PORT_NAME, timeout=3)
- #   except Exception as e:
- #       print(f"Error: {e}")
- #       lidar.stop()
- #       lidar.disconnect()
-  #      open_lidar
     	
 max_distance = 0
 
@@ -67,12 +59,12 @@ try:
             # lidar_data.append(scan_data)
 
             # Read input from stdin
-            # last_line = sys.stdin.readline().strip()
+            last_line = sys.stdin.readline().strip()
 
-            # if last_line is None or last_line == "":
-            #     last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
+            # If no input is available, use a default value
+            if not last_line:
+                last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
 
-            last_line = "0.00,0.00,0.00,0.00,0.00,0.00"
             line_arr = last_line.split(',')
             
             # Convert split values to float format
@@ -84,21 +76,17 @@ try:
         
         
 except KeyboardInterrupt:
+    print("Terminating...")
+
+except Exception as e:
+    print(f"Error: {e}")
+
+finally:
+    # ... (finalize and write to CSV)
     lidar.stop()
     lidar.disconnect()
     with open(output_file, 'w', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile)
-            csv_writer.writerows(lidar_data)  
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerows(lidar_data)
     print('Data collection stopped.')
     print(f'Lidar data saved to {output_file}')
-
-#except Exception as e:
-#    print(f"Error: {e}")
-#    lidar.stop()
- #   lidar.disconnect()
-#    open_lidar
-
-
-
-
-    
