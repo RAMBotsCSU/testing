@@ -1,8 +1,9 @@
 import serial
 import time
 from serial.serialutil import SerialException
-from pyPS4Controller.controller import Controller
-
+import pygame
+import threading
+from pygame.locals import *
 # Function to map joystick value to a range of [-1, 1]
 def joystick_map_to_range(original_value):
     return ((original_value + 32767) / 65535) * 2 - 1
@@ -26,9 +27,8 @@ def padStr(val):
 def rmPadStr(val):
     return val.replace('~', '')
 
-class MyController(Controller):
-    def __init__(self, **kwargs):
-        Controller.__init__(self, **kwargs)
+class MyController:
+    def __init__(self):
         # Initialize controller attributes here
         self.dpadArr = [0, 0, 0, 0]  # L, R, U, D
         self.shapeButtonArr = [0, 0, 0, 0]  # Sq, Tr, Cir, X
@@ -44,46 +44,88 @@ def serial_read_write(string, ser):
     inp = rmPadStr(inp)
     return inp
 
-def driver_thread_funct(controller, ser):
+def driver_thread_funct(ser):
     # Initialize joystickArr
     joystickArr = [1.000, 1.000, 1.000, 1.000, 1.000, 1.000]
+    dpadArr = [0, 0, 0, 0]
+    shapeButtonArr = [0, 0, 0, 0]
+    miscButtonArr = [0, 0, 0, 0, 0]
     # controller.shapeButtonArr[0] = 1.00
     runningMode = 0
+    modeMax = 5
+    joystick_threshold = 0.1
     index = 0
     # controller.shapeButtonArr[3] = 1
     while True:
         # Read controller inputs and perform necessary actions
         # ...
-        if index > 150:
-            if controller.shapeButtonArr[3] == 1:
-                controller.shapeButtonArr[3] = 0
-                joystickArr[1] = 1.00
-            else:
-                controller.shapeButtonArr[3] = 1
-                joystickArr[1] = 1.5
-            index = 0
+        for event in pygame.event.get():
+            # Call controller.update from the main thread
+            if (event.type == JOYBUTTONUP):
+                if (event.dict['button'] == 0): # X btn release
+                    shapeButtonArr[3] = 0
 
-            # joystickArr[1] = 1.5
+            if (event.type == JOYBUTTONDOWN):
+                if (event.dict['button'] == 15): # TOuchpad press
+                    exit()
+                if (event.dict['button'] == 0): # X button
+                    shapeButtonArr[3] = 1
+
+                if (event.dict['button'] == 9): # Left Bumper
+                    if runningMode <= 0:
+                        runningMode = modeMax
+                    else:
+                        runningMode = runningMode-1
+
+                if (event.dict['button'] == 10): # Right Bumper
+                    if runningMode >= modeMax:
+                        runningMode = 0
+                    else:
+                        runningMode = runningMode+1
+
+            if (event.type == JOYAXISMOTION):
+                # print(event.dict)
+                if (event.dict['axis'] == 0):
+                    if (abs(event.dict["value"]) > joystick_threshold):
+                        joystickArr[0] = event.dict["value"] + 1
+                    else:
+                        joystickArr[0] = 1.0
+                elif (event.dict['axis'] == 1):
+                    if (abs(event.dict["value"]) > joystick_threshold):
+                        joystickArr[1] = event.dict["value"] + 1
+                    else:
+                        joystickArr[1] = 1.0
+
+
 
         # Send data to the connected USB serial device
         data = '''J0:{0:.3f},J1:{1:.3f},J2:{2:.3f},J3:{3:.3f},J4:{4:.3f},J5:{5:.3f},M:{6},LD:{7},RD:{8},UD:{9},DD:{10},Sq:{11},Tr:{12},Ci:{13},Xx:{14},Sh:{15},Op:{16},Ps:{17},L3:{18},R3:{19},#'''.format(joystickArr[0], joystickArr[1], joystickArr[2], joystickArr[3], joystickArr[4], joystickArr[5],
-        runningMode, controller.dpadArr[0], controller.dpadArr[1],
-        controller.dpadArr[2], controller.dpadArr[3], controller.shapeButtonArr[0],
-        controller.shapeButtonArr[1], controller.shapeButtonArr[2], controller.shapeButtonArr[3],
-        controller.miscButtonArr[0], controller.miscButtonArr[1], controller.miscButtonArr[2],
-        controller.miscButtonArr[3], controller.miscButtonArr[4])
+        runningMode, dpadArr[0], dpadArr[1],
+        dpadArr[2], dpadArr[3], shapeButtonArr[0],
+        shapeButtonArr[1], shapeButtonArr[2], shapeButtonArr[3],
+        miscButtonArr[0], miscButtonArr[1], miscButtonArr[2],
+        miscButtonArr[3], miscButtonArr[4])
 
-        print(index, data)
+        print(index, serial_read_write(data, ser))
 
-        serial_read_write(data, ser)
-
-        time.sleep(0.01)
+        time.sleep(0.1)
         index += 1
+
+# def controller_listen():
+#     # Possible joystick events: JOYAXISMOTION, JOYBALLMOTION, JOYBUTTONDOWN,
+#     # JOYBUTTONUP, JOYHATMOTION, JOYDEVICEADDED, JOYDEVICEREMOVED
+#     running = True
+#     while running:
+        # Handle events
+
+        
+
+device_path = "/dev/tty.usbmodem147121401"
 
 def main():
     print("hello world")
     try:
-        ser = serial.Serial('/dev/tty.usbmodem104477401', 9600) # Run ls /dev/tty* on mac to find teensy path
+        ser = serial.Serial(device_path, 9600) # Run ls /dev/tty.* on mac to find teensy path
         print("Found Device")
     except SerialException as e:
         print(f"An error occurred: {e}. \nPlease unplug the USB to the Teensy, press stop, and plug it in again.")
@@ -91,9 +133,36 @@ def main():
         # pygame.mixer.Sound.play(error)
         while(1):
             pass
-    controller = MyController(interface="/dev/input/js0", connecting_using_ds4drv=False)
+    
 
-    driver_thread_funct(controller, ser)
+    # Initialize Pygame
+    pygame.init()
+    # Initialize Pygame's joystick module
+    pygame.joystick.init()
+
+    # Check for available joysticks
+    joystick_count = pygame.joystick.get_count()
+    print("joystick_count", joystick_count)
+    # Iterate through available joysticks to find the PS4 controller
+    for i in range(joystick_count):
+        joystick_name = pygame.joystick.Joystick(i).get_name()
+        print(joystick_name)
+        if "Controller" in joystick_name:
+            joystick = pygame.joystick.Joystick(i)
+            joystick.init()
+            print("PS4 controller found:", joystick_name)
+            break
+    else:
+        print("PS4 controller not found.")
+        exit()
+
+    # Start the driver thread
+    # controller_thread = threading.Thread(target=controller_listen)
+    # controller_thread.daemon = True
+    # controller_thread.start()
+
+    driver_thread_funct(ser)
+
     print("Done")
 
 if __name__ == "__main__":
