@@ -1,0 +1,1564 @@
+ODESC 1:
+
+Axis 0: RF Hip
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: -0.6164379119873047 (float)
+  stator_phase_vel: -4.7936906814575195 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 2 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 1 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: -0.02711472474038601 (float)
+  error: 0 (uint8)
+  input_pos: -0.4068899154663086 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.0019634810741990805 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: -0.4068899154663086 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: 0.007138965651392937 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 9716 (int32)
+  delta_pos_cpr_counts: -0.9745387434959412 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 0.0 (float)
+  is_ready: True (bool)
+  phase: -0.6317777633666992 (float)
+  pos_abs: 9709 (int32)
+  pos_circular: 0.5929841995239258 (float)
+  pos_cpr_counts: 9716.4375 (float)
+  pos_estimate: -0.4068880081176758 (float)
+  pos_estimate_counts: -6670.40625 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: -6666 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: -0.007629396393895149 (float)
+  vel_estimate_counts: 750.0000610351562 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 4.59531831741333 (float)
+  DC_calib_phB: -1.7750543355941772 (float)
+  DC_calib_phC: -2.8204872608184814 (float)
+  I_bus: 0.0006891799275763333 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: -0.2850351333618164 (float)
+  current_meas_phB: -0.19874918460845947 (float)
+  current_meas_phC: -0.12107682228088379 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 183399 (uint32)
+  n_evt_pwm_update: 183419 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: -0.15852558612823486 (float)
+  phase_vel: -4.660128116607666 (float)
+  pll_pos: -0.17076517641544342 (float)
+  vel_estimate: 0.017258454114198685 (float)
+step_dir_active: False (bool)
+steps: -416 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+Axis 1: RB Hip
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: -2.9372668266296387 (float)
+  stator_phase_vel: 0.0 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 8 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 7 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: -0.01584031619131565 (float)
+  error: 0 (uint8)
+  input_pos: 0.32387542724609375 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.0010915773455053568 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: 0.32387542724609375 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: 0.0015989331295713782 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 5306 (int32)
+  delta_pos_cpr_counts: -0.2701807916164398 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 1.0 (float)
+  is_ready: True (bool)
+  phase: -2.9219279289245605 (float)
+  pos_abs: 5304 (int32)
+  pos_circular: 0.3238086700439453 (float)
+  pos_cpr_counts: 5307.34375 (float)
+  pos_estimate: 0.3241004943847656 (float)
+  pos_estimate_counts: 5305.53125 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: 5308 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: 0.0381469801068306 (float)
+  vel_estimate_counts: 125.00003814697266 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 5.182682514190674 (float)
+  DC_calib_phB: -2.559992790222168 (float)
+  DC_calib_phC: -2.6217713356018066 (float)
+  I_bus: 0.00017174024833366275 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: -0.83062744140625 (float)
+  current_meas_phB: -0.13908720016479492 (float)
+  current_meas_phC: -0.0368194580078125 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 635624 (uint32)
+  n_evt_pwm_update: 635642 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: 0.10390199720859528 (float)
+  phase_vel: 0.9248104095458984 (float)
+  pll_pos: 0.11655671894550323 (float)
+  vel_estimate: 0.00894153956323862 (float)
+step_dir_active: False (bool)
+steps: 331 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+
+ODESC 2:
+
+Axis 0: RF Knee
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: -1.575007438659668 (float)
+  stator_phase_vel: -5.752429008483887 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 2 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 1 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: 0.005750724114477634 (float)
+  error: 0 (uint8)
+  input_pos: -0.15223217010498047 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.002383613493293524 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: -0.15223217010498047 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: -0.02558767981827259 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 13884 (int32)
+  delta_pos_cpr_counts: 0.38223516941070557 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 0.0 (float)
+  is_ready: True (bool)
+  phase: -1.6363630294799805 (float)
+  pos_abs: 13875 (int32)
+  pos_circular: 0.8472375869750977 (float)
+  pos_cpr_counts: 13878.1875 (float)
+  pos_estimate: -0.15274620056152344 (float)
+  pos_estimate_counts: -2504.421875 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: -2506 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: 0.0228881873190403 (float)
+  vel_estimate_counts: 1000.0001220703125 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 5.501307010650635 (float)
+  DC_calib_phB: -2.5991053581237793 (float)
+  DC_calib_phC: -2.901890754699707 (float)
+  I_bus: 0.0023404578678309917 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: 0.38130712509155273 (float)
+  current_meas_phB: -0.10088300704956055 (float)
+  current_meas_phC: -0.3613286018371582 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 2317755 (uint32)
+  n_evt_pwm_update: 2317762 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: -0.06994380056858063 (float)
+  phase_vel: 0.07555686682462692 (float)
+  pll_pos: -0.06709302216768265 (float)
+  vel_estimate: -0.003703454975038767 (float)
+step_dir_active: False (bool)
+steps: -155 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+Axis 1: RF Shoulder
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: -1.275099754333496 (float)
+  stator_phase_vel: -5.752429008483887 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 8 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 7 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: 0.0021323906257748604 (float)
+  error: 0 (uint8)
+  input_pos: -0.12862682342529297 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.003728353651240468 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: -0.12862682342529297 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: -0.02686689980328083 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 14273 (int32)
+  delta_pos_cpr_counts: -0.5230802893638611 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 1.0 (float)
+  is_ready: True (bool)
+  phase: -1.2214117050170898 (float)
+  pos_abs: 14273 (int32)
+  pos_circular: 0.8712100982666016 (float)
+  pos_cpr_counts: 14275.90625 (float)
+  pos_estimate: -0.12857913970947266 (float)
+  pos_estimate_counts: -2106.328125 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: -2109 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: -0.1220703199505806 (float)
+  vel_estimate_counts: -1000.0 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 4.393233299255371 (float)
+  DC_calib_phB: -2.1318142414093018 (float)
+  DC_calib_phC: -2.260578155517578 (float)
+  I_bus: -0.0006147691747173667 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: 0.11921119689941406 (float)
+  current_meas_phB: -0.08379888534545898 (float)
+  current_meas_phC: -0.1586003303527832 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 2559702 (uint32)
+  n_evt_pwm_update: 2559746 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: 0.6619634628295898 (float)
+  phase_vel: 3.7912235260009766 (float)
+  pll_pos: 0.6815395951271057 (float)
+  vel_estimate: -0.019180718809366226 (float)
+step_dir_active: False (bool)
+steps: -131 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+
+ODESC 3:
+
+Axis 0: RB Knee
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: 2.7850184440612793 (float)
+  stator_phase_vel: 4.7936906814575195 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 2 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 1 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: -0.019298342987895012 (float)
+  error: 0 (uint8)
+  input_pos: 0.2754497528076172 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.0008292895508930087 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: 0.2754497528076172 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: -0.013407974503934383 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 4513 (int32)
+  delta_pos_cpr_counts: -0.16628390550613403 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 1.0 (float)
+  is_ready: True (bool)
+  phase: 2.7773489952087402 (float)
+  pos_abs: 4516 (int32)
+  pos_circular: 0.2753915786743164 (float)
+  pos_cpr_counts: 4513.28125 (float)
+  pos_estimate: 0.2754993438720703 (float)
+  pos_estimate_counts: 4511.0625 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: 4508 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: 0.007629395462572575 (float)
+  vel_estimate_counts: -625.0001220703125 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 4.2056145668029785 (float)
+  DC_calib_phB: -2.1240406036376953 (float)
+  DC_calib_phC: -2.081479072570801 (float)
+  I_bus: 0.0017135910457000136 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: 0.38725996017456055 (float)
+  current_meas_phB: -0.49418115615844727 (float)
+  current_meas_phC: 0.7922332286834717 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 5085531 (uint32)
+  n_evt_pwm_update: 5085549 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: -0.33441343903541565 (float)
+  phase_vel: -0.8678443431854248 (float)
+  pll_pos: -0.331276535987854 (float)
+  vel_estimate: -0.015730371698737144 (float)
+step_dir_active: False (bool)
+steps: 282 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+Axis 1: RB Shoulder
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: 1.034358024597168 (float)
+  stator_phase_vel: -0.9587380886077881 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 8 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 7 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: -0.007035388611257076 (float)
+  error: 0 (uint8)
+  input_pos: -0.038397789001464844 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.0005475511425174773 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: -0.038397789001464844 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: -0.009089912287890911 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 15752 (int32)
+  delta_pos_cpr_counts: -0.14539282023906708 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 1.0 (float)
+  is_ready: True (bool)
+  phase: 1.0266904830932617 (float)
+  pos_abs: 15753 (int32)
+  pos_circular: 0.9615535736083984 (float)
+  pos_cpr_counts: 15753.3125 (float)
+  pos_estimate: -0.038421630859375 (float)
+  pos_estimate_counts: -630.65625 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: -631 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: -0.0457763709127903 (float)
+  vel_estimate_counts: -375.0000305175781 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 3.202733278274536 (float)
+  DC_calib_phB: -2.16408109664917 (float)
+  DC_calib_phC: -1.0392169952392578 (float)
+  I_bus: 0.0005604298785328865 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: 0.10024166107177734 (float)
+  current_meas_phB: 0.3116065263748169 (float)
+  current_meas_phC: 0.031748175621032715 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 5305362 (uint32)
+  n_evt_pwm_update: 5305379 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: 2.0408096313476562 (float)
+  phase_vel: -0.13789357244968414 (float)
+  pll_pos: 2.0404510498046875 (float)
+  vel_estimate: 0.0019475689623504877 (float)
+step_dir_active: False (bool)
+steps: -39 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+
+ODESC 4:
+
+Axis 0: LF Hip
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: -1.8362884521484375 (float)
+  stator_phase_vel: 0.9587380886077881 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 2 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 1 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: -0.030323036015033722 (float)
+  error: 0 (uint8)
+  input_pos: 0.3213634490966797 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.0004954023752361536 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: 0.3213634490966797 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: 0.01971396431326866 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 5262 (int32)
+  delta_pos_cpr_counts: -0.06452903151512146 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 1.0 (float)
+  is_ready: True (bool)
+  phase: -1.8270606994628906 (float)
+  pos_abs: 5262 (int32)
+  pos_circular: 0.3213310241699219 (float)
+  pos_cpr_counts: 5264.34375 (float)
+  pos_estimate: 0.32149314880371094 (float)
+  pos_estimate_counts: 5266.0625 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: 5265 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: -0.1068115308880806 (float)
+  vel_estimate_counts: -750.0000610351562 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 4.335352897644043 (float)
+  DC_calib_phB: -1.792493224143982 (float)
+  DC_calib_phC: -2.5418803691864014 (float)
+  I_bus: 0.0018535676645115018 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: -0.7089903354644775 (float)
+  current_meas_phB: 0.30170631408691406 (float)
+  current_meas_phC: 0.24667048454284668 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 6313819 (uint32)
+  n_evt_pwm_update: 6313826 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: 0.8347354531288147 (float)
+  phase_vel: -5.763059139251709 (float)
+  pll_pos: 0.8173788189888 (float)
+  vel_estimate: -0.040609367191791534 (float)
+step_dir_active: False (bool)
+steps: 329 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+Axis 1: LB Hip
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: 3.0705151557922363 (float)
+  stator_phase_vel: 0.9587380886077881 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 8 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 7 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: -0.008435537107288837 (float)
+  error: 0 (uint8)
+  input_pos: -0.29477500915527344 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.00048404501285403967 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: -0.29477500915527344 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: 0.0028511325363069773 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 11556 (int32)
+  delta_pos_cpr_counts: -0.3044505715370178 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 0.0 (float)
+  is_ready: True (bool)
+  phase: 3.0935254096984863 (float)
+  pos_abs: 11550 (int32)
+  pos_circular: 0.7050571441650391 (float)
+  pos_cpr_counts: 11554.671875 (float)
+  pos_estimate: -0.2948026657104492 (float)
+  pos_estimate_counts: -4828.921875 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: -4831 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: 0.007629394996911287 (float)
+  vel_estimate_counts: 125.00004577636719 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 3.42553973197937 (float)
+  DC_calib_phB: -1.2982805967330933 (float)
+  DC_calib_phC: -2.1276509761810303 (float)
+  I_bus: -1.2340129615040496e-05 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: -0.44419193267822266 (float)
+  current_meas_phB: -0.03181016445159912 (float)
+  current_meas_phC: -0.2899303436279297 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 6517309 (uint32)
+  n_evt_pwm_update: 6517330 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: 0.49610966444015503 (float)
+  phase_vel: 1.7852717638015747 (float)
+  pll_pos: 0.507189154624939 (float)
+  vel_estimate: 0.009197825565934181 (float)
+step_dir_active: False (bool)
+steps: -301 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+
+ODESC 5:
+
+Axis 0: LF Knee
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: 1.4604849815368652 (float)
+  stator_phase_vel: 9.587381362915039 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 2 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 1 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: -0.02444954216480255 (float)
+  error: 0 (uint8)
+  input_pos: 0.0646514892578125 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.0018217071192339063 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: 0.0646514892578125 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: -0.002999179996550083 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 1060 (int32)
+  delta_pos_cpr_counts: -0.3332977592945099 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 0.0 (float)
+  is_ready: True (bool)
+  phase: 1.5065054893493652 (float)
+  pos_abs: 1059 (int32)
+  pos_circular: 0.06472396850585938 (float)
+  pos_cpr_counts: 1060.25 (float)
+  pos_estimate: 0.06475448608398438 (float)
+  pos_estimate_counts: 1060.109375 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: 1057 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: 0.0610351599752903 (float)
+  vel_estimate_counts: -375.0000305175781 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 3.1143624782562256 (float)
+  DC_calib_phB: -1.6306458711624146 (float)
+  DC_calib_phC: -1.482736349105835 (float)
+  I_bus: 0.0001947302371263504 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: -0.1318068504333496 (float)
+  current_meas_phB: 0.3008148670196533 (float)
+  current_meas_phC: -0.16871178150177002 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 6846822 (uint32)
+  n_evt_pwm_update: 6846829 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: 0.08312996476888657 (float)
+  phase_vel: 1.0354032516479492 (float)
+  pll_pos: 0.08528833091259003 (float)
+  vel_estimate: 0.008013783022761345 (float)
+step_dir_active: False (bool)
+steps: 66 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+Axis 1: LF Shoulder
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: 2.908627986907959 (float)
+  stator_phase_vel: -5.752427577972412 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 8 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 7 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: -0.002408828353509307 (float)
+  error: 0 (uint8)
+  input_pos: 0.4181480407714844 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.0012885690666735172 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: 0.4181480407714844 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: -0.005503831896930933 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 6851 (int32)
+  delta_pos_cpr_counts: -0.7979424595832825 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 1.0 (float)
+  is_ready: True (bool)
+  phase: 2.893289089202881 (float)
+  pos_abs: 6857 (int32)
+  pos_circular: 0.418182373046875 (float)
+  pos_cpr_counts: 6849.359375 (float)
+  pos_estimate: 0.41817760467529297 (float)
+  pos_estimate_counts: 6847.796875 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: 6850 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: 0.0457763709127903 (float)
+  vel_estimate_counts: -1125.0001220703125 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 3.0514748096466064 (float)
+  DC_calib_phB: -1.1575716733932495 (float)
+  DC_calib_phC: -1.8945324420928955 (float)
+  I_bus: 0.0008758750045672059 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: 0.08955740928649902 (float)
+  current_meas_phB: -0.05056285858154297 (float)
+  current_meas_phC: 0.12289583683013916 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 7077622 (uint32)
+  n_evt_pwm_update: 7077628 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: -2.8423497676849365 (float)
+  phase_vel: 1.639298677444458 (float)
+  pll_pos: -2.8381972312927246 (float)
+  vel_estimate: 0.008291976526379585 (float)
+step_dir_active: False (bool)
+steps: 428 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+
+ODESC 6:
+
+Axis 0: LB Knee
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: -1.4275555610656738 (float)
+  stator_phase_vel: -0.9587386250495911 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 2 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 1 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: -0.021411746740341187 (float)
+  error: 0 (uint8)
+  input_pos: 0.12654781341552734 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.0006490996456705034 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: 0.12654781341552734 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: 0.00011433976033004001 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 2072 (int32)
+  delta_pos_cpr_counts: -0.49077868461608887 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 1.0 (float)
+  is_ready: True (bool)
+  phase: -1.4307923316955566 (float)
+  pos_abs: 2077 (int32)
+  pos_circular: 0.12655258178710938 (float)
+  pos_cpr_counts: 2072.71875 (float)
+  pos_estimate: 0.126434326171875 (float)
+  pos_estimate_counts: 2073.75 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: 2075 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: 0.0 (float)
+  vel_estimate_counts: -375.00006103515625 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 4.730244159698486 (float)
+  DC_calib_phB: -2.5549802780151367 (float)
+  DC_calib_phC: -2.17571759223938 (float)
+  I_bus: -8.167880878318101e-05 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: 0.1843562126159668 (float)
+  current_meas_phB: -0.06369829177856445 (float)
+  current_meas_phC: 0.20020878314971924 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 7336495 (uint32)
+  n_evt_pwm_update: 7336502 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: 0.02419503778219223 (float)
+  phase_vel: -4.915963649749756 (float)
+  pll_pos: 0.013955908827483654 (float)
+  vel_estimate: -0.02475818432867527 (float)
+step_dir_active: False (bool)
+steps: 129 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
+
+Axis 1: LB Shoulder
+acim_estimator:
+  config: ...
+  phase_offset: 0.0 (float)
+  rotor_flux: 0.0 (float)
+  slip_vel: 0.0 (float)
+  stator_phase: -1.062870979309082 (float)
+  stator_phase_vel: -5.752430438995361 (float)
+config:
+  calibration_lockin: ...
+  can: ...
+  dir_gpio_pin: 8 (uint16)
+  enable_sensorless_mode: False (bool)
+  enable_step_dir: False (bool)
+  enable_watchdog: False (bool)
+  general_lockin: ...
+  sensorless_ramp: ...
+  startup_closed_loop_control: True (bool)
+  startup_encoder_index_search: False (bool)
+  startup_encoder_offset_calibration: False (bool)
+  startup_homing: False (bool)
+  startup_motor_calibration: False (bool)
+  step_dir_always_on: False (bool)
+  step_gpio_pin: 7 (uint16)
+  watchdog_timeout: 0.0 (float)
+controller:
+  anticogging_valid: False (bool)
+  autotuning: ...
+  autotuning_phase: 0.0 (float)
+  config: ...
+  electrical_power: -0.009309451095759869 (float)
+  error: 0 (uint8)
+  input_pos: 0.2767648696899414 (float)
+  input_torque: 0.0 (float)
+  input_vel: 0.0 (float)
+  last_error_time: 0.0 (float)
+  mechanical_power: -0.009206496179103851 (float)
+  move_incremental(obj: object_ref, displacement: float, from_input_pos: bool)
+  pos_setpoint: 0.2767648696899414 (float)
+  start_anticogging_calibration(obj: object_ref)
+  torque_setpoint: 0.0 (float)
+  trajectory_done: True (bool)
+  vel_integrator_torque: 0.00044083749526180327 (float)
+  vel_setpoint: 0.0 (float)
+current_state: 8 (uint8)
+encoder:
+  calib_scan_response: 0.0 (float)
+  config: ...
+  count_in_cpr: 4542 (int32)
+  delta_pos_cpr_counts: -3.703944683074951 (float)
+  error: 0 (uint16)
+  hall_state: 0 (uint8)
+  index_found: False (bool)
+  interpolation: 0.0 (float)
+  is_ready: True (bool)
+  phase: -0.8787927627563477 (float)
+  pos_abs: 4511 (int32)
+  pos_circular: 0.2764148712158203 (float)
+  pos_cpr_counts: 4530.703125 (float)
+  pos_estimate: 0.2768669128417969 (float)
+  pos_estimate_counts: 4533.203125 (float)
+  set_linear_count(obj: object_ref, count: int32)
+  shadow_count: 4534 (int32)
+  spi_error_rate: 0.0 (float)
+  vel_estimate: -0.1068115308880806 (float)
+  vel_estimate_counts: 500.0001525878906 (float)
+error: 0 (uint32)
+is_homed: False (bool)
+last_drv_fault: 0 (uint32)
+max_endstop:
+  config: ...
+  endstop_state: False (bool)
+mechanical_brake:
+  config: ...
+  engage(obj: object_ref)
+  release(obj: object_ref)
+min_endstop:
+  config: ...
+  endstop_state: False (bool)
+motor:
+  DC_calib_phA: 4.043172359466553 (float)
+  DC_calib_phB: -1.368131160736084 (float)
+  DC_calib_phC: -2.6745240688323975 (float)
+  I_bus: 0.0012446425389498472 (float)
+  config: ...
+  current_control: ...
+  current_meas_phA: -0.2158036231994629 (float)
+  current_meas_phB: 0.039092302322387695 (float)
+  current_meas_phC: -0.265399694442749 (float)
+  effective_current_lim: 22.0 (float)
+  error: 0 (uint64)
+  fet_thermistor: ...
+  is_armed: True (bool)
+  is_calibrated: True (bool)
+  last_error_time: 0.0 (float)
+  max_allowed_current: 60.75 (float)
+  max_dc_calib: 6.075000286102295 (float)
+  motor_thermistor: ...
+  n_evt_current_measurement: 7492965 (uint32)
+  n_evt_pwm_update: 7492981 (uint32)
+  phase_current_rev_gain: 0.02500000037252903 (float)
+requested_state: 0 (uint8)
+sensorless_estimator:
+  config: ...
+  error: 0 (uint8)
+  phase: 2.7375059127807617 (float)
+  phase_vel: -1.4472997188568115 (float)
+  pll_pos: 2.721658229827881 (float)
+  vel_estimate: 0.007883340120315552 (float)
+step_dir_active: False (bool)
+steps: 283 (int64)
+task_times:
+  acim_estimator_update: ...
+  can_heartbeat: ...
+  controller_update: ...
+  current_controller_update: ...
+  current_sense: ...
+  dc_calib: ...
+  encoder_update: ...
+  endstop_update: ...
+  motor_update: ...
+  open_loop_controller_update: ...
+  pwm_update: ...
+  sensorless_estimator_update: ...
+  thermistor_update: ...
+trap_traj:
+  config: ...
+watchdog_feed(obj: object_ref)
