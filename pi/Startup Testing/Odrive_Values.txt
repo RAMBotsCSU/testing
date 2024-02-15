@@ -129,6 +129,15 @@ trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
 
+
+
+
+
+
+
+
+
+
 Axis 1: RB Hip
 acim_estimator:
   config: ...
@@ -257,6 +266,15 @@ task_times:
 trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
+
+
+
+
+
+
+
+
+
 
 
 ODESC 2:
@@ -390,6 +408,15 @@ trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
 
+
+
+
+
+
+
+
+
+
 Axis 1: RF Shoulder
 acim_estimator:
   config: ...
@@ -518,6 +545,15 @@ task_times:
 trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
+
+
+
+
+
+
+
+
+
 
 
 ODESC 3:
@@ -651,6 +687,15 @@ trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
 
+
+
+
+
+
+
+
+
+
 Axis 1: RB Shoulder
 acim_estimator:
   config: ...
@@ -779,6 +824,15 @@ task_times:
 trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
+
+
+
+
+
+
+
+
+
 
 
 ODESC 4:
@@ -912,6 +966,15 @@ trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
 
+
+
+
+
+
+
+
+
+
 Axis 1: LB Hip
 acim_estimator:
   config: ...
@@ -1040,6 +1103,15 @@ task_times:
 trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
+
+
+
+
+
+
+
+
+
 
 
 ODESC 5:
@@ -1173,6 +1245,15 @@ trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
 
+
+
+
+
+
+
+
+
+
 Axis 1: LF Shoulder
 acim_estimator:
   config: ...
@@ -1301,6 +1382,15 @@ task_times:
 trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
+
+
+
+
+
+
+
+
+
 
 
 ODESC 6:
@@ -1433,6 +1523,15 @@ task_times:
 trap_traj:
   config: ...
 watchdog_feed(obj: object_ref)
+
+
+
+
+
+
+
+
+
 
 Axis 1: LB Shoulder
 acim_estimator:
