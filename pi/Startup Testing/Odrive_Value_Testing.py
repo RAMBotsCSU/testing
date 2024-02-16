@@ -34,23 +34,35 @@ correct_hip_values = {
                       "PARAM_FLOAT_ENCODER_PLL_KI": 0
                       }
 
+correct_shoulder_values = {}
+
+correct_knee_values = {}
 
 
-def hip_checker(odrive_values):
+
+def percent_error_checker(trueval, expectedval):
+    #checks if expectedval is more than 1% different from trueval and returns False if so
+    pass
+
+
+
+def value_checker(odrive_values, correct_values):
     #checks the hip values against correct_hip_values
-    pass
+    odrive_value_dict = odrive_values[list(dict1.keys())[0]] #gets the dictionary with all values
 
+    error_dict = {}
 
+    if (odrive_value_dict == correct_values):
+        return (True, {})
+    
+    for key, expected_value in correct_values:
+        actual_value = odrive_value_dict[key]
 
-def shoulder_checker(odrive_values):
-    #checks the shoulder values against correct_shoulder_values
-    pass
+        if (actual_value != expected_value):
+            if (not percent_error_checker(actual_value, expected_value)):
+                error_dict[key] = actual_value
 
-
-
-def knee_checker(odrive_values):
-    #checks the knee values against correct_knee_values
-    pass
+    return (False, error_dict)
 
 
 
@@ -62,13 +74,17 @@ def odrive_values_test(odrive_values):
     motor_name = list(odrive_values.keys())[0][2] #gets the third char of the motor name - will be H, S, or K
     
     if (motor_name == 'H'):
-        return hip_checker(odrive_values)
+        return value_checker(odrive_values, correct_hip_values)
     elif (motor_name == 'S'):
-        return shoulder_checker(odrive_values)
+        return value_checker(odrive_values, correct_shoulder_values)
     elif (motor_name == 'K'):
-        return knee_checker(odrive_values)
+        return value_checker(odrive_values, correct_knee_values)
     else:
         return (False, {"Error": "Incorrect Motor Name"})
 
 
 odrive_values_test({"RFH": 32})
+
+
+dict1 = {"stuff": {"Stuff": "Things", "Stuff2": "Things2"}}
+print(dict1[list(dict1.keys())[0]])
