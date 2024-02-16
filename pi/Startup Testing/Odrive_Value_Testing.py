@@ -48,14 +48,18 @@ def percent_error_checker(trueval, expectedval):
 
 def value_checker(odrive_values, correct_values):
     #checks the hip values against correct_hip_values
-    odrive_value_dict = odrive_values[list(dict1.keys())[0]] #gets the dictionary with all values
+    odrive_value_dict = odrive_values[str(list(odrive_values.keys())[0])] #gets the dictionary with all values
+
+    if (type(odrive_value_dict) is not dict):
+        return (False, {"Error": "value_checker: nested dictionary was not passed in"})
 
     error_dict = {}
 
     if (odrive_value_dict == correct_values):
         return (True, {})
     
-    for key, expected_value in correct_values:
+    
+    for key, expected_value in correct_values.items():
         actual_value = odrive_value_dict[key]
 
         if (actual_value != expected_value):
@@ -80,11 +84,5 @@ def odrive_values_test(odrive_values):
     elif (motor_name == 'K'):
         return value_checker(odrive_values, correct_knee_values)
     else:
-        return (False, {"Error": "Incorrect Motor Name"})
+        return (False, {"Error": "odrive_values_test: incorrect motor name"})
 
-
-odrive_values_test({"RFH": 32})
-
-
-dict1 = {"stuff": {"Stuff": "Things", "Stuff2": "Things2"}}
-print(dict1[list(dict1.keys())[0]])
