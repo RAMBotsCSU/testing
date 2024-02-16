@@ -6,6 +6,9 @@
 
 import math
 
+#max % different any two values can be 
+PERCENT_DIFFERENCE = 5
+
 # Correct Values
 correct_hip_values = {
                       "PARAM_FLOAT_POS_SETPOINT": float('nan'),
@@ -45,8 +48,10 @@ correct_knee_values = {}
 
 
 def percent_error_checker(trueval, expectedval):
-    #checks if expectedval is more than 1% different from trueval and returns False if so
-    pass
+    #checks if expectedval is more than PERCENT_DIFFERENT from trueval and returns False if so
+    #NOTE: this method doesn't work very accurately due to floating point errors
+
+    return PERCENT_DIFFERENCE > abs((trueval - expectedval)/trueval)*100.0
 
 
 
@@ -91,36 +96,3 @@ def odrive_values_test(odrive_values):
         return value_checker(odrive_values, correct_knee_values)
     else:
         return (False, {"Error": "odrive_values_test: incorrect motor name"})
-
-NOT_correct_hip_values = {"RFH":
-                      {"PARAM_FLOAT_POS_SETPOINT": 0,
-                      "PARAM_FLOAT_POS_GAIN": 0,
-                      "PARAM_FLOAT_VEL_SETPOINT": 0,
-                      "PARAM_FLOAT_VEL_GAIN": 0,
-                      "PARAM_FLOAT_VEL_INTEGRATOR_GAIN": 0,
-                      "PARAM_FLOAT_VEL_INTEGRATOR_CURRENT": 0,
-                      "PARAM_FLOAT_VEL_LIMIT": 0,
-                      "PARAM_FLOAT_CURRENT_SETPOINT": 0,
-                      "PARAM_FLOAT_CALIBRATION_CURRENT": 0,
-                      "PARAM_FLOAT_PHASE_INDUCTANCE": 0,
-                      "PARAM_FLOAT_PHASE_RESISTANCE": 0,
-                      "PARAM_FLOAT_CURRENT_MEAS_PHB": 0,
-                      "PARAM_FLOAT_CURRENT_MEAS_PHC": 0,
-                      "PARAM_FLOAT_DC_CALIB_PHB": 0,
-                      "PARAM_FLOAT_DC_CALIB_PHC": 0,
-                      "PARAM_FLOAT_SHUNT_CONDUCTANCE": 0,
-                      "PARAM_FLOAT_PHASE_CURRENT_REV_GAIN": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_CURRENT_LIM": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_P_GAIN": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_I_GAIN": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_V_CURRENT_CONTROL_INTEGRAL_D": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_V_CURRENT_CONTROL_INTEGRAL_Q": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_IBUS": 0,
-                      "PARAM_FLOAT_ENCODER_PHASE": 0,
-                      "PARAM_FLOAT_ENCODER_PLL_POS": 0,
-                      "PARAM_FLOAT_ENCODER_PLL_VEL": 0,
-                      "PARAM_FLOAT_ENCODER_PLL_KP": 0,
-                      "PARAM_FLOAT_ENCODER_PLL_KI": 0
-                      }}
-
-print(odrive_values_test(NOT_correct_hip_values))
