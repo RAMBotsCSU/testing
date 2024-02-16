@@ -50,6 +50,8 @@ correct_knee_values = {}
 def percent_error_checker(trueval, expectedval):
     #checks if expectedval is more than PERCENT_DIFFERENT from trueval and returns False if so
     #NOTE: this method doesn't work very accurately due to floating point errors
+    if (trueval == 0):
+        trueval = 0.00001
 
     return PERCENT_DIFFERENCE > abs((trueval - expectedval)/trueval)*100.0
 
