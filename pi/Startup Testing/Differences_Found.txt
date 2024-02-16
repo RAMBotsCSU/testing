@@ -1,0 +1,16 @@
+Difference 1:
+    RF Hip: Interpolation = 0.0
+    LF Hip: Interpolation = 1.0
+    0.0 seems to be the correct value
+
+Difference 2:
+    RF Shoulder: Interpolation = 1.0
+    LB Shoulder: Interpolation = 0.0
+    1.0 seems to be the correct value
+
+Difference 3:
+    RF Knee: Interpolation = 0.0
+    LF Knee: Interpolation = 0.0
+    RB Knee: Interpolation = 1.0
+    LB Knee: Interpolation = 1.0
+    This one could be on purpose but I don't know why it would be
