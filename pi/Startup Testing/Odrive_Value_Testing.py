@@ -38,7 +38,17 @@ correct_hip_values = {
                       "PARAM_FLOAT_ENCODER_PLL_POS": 0,
                       "PARAM_FLOAT_ENCODER_PLL_VEL": 0,
                       "PARAM_FLOAT_ENCODER_PLL_KP": 0,
-                      "PARAM_FLOAT_ENCODER_PLL_KI": 0
+                      "PARAM_FLOAT_ENCODER_PLL_KI": 0,
+                      "PARAM_INT_CONTROL_MODE": 0,
+                      "PARAM_INT_ENCODER_ENCODER_OFFSET": 0,
+                      "PARAM_INT_ENCODER_ENCODER_STATE": 0,
+                      "PARAM_INT_ERROR": 0,
+                      "PARAM_BOOL_THREAD_READY": False,
+                      "PARAM_BOOL_ENABLE_CONTROL": False,
+                      "PARAM_BOOL_DO_CALIBRATION": False,
+                      "PARAM_BOOL_CALIBRATION_OK": False,
+                      "PARAM_UINT16_CONTROL_DEADLINE": 0,
+                      "PARAM_UINT16_LAST_CPU_TIME": 0
                       }
 
 correct_shoulder_values = {}
