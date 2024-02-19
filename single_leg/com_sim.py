@@ -67,6 +67,7 @@ def driver_thread_funct(ser):
 
             if (event.type == JOYBUTTONDOWN):
                 if (event.dict['button'] == 15): # TOuchpad press
+                    print("EXIT")
                     exit()
                 if (event.dict['button'] == 0): # X button
                     shapeButtonArr[3] = 1
@@ -76,12 +77,14 @@ def driver_thread_funct(ser):
                         runningMode = modeMax
                     else:
                         runningMode = runningMode-1
+                    print("Mode:", runningMode)
 
                 if (event.dict['button'] == 10): # Right Bumper
                     if runningMode >= modeMax:
                         runningMode = 0
                     else:
                         runningMode = runningMode+1
+                    print("Mode:", runningMode)
 
             if (event.type == JOYAXISMOTION):
                 # print(event.dict)
@@ -106,9 +109,10 @@ def driver_thread_funct(ser):
         miscButtonArr[0], miscButtonArr[1], miscButtonArr[2],
         miscButtonArr[3], miscButtonArr[4])
 
-        print(index, serial_read_write(data, ser))
+        data_returned = serial_read_write(data, ser)
+        # print(index, data_returned)
 
-        time.sleep(0.1)
+        # time.sleep(0.1)
         index += 1
 
 # def controller_listen():
