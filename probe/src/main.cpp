@@ -194,7 +194,7 @@ void setup() {
 
   server.serveStatic("/", LittleFS, "/");
 
-  // Start server
+  // Starting server
   server.begin();
   initIMU();
 }
