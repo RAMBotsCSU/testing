@@ -23,6 +23,10 @@ enc1 = ax1.encoder
 contr0 = ax0.controller
 contr1 = ax1.controller
 
+mo0.config.current_lim = 22.0
+mo1.config.current_lim = 22.0
+mo0.config.current_lim_margin = 9.0
+mo1.config.current_lim_margin = 9.0
 enc0.config.cpr = 16384                         
 enc1.config.cpr = 16384                         #Has different value in SPI
 mo0.config.pole_pairs = 20
