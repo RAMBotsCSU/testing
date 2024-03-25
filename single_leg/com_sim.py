@@ -4,6 +4,7 @@ from serial.serialutil import SerialException
 import pygame
 import threading
 from pygame.locals import *
+import re
 # Function to map joystick value to a range of [-1, 1]
 def joystick_map_to_range(original_value):
     return ((original_value + 32767) / 65535) * 2 - 1
@@ -35,14 +36,21 @@ class MyController:
         self.miscButtonArr = [0, 0, 0, 0, 0]  # Share, Options, PS, L3, R3
 
     # Define controller event handlers here
+        
+def process_odrive_params(params):
+    print("Error with params")
+    exit()
 
 # Function to read from and write to the serial port
 def serial_read_write(string, ser):
     ser.write(padStr(string).encode())
-    inp = str(ser.readline())
-    inp = inp[2:-5]
-    inp = rmPadStr(inp)
-    return inp
+    return getLineSerial(ser)
+
+def getLineSerial(ser):
+    line = str(ser.readline())
+    line = line[2:-5]
+    line = rmPadStr(line)
+    return line
 
 def driver_thread_funct(ser):
     # Initialize joystickArr
@@ -50,9 +58,18 @@ def driver_thread_funct(ser):
     dpadArr = [0, 0, 0, 0]
     shapeButtonArr = [0, 0, 0, 0]
     miscButtonArr = [0, 0, 0, 0, 0]
-    # controller.shapeButtonArr[0] = 1.00
+
+    curr_odrive = ""
+
+    odrive_params = {"odrive1": {"axis0":{}, "axis1": {}},
+                     "odrive2": {"axis0":{}, "axis1": {}},
+                     "odrive3": {"axis0":{}, "axis1": {}},
+                     "odrive4": {"axis0":{}, "axis1": {}},
+                     "odrive5": {"axis0":{}, "axis1": {}},
+                     "odrive6": {"axis0":{}, "axis1": {}}}
+
     runningMode = 0
-    modeMax = 5
+    modeMax = 6
     joystick_threshold = 0.1
     index = 0
     # controller.shapeButtonArr[3] = 1
@@ -110,7 +127,39 @@ def driver_thread_funct(ser):
         miscButtonArr[3], miscButtonArr[4])
 
         data_returned = serial_read_write(data, ser)
-        # print(index, data_returned)
+        print(index, data_returned)
+
+        if (runningMode == 6):
+            line = getLineSerial(ser)
+            if ("odrive" in line):
+                # Header print statement indicating which odrive is being dumped
+                curr_odrive = line
+
+                while True:
+                    line = getLineSerial(ser)
+
+                    print(line)
+                    if ("END" in line):
+                        runningMode = 0
+                        print("Params:",odrive_params)
+                        break
+
+                    elif ("odrive" in line):
+                        # Header print statement indicating which odrive is being dumped
+                        curr_odrive = line
+
+                    else:
+                        data_return_val_num = len(line.split(" "))
+                        if data_return_val_num == 2:
+                            key = line.split(" ")[0]
+                            value = line.split(" ")[1]
+                            odrive_params[curr_odrive][key] = value
+                        elif data_return_val_num == 3:
+                            axis = line.split(" ")[0]
+                            key = line.split(" ")[1]
+                            value = line.split(" ")[2]
+                            odrive_params[curr_odrive][axis][key] = value
+                
 
         # time.sleep(0.1)
         index += 1
@@ -124,7 +173,8 @@ def driver_thread_funct(ser):
 
         
 
-device_path = "/dev/tty.usbmodem147121401"
+device_path = "/dev/tty.usbmodem147121401" # Teensy on Single Leg
+# device_path = "/dev/tty.usbmodem104477401" # Teensy on Robot
 
 def main():
     print("hello world")
@@ -158,7 +208,7 @@ def main():
             break
     else:
         print("PS4 controller not found.")
-        exit()
+        # exit()
 
     # Start the driver thread
     # controller_thread = threading.Thread(target=controller_listen)
