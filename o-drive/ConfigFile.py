@@ -41,8 +41,13 @@ contr0.config.vel_integrator_gain = 0.2
 contr1.config.vel_integrator_gain = 0.2
 contr0.config.vel_limit = math.inf              #500 without resistors
 contr1.config.vel_limit = math.inf              #500 without resistors
-#dev0.config.dc_max_negative_current = -3
-#dev0.config.max_regen_current = 3
+
+# odrv0.config.brake_resistance = 2.0 //if have resistors
+# odrv0.config.dc_bus_undervoltage_trip_level = 8.0
+# odrv0.config.dc_bus_overvoltage_trip_level = 56.0
+# odrv0.config.dc_max_positive_current = 20.0
+# odrv0.config.dc_max_negative_current = -3.0
+# odrv0.config.max_regen_current = 0
 
 dev0.config.gpio7_mode = 0                      #Set pin to digital
 dev0.config.gpio8_mode = 0                      #Set pin to digital
