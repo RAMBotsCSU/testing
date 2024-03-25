@@ -42,6 +42,7 @@ contr1.config.vel_integrator_gain = 0.2
 contr0.config.vel_limit = math.inf              #500 without resistors
 contr1.config.vel_limit = math.inf              #500 without resistors
 
+# These values were in another file with the label Uncertain... They may or may not be important
 # odrv0.config.brake_resistance = 2.0 //if have resistors
 # odrv0.config.dc_bus_undervoltage_trip_level = 8.0
 # odrv0.config.dc_bus_overvoltage_trip_level = 56.0
