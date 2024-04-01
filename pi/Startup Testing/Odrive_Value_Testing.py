@@ -63,7 +63,7 @@ def percent_error_checker(trueval, expectedval):
     if (trueval == 0):
         trueval = 0.00001
 
-    return PERCENT_DIFFERENCE > abs((trueval - expectedval)/trueval)*100.0
+    return PERCENT_DIFFERENCE > abs((trueval - expectedval) / trueval)*100.0
 
 
 
