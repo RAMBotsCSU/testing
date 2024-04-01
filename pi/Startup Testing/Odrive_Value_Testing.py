@@ -1,110 +1,81 @@
 #Set of functions that test if the ODESC values passed to it are correct within a certain percentage
-#Input: dict of values of the form {<motor name>: {<valuename1>: <valuenum1>.....}}
+#Input: dict of values of the form {<valuename1>: <valuenum1>.....}
 #Output: (True, {}) if all values pass, (False, {<incorrectvals>}) if any values don't pass
 #
-#any nan values in correct_values dicts means that value is not getting checked
+#the correct_values dictionary below shows all values that are checked
+#if there are values passed in that are not in correct_values, they are not checked
 
-import math
 
-#max % different any two values can be 
-PERCENT_DIFFERENCE = 5
+#max % different any two values can be - used so direct float comparison doesn't happen
+PERCENT_DIFFERENCE = 1
 
 # Correct Values
-correct_hip_values = {
-                      "PARAM_FLOAT_POS_SETPOINT": float('nan'),
-                      "PARAM_FLOAT_POS_GAIN": 0,
-                      "PARAM_FLOAT_VEL_SETPOINT": 0,
-                      "PARAM_FLOAT_VEL_GAIN": 0,
-                      "PARAM_FLOAT_VEL_INTEGRATOR_GAIN": 0,
-                      "PARAM_FLOAT_VEL_INTEGRATOR_CURRENT": 0,
-                      "PARAM_FLOAT_VEL_LIMIT": 0,
-                      "PARAM_FLOAT_CURRENT_SETPOINT": 0,
-                      "PARAM_FLOAT_CALIBRATION_CURRENT": 0,
-                      "PARAM_FLOAT_PHASE_INDUCTANCE": 0,
-                      "PARAM_FLOAT_PHASE_RESISTANCE": 0,
-                      "PARAM_FLOAT_CURRENT_MEAS_PHB": 0,
-                      "PARAM_FLOAT_CURRENT_MEAS_PHC": 0,
-                      "PARAM_FLOAT_DC_CALIB_PHB": 0,
-                      "PARAM_FLOAT_DC_CALIB_PHC": 0,
-                      "PARAM_FLOAT_SHUNT_CONDUCTANCE": 0,
-                      "PARAM_FLOAT_PHASE_CURRENT_REV_GAIN": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_CURRENT_LIM": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_P_GAIN": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_I_GAIN": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_V_CURRENT_CONTROL_INTEGRAL_D": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_V_CURRENT_CONTROL_INTEGRAL_Q": 0,
-                      "PARAM_FLOAT_CURRENT_CONTROL_IBUS": 0,
-                      "PARAM_FLOAT_ENCODER_PHASE": 0,
-                      "PARAM_FLOAT_ENCODER_PLL_POS": 0,
-                      "PARAM_FLOAT_ENCODER_PLL_VEL": 0,
-                      "PARAM_FLOAT_ENCODER_PLL_KP": 0,
-                      "PARAM_FLOAT_ENCODER_PLL_KI": 0,
-                      "PARAM_INT_CONTROL_MODE": 0,
-                      "PARAM_INT_ENCODER_ENCODER_OFFSET": 0,
-                      "PARAM_INT_ENCODER_ENCODER_STATE": 0,
-                      "PARAM_INT_ERROR": 0,
-                      "PARAM_BOOL_THREAD_READY": False,
-                      "PARAM_BOOL_ENABLE_CONTROL": False,
-                      "PARAM_BOOL_DO_CALIBRATION": False,
-                      "PARAM_BOOL_CALIBRATION_OK": False,
-                      "PARAM_UINT16_CONTROL_DEADLINE": 0,
-                      "PARAM_UINT16_LAST_CPU_TIME": 0
-                      }
+correct_values_axis0 = {'encoder.config.abs_spi_cs_gpio_pin': '0.00', 'encoder.config.cpr': '7.00', 'encoder.config.mode': '16384.00', 'motor.config.current_lim': '257.00', 'motor.config.current_lim_margin': '22.00', 'motor.config.pole_pairs': '9.00', 'motor.config.torque_constant': '20.00', 'controller.config.pos_gain': '0.03', 'controller.config.vel_gain': '50.00', 'controller.config.vel_integrator_gain': '0.10', 'controller.config.vel_limit': '0.08'}
 
-correct_shoulder_values = {}
-
-correct_knee_values = {}
-
-
-
-def percent_error_checker(trueval, expectedval):
-    #checks if expectedval is more than PERCENT_DIFFERENT from trueval and returns False if so
-    #NOTE: this method doesn't work very accurately due to floating point errors
-    if (trueval == 0):
-        trueval = 0.00001
-
-    return PERCENT_DIFFERENCE > abs((trueval - expectedval) / trueval)*100.0
-
+correct_values_axis1 = {'encoder.config.abs_spi_cs_gpio_pin': '257.00', 'encoder.config.cpr': '8.00', 'encoder.config.mode': '16384.00', 'motor.config.current_lim': '0.03', 'motor.config.current_lim_margin': '22.00', 'motor.config.pole_pairs': '9.00', 'motor.config.torque_constant': '20.00', 'controller.config.pos_gain': '', 'controller.config.vel_gain': '50.00', 'controller.config.vel_integrator_gain': '0.10', 'controller.config.vel_limit': '0.08'}
 
 
 def value_checker(odrive_values, correct_values):
-    #checks the hip values against correct_hip_values
-    odrive_value_dict = odrive_values[str(list(odrive_values.keys())[0])] #gets the dictionary with all values
+    #checks the values against the correct values
 
-    if (type(odrive_value_dict) is not dict):
+    if (type(odrive_values) is not dict):
         return (False, {"Error": "value_checker: nested dictionary was not passed in"})
 
     error_dict = {}
 
-    if (odrive_value_dict == correct_values):
+    if (odrive_values == correct_values):
         return (True, {})
     
     
     for key, expected_value in correct_values.items():
-        actual_value = odrive_value_dict[key]
-        if (math.isnan(expected_value)): #nan used for unchecked values
-            continue 
+        actual_value = odrive_values[key]
 
         if (actual_value != expected_value):
-            if (not percent_error_checker(actual_value, expected_value)):
-                error_dict[key] = actual_value
+            error_dict[key] = actual_value
 
     return (len(error_dict) == 0, error_dict)
 
 
+{'odrive1': 
+ {'axis0': 
+  {'encoder.config.abs_spi_cs_gpio_pin': '0.00', 'encoder.config.cpr': '7.00', 'encoder.config.mode': '16384.00', 'motor.config.current_lim': '257.00', 'motor.config.current_lim_margin': '22.00', 'motor.config.pole_pairs': '9.00', 'motor.config.torque_constant': '20.00', 'controller.config.pos_gain': '0.03', 'controller.config.vel_gain': '50.00', 'controller.config.vel_integrator_gain': '0.10', 'controller.config.vel_limit': '0.08'}, 
+  'axis1': 
+  {'encoder.config.abs_spi_cs_gpio_pin': '257.00', 'encoder.config.cpr': '8.00', 'encoder.config.mode': '16384.00', 'motor.config.current_lim': '0.03', 'motor.config.current_lim_margin': '22.00', 'motor.config.pole_pairs': '9.00', 'motor.config.torque_constant': '20.00', 'controller.config.pos_gain': '', 'controller.config.vel_gain': '50.00', 'controller.config.vel_integrator_gain': '0.10', 'controller.config.vel_limit': '0.08'}}, 
+  'odrive2': {'axis0': {}, 'axis1': {}}, 
+  'odrive3': {'axis0': {}, 'axis1': {}}, 
+  'odrive4': {'axis0': {}, 'axis1': {}}, 
+  'odrive5': {'axis0': {}, 'axis1': {}}, 
+  'odrive6': {'axis0': {}, 'axis1': {}}}
 
 
-def odrive_values_test(odrive_values):
-    #input function
-    #checks if motor is hip, shoulder, or knee and redirects appropriately
+def input_func(input_dict):
+    error_list = []
+    for odrivename, odrivedict in input_dict.items():
+        for axisname, axisdict in odrivedict.items():
+            if axisname == "axis0":
+                axis_correct_dict = correct_values_axis0
+            else:
+                axis_correct_dict = correct_values_axis1
+            
+            output = value_checker(axisdict, axis_correct_dict)
+
+            if output[0] is False:
+                value_checker_dict = output[1]
+
+                for param, value in value_checker_dict.items():
+                    error_string = "In " + odrivename + ", " + axisname + ": "
+                    error_string += param + " is " + value + ", should be: " + axis_correct_dict[param]
+                    error_list.append(error_string)
     
-    motor_name = list(odrive_values.keys())[0][2] #gets the third char of the motor name - will be H, S, or K
-    
-    if (motor_name == 'H'):
-        return value_checker(odrive_values, correct_hip_values)
-    elif (motor_name == 'S'):
-        return value_checker(odrive_values, correct_shoulder_values)
-    elif (motor_name == 'K'):
-        return value_checker(odrive_values, correct_knee_values)
-    else:
-        return (False, {"Error": "odrive_values_test: incorrect motor name"})
+    return (len(error_list) == 0, error_list)
+
+
+other_vals = {'odrive1': 
+ {'axis0': 
+  {'encoder.config.abs_spi_cs_gpio_pin': '0.00', 'encoder.config.cpr': '7.00', 'encoder.config.mode': '16384.00', 'motor.config.current_lim': '257.00', 'motor.config.current_lim_margin': '22.00', 'motor.config.pole_pairs': '9.00', 'motor.config.torque_constant': '20.00', 'controller.config.pos_gain': '0.03', 'controller.config.vel_gain': '50.00', 'controller.config.vel_integrator_gain': '0.10', 'controller.config.vel_limit': '0.08'}, 
+  'axis1': 
+  {'encoder.config.abs_spi_cs_gpio_pin': '257.00', 'encoder.config.cpr': '8.00', 'encoder.config.mode': '16384.00', 'motor.config.current_lim': '0.03', 'motor.config.current_lim_margin': '22.00', 'motor.config.pole_pairs': '9.00', 'motor.config.torque_constant': '20.00', 'controller.config.pos_gain': '', 'controller.config.vel_gain': '50.00', 'controller.config.vel_integrator_gain': '0.10', 'controller.config.vel_limit': '0.08'}}}
+
+
+
+print(input_func(other_vals))
