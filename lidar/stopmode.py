@@ -8,11 +8,13 @@ pygame.init()
 
 
 # Setup the RPLidar
-PORT_NAME = '/dev/ttyUSB0'
+#PORT_NAME = '/dev/ttyUSB0'
+PORT_NAME = '/dev/tty.usbserial-0001'
 
 while(True):
     try:
         lidar = RPLidar(None, PORT_NAME, timeout=3)
+        print("Lidar connected.")
         break
     except: 
         print("Error connecting to lidar. Trying again")
@@ -86,16 +88,28 @@ def update_avg_dist(dist_buffer):
         temp_avg[angle_step] = dist_sum / (len(dist_buffer)*5) # average distance by size of dist_buffer
     return temp_avg
 
-for scan in lidar.iter_scans():
-    for (_, angle, distance) in scan:
-        scan_data[min([359, int(angle)])] = distance 
-    process_data(scan_data)
+while(True):
+    try:
+        for scan in lidar.iter_scans():
+            for (_, angle, distance) in scan:
+                scan_data[min([359, int(angle)])] = distance 
+            process_data(scan_data)
 
-    if (time.time() - starttime) > 0.25: # every .25s
-        starttime = time.time() # restart timer
-        dist_buffer.append(scan_data) # add new data set to dist_buffer
-        if len(dist_buffer) > window: # more data sets than window parameter
-            dist_buffer.pop(0) # remove oldest data set
-            avg_dist = update_avg_dist(dist_buffer) # get average of all data sets
-            #if min(avg_dist) <= red_dot_threshold: # any distance within stop proximity?
-                #print("Stop Proximity.")
+            if (time.time() - starttime) > 0.25: # every .25s
+                starttime = time.time() # restart timer
+                dist_buffer.append(scan_data) # add new data set to dist_buffer
+                if len(dist_buffer) > window: # more data sets than window parameter
+                    dist_buffer.pop(0) # remove oldest data set
+                    avg_dist = update_avg_dist(dist_buffer) # get average of all data sets
+                    #if min(avg_dist) <= red_dot_threshold: # any distance within stop proximity?
+                        #print("Stop Proximity.")
+    except:
+        print("Issue with lidar. Trying again.")
+        time.sleep(1)
+        while(True):
+            try:
+                lidar = RPLidar(None, PORT_NAME, timeout=3)
+                print("Lidar connected.")
+                break
+            except: 
+                print("Error connecting to lidar. Trying again")
