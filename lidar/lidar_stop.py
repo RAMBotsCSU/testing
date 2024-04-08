@@ -80,7 +80,7 @@ def process_data(data):
                 pygame.draw.circle(lcd, (255, 0, 0), point, 2)  # Red dot for objects within 1 meters
             elif distance > red_dot_threshold:
                 pygame.draw.circle(lcd, (255, 255, 255), point, 2)  # White dot for objects beyond 0.5 meters
-        
+
     pygame.display.update()
 
 def update_ave_dist(dist_buffer, avg_dist):
@@ -90,10 +90,14 @@ def update_ave_dist(dist_buffer, avg_dist):
             dist_sum += arr[angle]
         avg_dist[angle] = dist_sum / len(dist_buffer)
 
+# check if object is in stop proximity
 def check_stop(avg_dist):
-    print(min(avg_dist))
     if min(avg_dist) <= red_dot_threshold:
-        print("Stop")
+        return True
+
+def stop():
+    # update_table_cell(table, 7, 1, "Sh:0,Op:0,Ps:1,L3:0,R3:0")
+    
 
 try:
     print(lidar.info)
@@ -107,8 +111,11 @@ try:
             if len(dist_buffer) > window:
                 dist_buffer.pop(0)
                 update_ave_dist(dist_buffer, avg_dist)
-                check_stop(avg_dist)
-        
+                print(min(avg_dist))
+                if check_stop(avg_dist):
+                    print("Stop")
+                    stop()
+
 except KeyboardInterrupt:
     print('Stopping.')
 lidar.stop()
