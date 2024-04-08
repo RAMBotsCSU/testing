@@ -8,7 +8,7 @@ pygame.init()
 
 
 # Setup the RPLidar
-PORT_NAME = '/dev/tty.usbserial-0001'
+PORT_NAME = '/dev/ttyUSB0'
 
 while(True):
     try:
