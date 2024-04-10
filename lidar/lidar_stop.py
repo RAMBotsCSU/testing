@@ -95,10 +95,6 @@ def check_stop(avg_dist):
     if min(avg_dist) <= red_dot_threshold:
         return True
 
-def stop():
-    # update_table_cell(table, 7, 1, "Sh:0,Op:0,Ps:1,L3:0,R3:0")
-    
-
 try:
     print(lidar.info)
     for scan in lidar.iter_scans():
@@ -114,7 +110,6 @@ try:
                 print(min(avg_dist))
                 if check_stop(avg_dist):
                     print("Stop")
-                    stop()
 
 except KeyboardInterrupt:
     print('Stopping.')

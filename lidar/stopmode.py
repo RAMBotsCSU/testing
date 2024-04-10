@@ -9,7 +9,7 @@ pygame.init()
 
 # Setup the RPLidar
 PORT_NAME = '/dev/ttyUSB0'
-# PORT_NAME = '/dev/tty.usbserial-0001'
+#PORT_NAME = '/dev/tty.usbserial-0001'
 
 while(True):
     try:
@@ -30,8 +30,8 @@ output_file = 'lidar_data.csv'
 
 
 # Define Parameters for Map
-red_dot_threshold = 400 # 500=.5m (?); threshhold for detecting close object
-white_dot_threshold = 4000 # furthest distance factored into calculations
+red_dot_threshold = 1000 # 500=.5m (?); threshhold for detecting close object
+white_dot_threshold = 5000 # furthest distance factored into calculations
 scale_data = int(white_dot_threshold/map_width) # scale of real data to printed map
   
 
@@ -43,8 +43,8 @@ def process_data(data):
         distance = float(data[angle])
         if distance > 0:  # ignore initially ungathered data points
             radians = angle * pi / 180.0
-            x = distance * cos(radians)
-            y = distance * sin(radians)
+            y = distance * cos(radians)
+            x = -distance * sin(radians)
             point = (int(int(x)/scale_data + map_width/2), int(int(y)/scale_data + map_width/2))
             if distance <= red_dot_threshold:
                 pygame.draw.circle(lcd, pygame.Color(255, 55, 55), point, 1, 1)
@@ -64,6 +64,11 @@ def process_data(data):
         text = font.render(label, True, (255, 255, 255))
         lcd.blit(text, (int(map_width/2 + 5), tick_placement - 5)) # x-axis
         lcd.blit(text, (tick_placement - 5, int(map_width/2 + 5))) # y-axis
+    pygame.draw.circle(lcd, pygame.Color(255, 50, 50), (int(map_width/2), int(map_width/2)), red_dot_threshold/scale_data, width=1)
+    label = str(red_dot_threshold/1000) + ' m'
+    font = pygame.font.SysFont(None, 12)
+    text = font.render(label, True, (255, 50, 50))
+    lcd.blit(text, (int(map_width/2) + int(red_dot_threshold*0.6/scale_data), int(map_width/2) + int(red_dot_threshold*0.8/scale_data)))
     pygame.display.update()
     return processed_data
 
