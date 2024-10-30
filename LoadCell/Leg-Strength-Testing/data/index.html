@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>IMU Websocket Demo v3</title>
+</head>
+<body>
+    <div class="topnav">
+        <h1>Rambots ForceProbe</h1>
+    </div>
+    <!----<script type="module" src="plane.js"></script><></!---->
+    <div id="scene-container"></div>
+    <div class="content">
+        <div class="card-grid">
+            <div class="card">
+                <p class="card-title"><i class="fas fa-thermometer-threequarters" style="color:#059e8a;"></i> X Acceleration</p>
+                <p class="reading"><span id="Strength"></span> lbs</p>
+            </div>
+    </div>
+    <script type="module" src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize the scene and start rendering
+            init();
+            animate();
+        });
+    </script>
+</body>
+</html>
