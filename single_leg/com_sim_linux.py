@@ -83,24 +83,22 @@ def driver_thread_funct(ser):
                     shapeButtonArr[3] = 0
 
             if (event.type == JOYBUTTONDOWN):
-                if (event.dict['button'] == 15): # TOuchpad press
+                if (event.dict['button'] == 13):  # Touchpad press
                     print("EXIT")
                     exit()
-                if (event.dict['button'] == 0): # X button
+                if (event.dict['button'] == 0):  # Cross (X) button
                     shapeButtonArr[3] = 1
-
-                if (event.dict['button'] == 9): # Left Bumper
+                if (event.dict['button'] == 4):  # Left Bumper
                     if runningMode <= 0:
                         runningMode = modeMax
                     else:
-                        runningMode = runningMode-1
+                        runningMode = runningMode - 1
                     print("Mode:", runningMode)
-
-                if (event.dict['button'] == 10): # Right Bumper
+                if (event.dict['button'] == 5):  # Right Bumper
                     if runningMode >= modeMax:
                         runningMode = 0
                     else:
-                        runningMode = runningMode+1
+                        runningMode = runningMode + 1
                     print("Mode:", runningMode)
 
             if (event.type == JOYAXISMOTION):
