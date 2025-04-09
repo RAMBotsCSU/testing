@@ -79,8 +79,14 @@ def driver_thread_funct(ser):
         for event in pygame.event.get():
             # Call controller.update from the main thread
             if (event.type == JOYBUTTONUP):
-                if (event.dict['button'] == 0): # X btn release
+                if (event.dict['button'] == 0):  # X button release
                     shapeButtonArr[3] = 0
+                if (event.dict['button'] == 1):  # Circle button release
+                    shapeButtonArr[2] = 0
+                if (event.dict['button'] == 2):  # Square button release
+                    shapeButtonArr[0] = 0
+                if (event.dict['button'] == 3):  # Triangle button release
+                    shapeButtonArr[1] = 0
 
             if (event.type == JOYBUTTONDOWN):
                 if (event.dict['button'] == 13):  # Touchpad press
@@ -88,6 +94,12 @@ def driver_thread_funct(ser):
                     exit()
                 if (event.dict['button'] == 0):  # Cross (X) button
                     shapeButtonArr[3] = 1
+                if (event.dict['button'] == 1):  # Circle button
+                    shapeButtonArr[2] = 1
+                if (event.dict['button'] == 2):  # Square button
+                    shapeButtonArr[0] = 1
+                if (event.dict['button'] == 3):  # Triangle button
+                    shapeButtonArr[1] = 1
                 if (event.dict['button'] == 4):  # Left Bumper
                     if runningMode <= 0:
                         runningMode = modeMax
