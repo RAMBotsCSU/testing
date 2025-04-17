@@ -46,7 +46,7 @@ def update_plot(frame):
     with data_lock:
         smoothed_currents = exponential_moving_average(currents)
         plt.cla()
-        plt.ylim(-20, 20)  # Set the Y-axis limits
+        plt.ylim(-40, 40)  # Set the Y-axis limits
         plt.plot(times, smoothed_currents, label="Smoothed Iq_measured (EMA)")
         plt.xlabel("Time (s)")
         plt.ylabel("Current (A)")

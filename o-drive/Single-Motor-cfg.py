@@ -3,59 +3,54 @@ import fibre.libfibre
 import math
 import time
 import sys
-import os
 
-# Erase config, except that the oDrive will disconnect
+if len(sys.argv) != 2 or sys.argv[1] not in ["0", "1"]:
+    print("Usage: python script.py [0|1]")
+    sys.exit(1)
+
+axis_id = int(sys.argv[1])
+
+print(f"Configuring Axis {axis_id}...")
+
+# Erase config (ODrive will disconnect)
 dev0 = odrive.find_any()
 try:
     dev0.erase_configuration()
 except fibre.libfibre.ObjectLostError:
     pass
 
-# Refind oDrive and simplify naming scheme
 dev0 = odrive.find_any()
-ax0 = dev0.axis0
-ax1 = dev0.axis1
-mo0 = ax0.motor
-mo1 = ax1.motor
-enc0 = ax0.encoder
-enc1 = ax1.encoder
-contr0 = ax0.controller
-contr1 = ax1.controller
+ax = dev0.axis0 if axis_id == 0 else dev0.axis1
+mo = ax.motor
+enc = ax.encoder
+contr = ax.controller
 
-mo0.config.current_lim = 22.0
-mo1.config.current_lim = 22.0
-mo0.config.current_lim_margin = 9.0
-mo1.config.current_lim_margin = 9.0
-enc0.config.cpr = 16384                         
-enc1.config.cpr = 16384                         # Has different value in SPI
-mo0.config.pole_pairs = 20
-mo1.config.pole_pairs = 20
-mo0.config.torque_constant = 0.025  # 8.27/90  
-mo1.config.torque_constant = 0.025  # 8.27/90
-contr0.config.pos_gain = 60
-contr1.config.pos_gain = 60
-contr0.config.vel_gain = 0.1
-contr1.config.vel_gain = 0.1
-contr0.config.vel_integrator_gain = 0.2
-contr1.config.vel_integrator_gain = 0.2
-contr0.config.vel_limit = math.inf              # 500 without resistors
-contr1.config.vel_limit = math.inf              # 500 without resistors
+# General configuration
+mo.config.current_lim = 22.0
+mo.config.current_lim_margin = 9.0
+enc.config.cpr = 16384                         
+mo.config.pole_pairs = 20
+mo.config.torque_constant = 0.025  # 8.27/90  
 
-# These values were in another file with the label Uncertain... They may or may not be important
-# odrv0.config.brake_resistance = 2.0 //if have resistors
-# odrv0.config.dc_bus_undervoltage_trip_level = 8.0
-# odrv0.config.dc_bus_overvoltage_trip_level = 56.0
-# odrv0.config.dc_max_positive_current = 20.0
-# odrv0.config.dc_max_negative_current = -3.0
-# odrv0.config.max_regen_current = 0
+contr.config.pos_gain = 60
+contr.config.vel_gain = 0.1
+contr.config.vel_integrator_gain = 0.2
+contr.config.vel_limit = math.inf  # Unlimited (careful!)
 
-dev0.config.gpio7_mode = 0                      # Set pin to digital
-dev0.config.gpio8_mode = 0                      # Set pin to digital
-enc0.config.abs_spi_cs_gpio_pin = 7             # Set pin to SPI mode
-enc1.config.abs_spi_cs_gpio_pin = 8             # Set pin to SPI mode
-enc0.config.mode = 257                          # Set encoder to SPI mode
-enc1.config.mode = 257                          # Set encoder to SPI mode
+# Encoder SPI settings
+dev0.config.gpio7_mode = 0  # digital
+dev0.config.gpio8_mode = 0  # digital
+enc.config.abs_spi_cs_gpio_pin = 7 if axis_id == 0 else 8
+enc.config.mode = 257  # ABS_SPI
+
+# Optional power-related config
+dev0.config.brake_resistance = 2.0
+dev0.config.dc_bus_undervoltage_trip_level = 8.0
+# dev0.config.dc_bus_overvoltage_trip_level = 56.0
+# dev0.config.dc_max_positive_current = 20.0
+# dev0.config.dc_max_negative_current = -3.0
+
+dev0.config.enable_brake_resistor = True
 
 try:
     dev0.save_configuration()
@@ -63,55 +58,38 @@ try:
 except fibre.libfibre.ObjectLostError:
     pass
 
+# Reconnect after reboot
 dev0 = odrive.find_any()
-ax0 = dev0.axis0
-ax1 = dev0.axis1
-mo0 = ax0.motor
-mo1 = ax1.motor
-enc0 = ax0.encoder
-enc1 = ax1.encoder
-contr0 = ax0.controller
-contr1 = ax1.controller
+ax = dev0.axis0 if axis_id == 0 else dev0.axis1
+mo = ax.motor
+enc = ax.encoder
+contr = ax.controller
 
-# Calibrate motor 0
-ax0.requested_state = 4                         # Motor calibration
-while not mo0.is_calibrated:
+# Calibrate motor
+print("Starting motor calibration...")
+ax.requested_state = 4  # FULL_CALIBRATION_SEQUENCE
+while not mo.is_calibrated:
     time.sleep(2)
-    print('motor 0 not calibrated')
-    print(mo0.error)
-mo0.config.pre_calibrated = True
+    print(f"motor {axis_id} not calibrated")
+    print(mo.error)
+mo.config.pre_calibrated = True
 
-# Skip motor 1 calibration
-# ax1.requested_state = 4                         # Motor calibration
-# while not mo1.is_calibrated:
-#     time.sleep(2)
-#     print('motor 1 not calibrated')
-#     print(mo1.error)
-# mo1.config.pre_calibrated = True
-
-# Calibrate encoder 0
-ax0.requested_state = 7                         # Encoder calibration
-while not enc0.is_ready:
+# Calibrate encoder
+print("Starting encoder calibration...")
+ax.requested_state = 7  # ENCODER_OFFSET_CALIBRATION
+while not enc.is_ready:
     time.sleep(2)
-    print('encoder 0 not calibrated')
-    print(enc0.error)
-enc0.config.pre_calibrated = True
+    print(f"encoder {axis_id} not calibrated")
+    print(enc.error)
+enc.config.pre_calibrated = True
 
-# Skip encoder 1 calibration
-# ax1.requested_state = 7                         # Encoder calibration
-# while not enc1.is_ready:
-#     time.sleep(2)
-#     print('encoder 1 not calibrated')
-#     print(enc1.error)
-# enc1.config.pre_calibrated = True
-
-dev0.config.enable_brake_resistor = True        # If have resistors (resistance is at 2 ohms per default)
-dev0.clear_errors()                             # Must do this to enable resistor
-ax0.config.startup_closed_loop_control = True   # Go into closed loop on restart
-# ax1.config.startup_closed_loop_control = True   # Skip closed loop for axis1
+# Enable startup closed loop only for selected axis
+ax.config.startup_closed_loop_control = True
+dev0.clear_errors()
 
 try:
     dev0.save_configuration()
 except fibre.libfibre.ObjectLostError:
     pass
 
+print(f"Axis {axis_id} successfully configured and calibrated.")
