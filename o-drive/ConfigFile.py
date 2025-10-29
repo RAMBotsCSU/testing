@@ -72,7 +72,7 @@ enc1 = ax1.encoder
 contr0 = ax0.controller
 contr1 = ax1.controller
 
-
+print("peins")
 
 ax0.requested_state = 4                         #Motor calibration
 while(not(mo0.is_calibrated)):

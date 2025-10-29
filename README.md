@@ -16,6 +16,19 @@ Files:
 | pi_simple_controller   | Poll controller inputs for opendog walk cycle. Pair with teensy_serial_main_opendog.ino      |
 | pi_gui   | RamBOT GUI for Pi touchscreen display. TODO      |
 | Sounds   | .mp3 files for use with pygame mixer and USB speaker     |
+| PiPS4_test.py | Early PS4 controller Bluetooth test script (legacy test). |
+| serial_test.py | Serial communication test scripts for Pi-Teensy debugging. |
+| serial_test_single.py | Single-port serial test variant. |
+| Serial_and_PS4_test.py | Combined PS4 and serial communication test (legacy). |
+| multithreading_Serial_PS4_Test.py | Multithreading experiments combining controller and serial threads. |
+| multithreadingTest.py | Multithreading experiments (utility/bench). |
+| pygame_test.py | Pygame-based controller/audio test and examples. |
+| color_test.py | Python script to change PS4 controller LED color from Pi. |
+| pi/PiGUI/Dashboard_Example.py | Example PySimpleGUI dashboard for Pi touchscreen. |
+| pi/PiGUI/pygame_Test.py | Pygame example demonstrating audio playback and input handling. |
+| pi/PiGUI/Demo_Animated_GIFS.py | Demo showing animated GIF usage in the Pi GUI. |
+| pi/PiGUI/RamBOTs_UI.py | Prototype RamBOTs user interface built with PySimpleGUI. |
+| pi/pi_edays_demo_demo | Pi-side demo script used for eDays demonstrations (simple controller/visuals). |
 
 &emsp;**Teensy directory:**
 | File                       | Description           |
@@ -24,11 +37,15 @@ Files:
 | teensy_serial_main_opendog    | Implementation of opendog walk cycle. Pair with pi_simple_controller.py      |
 | teensy_serial_main_gyro    | Gyroscope demo: control legs using gyroscope tilt      |
 | standalone_Kinematics    | Leg test program using serial monitor input instead of Pi program for ease of use    |
+| teensy/test_rambot_gyro | Gyroscope testing code and examples (separate test folder). |
+| teensy/MechETest | Mechanical engineers' motor and encoder test programs for ODrive integration. |
+| teensy/teensy_edays_demo | Teensy-side demo code used for eDays demonstrations. |
 
 &emsp;**O-Drive directory:**
 | File                       | Description           |
 | ---------------------------|-------------|
 | ConfigSteps  | Instructions for configuring an ODrive for initialization     |
+| SinWaveTest | ODrive sinusoidal drive test programs for motor validation. |
 
 History:
 --------
@@ -145,8 +162,6 @@ History:
  Added:     pi/PiGUI/Dashboard_Example.py
             pi/PiGUI/pygame_Test.py
             pi/PiGUI/Demo_Animated_GIFS.py
-
-</pre>
 
 </pre>
 
