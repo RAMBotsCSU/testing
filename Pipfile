@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+
+[dev-packages]
+
+[requires]
+python_version = "3.13"
+
+[scripts]
+calibrate_old = "python o-drive/ConfigFile.py"
+diagnose = "python o-drive/Diagnose.py"
+calibrate_axis0 = "python o-drive/Single-Motor-cfg.py 0"
+calibrate_axis1 = "python o-drive/Single-Motor-cfg.py 1"
+com_sim = "python single_leg/com_sim.py"
+com_sim_linux = "python single_leg/com_sim_linux.py"
+lidar_sim = "python lidar/lidar_display.py"
+plotter = "python plotter/odrive-plotter.py"

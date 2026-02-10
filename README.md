@@ -4,6 +4,10 @@ This is the official CSU RAMBots testing repository.
 Visit us at our [website](https://projects-web.engr.colostate.edu/ece-sr-design/AY22/RamBOTs).
 
 
+## Tutorial on Running Scripts
+To streamline testing and troubleshooting, we've added pipfile to facilitate running scripts on all platforms. Learn more here: [Scripts](./Running_Everything.md).
+
+
 <img src="https://user-images.githubusercontent.com/112744753/196563382-2745e707-77d6-42d5-98a0-a29530e21c9a.png" width=50% height=50%>
 
 Files:
