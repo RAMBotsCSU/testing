@@ -12,6 +12,7 @@ odrive = "*"
 python_version = "3.13"
 
 [scripts]
+calibrate = "python o-drive/calibrate.py"
 calibrate_old = "python o-drive/ConfigFile.py"
 diagnose = "python o-drive/Diagnose.py"
 calibrate_axis0 = "python o-drive/Single-Motor-cfg.py 0"
