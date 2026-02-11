@@ -54,34 +54,59 @@ def clear_axis_errors(axis, axis_name="axis"):
     print(f"{axis_name} errors cleared.\n")
 
 def main():
-    print("🔍 Connecting to ODrive... (this may take a few seconds)")
-    odrv = odrive.find_any()
-    print("✅ Connected to ODrive.")
-    print(f"Firmware version: {odrv.fw_version_major}.{odrv.fw_version_minor}.{odrv.fw_version_revision}")
+    print("Connecting to ODrive... (this may take a few seconds)")
+    try:
+        odrv = odrive.find_any()
+    except Exception as e:
+        print(f"ERROR: Failed to connect to ODrive: {e}")
+        return
+    
+    print("Connected to ODrive.")
+    
+    try:
+        print(f"Firmware version: {odrv.fw_version_major}.{odrv.fw_version_minor}.{odrv.fw_version_revision}")
+    except (AttributeError, Exception) as e:
+        print(f"Warning: Could not read firmware version: {e}")
 
     # System-level error
-    print(f"\nSystem Error: {odrv.system_stats.error}")
+    try:
+        print(f"\nSystem Error: {odrv.system_stats.error}")
+    except (AttributeError, Exception) as e:
+        print(f"Warning: Could not read system stats: {e}")
 
     # Diagnostic reports
-    print_error_report(odrv.axis0, "axis0")
+    try:
+        print_error_report(odrv.axis0, "axis0")
+    except (AttributeError, Exception) as e:
+        print(f"\nError reading axis0: {e}")
+    
     try:
         print_error_report(odrv.axis1, "axis1")
     except AttributeError:
         print("\nNo axis1 detected on this ODrive.")
+    except Exception as e:
+        print(f"\nError reading axis1: {e}")
 
     # Ask user if they want to clear
     resp = input("\nDo you want to clear all ODrive errors now? (y/N): ").strip().lower()
     if resp == "y":
-        clear_axis_errors(odrv.axis0, "axis0")
+        try:
+            clear_axis_errors(odrv.axis0, "axis0")
+        except (AttributeError, Exception) as e:
+            print(f"Error clearing axis0: {e}")
+        
         try:
             clear_axis_errors(odrv.axis1, "axis1")
         except AttributeError:
             pass
-        print("✅ All errors cleared successfully.")
+        except Exception as e:
+            print(f"Error clearing axis1: {e}")
+        
+        print("All errors cleared successfully.")
     else:
-        print("ℹ️ Errors left intact. No changes made.")
+        print("Errors left intact. No changes made.")
 
-    print("\n✅ Diagnostic complete.")
+    print("\nDiagnostic complete.")
 
 if __name__ == "__main__":
     main()
