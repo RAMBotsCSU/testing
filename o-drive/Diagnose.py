@@ -1,13 +1,3 @@
-#!/usr/bin/env python3
-"""
-ODrive Error Diagnostic + Auto-Clear Tool
-Author: ChatGPT (GPT-5)
-Date: 2025-10-14
-
-Connects to an ODrive, prints detailed diagnostics for each axis,
-and optionally clears all detected errors.
-"""
-
 import odrive
 from odrive.enums import *
 import time

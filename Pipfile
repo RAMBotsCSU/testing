@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 odrive = "*"
+serial = "*"
+pyserial = "*"
 fibre = "*"
 
 [dev-packages]
@@ -16,6 +18,7 @@ python_version = "3.13"
 calibrate = "python o-drive/calibrate.py"
 calibrate_old = "python o-drive/ConfigFile.py"
 diagnose = "python o-drive/Diagnose.py"
+rambot_tool = "python o-drive/RamBOT-Tool.py"
 calibrate_axis0 = "python o-drive/Single-Motor-cfg.py 0"
 calibrate_axis1 = "python o-drive/Single-Motor-cfg.py 1"
 com_sim = "python single_leg/com_sim.py"
