@@ -2,7 +2,10 @@ import tkinter as tk
 from tkinter import ttk, Menu, PhotoImage, scrolledtext
 import csv, re, math
 import odrive
+from odrive.enums import *
 import time
+import sys
+import os
 
 class RamBOTTool:
     '''
@@ -27,6 +30,29 @@ class RamBOTTool:
         '''
         self.root.title("RamBOT Tool")
         self.root.option_add('*tearOff', False)
+        
+        # Configure colors and styling
+        self.bg_color = "#2b2b2b"  # Dark background
+        self.fg_color = "#e8e8e8"  # Light text
+        self.accent_color = "#4a90e2"  # Accent blue
+        
+        self.root.configure(bg=self.bg_color)
+        
+        # Configure ttk styling
+        style = ttk.Style()
+        style.theme_use('clam')  # Use clam theme for better customization
+        
+        # Configure styles
+        style.configure('TFrame', background=self.bg_color)
+        style.configure('TLabel', background=self.bg_color, foreground=self.fg_color, font=('Helvetica', 9))
+        style.configure('TButton', font=('Helvetica', 9))
+        style.configure('TNotebook', background=self.bg_color, borderwidth=0)
+        style.configure('TNotebook.Tab', font=('Helvetica', 9), padding=[10, 5])
+        
+        # Configure font rendering for better anti-aliasing
+        self.default_font = ('Helvetica', 9)
+        self.heading_font = ('Helvetica', 14, 'bold')
+        self.mono_font = ('Consolas', 9)
 
         # Set icon
         self.icon = PhotoImage(file="o-drive/logo.png")
@@ -66,13 +92,13 @@ class RamBOTTool:
         self.tab2.columnconfigure(0, weight=1)
     
     def create_calibrate_tab(self):
-        ttk.Label(self.tab1, text="Calibrate O-Drive", font=('Arial', 14, 'bold')).grid(column=0, row=0, padx=30, pady=(30,10))
+        ttk.Label(self.tab1, text="Calibrate O-Drive", font=self.heading_font).grid(column=0, row=0, padx=30, pady=(30,10))
         
         calibrate_btn = ttk.Button(self.tab1, text='Start Calibration', command=self.start_calibration)
         calibrate_btn.grid(column=0, row=1, padx=30, pady=10)
             
     def create_diagnose_tab(self):
-        ttk.Label(self.tab2, text="Diagnose O-Drive", font=('Arial', 14, 'bold')).grid(column=0, row=0, padx=30, pady=(30,10), columnspan=2)
+        ttk.Label(self.tab2, text="Diagnose O-Drive", font=self.heading_font).grid(column=0, row=0, padx=30, pady=(30,10), columnspan=2)
         
         # Button frame
         button_frame = ttk.Frame(self.tab2)
@@ -85,9 +111,11 @@ class RamBOTTool:
         clear_errors_btn.pack(side=tk.LEFT, padx=5)
         
         # Diagnostic output text area
-        ttk.Label(self.tab2, text="Diagnostic Output:", font=('Arial', 10, 'bold')).grid(column=0, row=2, padx=30, pady=(10,5), sticky='w', columnspan=2)
+        ttk.Label(self.tab2, text="Diagnostic Output:", font=self.default_font).grid(column=0, row=2, padx=30, pady=(10,5), sticky='w', columnspan=2)
         
-        self.diag_text = scrolledtext.ScrolledText(self.tab2, height=20, width=70, wrap=tk.WORD)
+        self.diag_text = scrolledtext.ScrolledText(self.tab2, height=20, width=70, wrap=tk.WORD, 
+                                                   bg="#1e1e1e", fg=self.fg_color, 
+                                                   font=self.mono_font, insertbackground=self.fg_color)
         self.diag_text.grid(column=0, row=3, padx=30, pady=(0,20), columnspan=2, sticky='nsew')
         self.diag_text.config(state=tk.DISABLED)
         
@@ -100,7 +128,8 @@ class RamBOTTool:
         self.status_frame = ttk.Frame(self.root)
         self.status_frame.grid(column=0, row=1, sticky="ew", padx=5, pady=5)
         
-        self.status_label = ttk.Label(self.status_frame, text="Ready", relief=tk.SUNKEN, anchor=tk.W)
+        self.status_label = ttk.Label(self.status_frame, text="Ready", relief=tk.SUNKEN, 
+                                      anchor=tk.W, font=self.default_font)
         self.status_label.pack(fill=tk.X)
         
         # Adjust root grid to accommodate status bar
@@ -162,10 +191,19 @@ class RamBOTTool:
     
     def on_closing(self):
         """Clean shutdown when window is closed"""
-        if self.odrive_config:
-            self.update_status("Detaching ODrive...")
-            self.odrive_config.detach()
-        self.root.destroy()
+        try:
+            if self.odrive_config:
+                self.odrive_config.detach()
+        except Exception as e:
+            print(f"Error during cleanup: {e}")
+        finally:
+            try:
+                self.root.quit()
+                self.root.destroy()
+            except:
+                pass
+            # Force exit to prevent hanging
+            os._exit(0)
 
 class Config_ODrive:
     def __init__(self):
@@ -233,12 +271,6 @@ class Config_ODrive:
         self.contr0.config.vel_limit = math.inf              #500 without resistors
         self.contr1.config.vel_limit = math.inf   
 
-    def calibrate(self):
-        self.calibrate_motor(self.ax0)
-        self.calibrate_motor(self.ax1)
-        self.calibrate_encoders(self.ax0)
-        self.calibrate_encoders(self.ax1)
-
     def calibrate_motor(self, axis):
         self.send_feedback(f"Calibrating motor on {axis}...")
         axis.requested_state = 4
@@ -274,9 +306,16 @@ class Config_ODrive:
     def detach(self):
         """Detach from ODrive without stopping motors"""
         if self.odrive:
-            self.send_feedback("Detaching from ODrive...")
-            self.odrive = None
-            self.send_feedback("ODrive detached")
+            try:
+                self.send_feedback("Detaching from ODrive...")
+                # Properly release the ODrive connection
+                if hasattr(self.odrive, '__channel__'):
+                    self.odrive.__channel__.close()
+                self.odrive = None
+                self.send_feedback("ODrive detached")
+            except Exception as e:
+                print(f"Error detaching: {e}")
+                self.odrive = None
 
     def decode_errors(self, error_value, error_dict):
         """Convert bitfield error values into human-readable names."""
