@@ -23,6 +23,11 @@ pipenv run lidar_sim
 ```
 
 ### O-Drive Scripts
+Run RamBOT-Tool UI (Best):
+```
+pipenv run rambot_tool
+```
+
 Run current calibration script (Recommended):
 ```
 pipenv run calibrate
