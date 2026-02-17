@@ -34,7 +34,7 @@ class RamBOTTool:
         # Configure colors and styling
         self.bg_color = "#2b2b2b"  # Dark background
         self.fg_color = "#e8e8e8"  # Light text
-        self.accent_color = "#4a90e2"  # Accent blue
+        self.accent_color = "#066710"  # Accent Green
         
         self.root.configure(bg=self.bg_color)
         
@@ -42,12 +42,45 @@ class RamBOTTool:
         style = ttk.Style()
         style.theme_use('clam')  # Use clam theme for better customization
         
-        # Configure styles
-        style.configure('TFrame', background=self.bg_color)
-        style.configure('TLabel', background=self.bg_color, foreground=self.fg_color, font=('Helvetica', 9))
-        style.configure('TButton', font=('Helvetica', 9))
-        style.configure('TNotebook', background=self.bg_color, borderwidth=0)
-        style.configure('TNotebook.Tab', font=('Helvetica', 9), padding=[10, 5])
+        # Configure default styles
+        style.configure('TFrame', 
+                       background=self.bg_color,
+                       borderwidth=0,
+                       relief='flat')
+        
+        style.configure('TLabel', 
+                       background=self.bg_color, 
+                       foreground=self.fg_color, 
+                       font=('Helvetica', 9))
+        
+        # Button styling
+        style.configure('TButton', 
+                       font=('Helvetica', 9),
+                       background=self.accent_color,
+                       foreground='white',
+                       borderwidth=0,
+                       focuscolor='none',
+                       padding=10)
+        
+        # Button hover/press effects
+        style.map('TButton',
+                 background=[('active', '#088A12'), ('pressed', '#044408')],
+                 foreground=[('active', 'white'), ('pressed', 'white')])
+        
+        # Notebook styling
+        style.configure('TNotebook', 
+                       background=self.bg_color, 
+                       borderwidth=0)
+        
+        style.configure('TNotebook.Tab', 
+                       font=('Helvetica', 9), 
+                       padding=[10, 5],
+                       background='#3d3d3d',
+                       foreground=self.fg_color)
+        
+        style.map('TNotebook.Tab',
+                 background=[('selected', self.accent_color), ('active', '#4d4d4d')],
+                 foreground=[('selected', 'white')])
         
         # Configure font rendering for better anti-aliasing
         self.default_font = ('Helvetica', 9)

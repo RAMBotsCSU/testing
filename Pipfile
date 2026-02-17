@@ -8,6 +8,8 @@ odrive = "*"
 serial = "*"
 pyserial = "*"
 fibre = "*"
+pyqt6 = "*"
+matplotlib = "*"
 
 [dev-packages]
 
@@ -19,6 +21,7 @@ calibrate = "python o-drive/calibrate.py"
 calibrate_old = "python o-drive/ConfigFile.py"
 diagnose = "python o-drive/Diagnose.py"
 rambot_tool = "python o-drive/RamBOT-Tool.py"
+rambot_tool_v2 = "python o-drive/RamBOT-Tool-v2.py"
 calibrate_axis0 = "python o-drive/Single-Motor-cfg.py 0"
 calibrate_axis1 = "python o-drive/Single-Motor-cfg.py 1"
 com_sim = "python single_leg/com_sim.py"
