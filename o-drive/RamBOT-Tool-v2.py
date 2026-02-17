@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                               QHBoxLayout, QTabWidget, QPushButton, QLabel, 
                               QTextEdit, QStatusBar, QFrame, QComboBox)
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QTimer
-from PyQt6.QtGui import QFont, QIcon
+from PyQt6.QtGui import QFont, QIcon, QPixmap
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import sys
@@ -43,7 +43,7 @@ class RamBOTToolQt(QMainWindow):
     def setup_main_window(self):
         """Main Window Setup"""
         self.setWindowTitle("RamBOT Tool")
-        self.setMinimumSize(900, 700)
+        self.setMinimumSize(900, 750)
         
         # Set icon
         try:
@@ -60,6 +60,29 @@ class RamBOTToolQt(QMainWindow):
         main_layout = QVBoxLayout(central_widget)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
+        
+        # Create banner label above tabs
+        self.banner_label = QLabel()
+        self.banner_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.banner_label.setStyleSheet("background-color: #1e1e1e; padding: 10px;")
+        
+        # Try to load banner image
+        try:
+            banner_pixmap = QPixmap("o-drive/banner.png")
+            if not banner_pixmap.isNull():
+                # Scale the image to fit nicely (maintain aspect ratio)
+                scaled_pixmap = banner_pixmap.scaledToWidth(800, Qt.TransformationMode.SmoothTransformation)
+                self.banner_label.setPixmap(scaled_pixmap)
+            else:
+                # Fallback if image doesn't exist
+                self.banner_label.setText("RamBOT Tool")
+                self.banner_label.setStyleSheet("background-color: #1e1e1e; padding: 20px; font-size: 24pt; font-weight: bold; color: #4a90e2;")
+        except:
+            # Fallback if image loading fails
+            self.banner_label.setText("RamBOT Tool")
+            self.banner_label.setStyleSheet("background-color: #1e1e1e; padding: 20px; font-size: 24pt; font-weight: bold; color: #4a90e2;")
+        
+        main_layout.addWidget(self.banner_label)
         
         # Create tab widget
         self.tabs = QTabWidget()
