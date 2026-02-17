@@ -16,7 +16,8 @@ import os
 import math
 import time
 import odrive
-from odrive.enums import *
+import odrive.utils
+from odrive.device_manager import *
 import threading
 
 
@@ -518,6 +519,9 @@ class Config_ODrive:
     def __init__(self):
         self.odrive = None
         self.feedback_callback = None
+        self.subscription = None
+        self.device_manager = get_device_manager()
+        self._is_connected = False
     
     def set_feedback_callback(self, callback):
         """Set callback function for sending status updates to GUI"""
@@ -600,14 +604,58 @@ class Config_ODrive:
         axis.encoder.config.pre_calibrated = True
         self.send_feedback(f"Encoder {axis} calibrated")
 
+    def on_found(self, dev):
+        """Callback when ODrive device is found"""
+        serial = dev.info.serial_number if hasattr(dev, 'info') else 'unknown'
+        self.send_feedback(f"Found ODrive (S/N: {serial})")
+        return True  # Always connect to found devices
+    
+    def on_lost(self, dev):
+        """Callback when ODrive device is lost"""
+        self._is_connected = False
+        self.send_feedback("ODrive connection lost - searching...")
+    
+    def on_connected(self, dev):
+        """Callback when connected to ODrive"""
+        self._is_connected = True
+        self.odrive = dev
+        serial = dev.info.serial_number if hasattr(dev, 'info') else 'unknown'
+        self.send_feedback(f"Connected to ODrive (S/N: {serial})")
+    
+    def on_disconnected(self, dev):
+        """Callback when disconnected from ODrive"""
+        self._is_connected = False
+        self.odrive = None
+        self.send_feedback("ODrive disconnected - will auto-reconnect")
+    
     def find_odrive(self):
-        """Find and connect to ODrive"""
+        """Find and connect to ODrive using subscription"""
         try:
             self.send_feedback("Searching for ODrive...")
-            odrv = odrive.find_any()
-            self.send_feedback("ODrive found and connected")
-            self.odrive = odrv
-            return odrv
+            
+            # Create subscription if not already created
+            if self.subscription is None:
+                self.subscription = Subscription(
+                    on_found=self.on_found,
+                    on_lost=self.on_lost,
+                    on_connected=self.on_connected,
+                    on_disconnected=self.on_disconnected
+                )
+                self.device_manager.subscribe(self.subscription)
+            
+            # Wait a moment for connection
+            max_wait = 5  # seconds
+            start_time = time.time()
+            while not self._is_connected and (time.time() - start_time) < max_wait:
+                time.sleep(0.1)
+            
+            if self._is_connected:
+                self.send_feedback("ODrive connected successfully")
+                return self.odrive
+            else:
+                self.send_feedback("Timeout waiting for ODrive - will keep searching")
+                return None
+                
         except Exception as e:
             self.send_feedback(f"Error finding ODrive: {e}")
             print(f"Error finding ODrive: {e}")
@@ -622,27 +670,26 @@ class Config_ODrive:
     
     def detach(self):
         """Detach from ODrive without stopping motors"""
-        if self.odrive:
-            try:
-                self.send_feedback("Detaching from ODrive...")
-                # Properly release the ODrive connection
-                if hasattr(self.odrive, '__channel__'):
-                    self.odrive.__channel__.close()
-                self.odrive = None
-                self.send_feedback("ODrive detached")
-            except Exception as e:
-                print(f"Error detaching: {e}")
-                self.odrive = None
-
-    def decode_errors(self, error_value, error_dict):
-        """Convert bitfield error values into human-readable names"""
-        if error_value == 0:
-            return ["no error"]
-        errors = []
-        for name, value in error_dict.items():
-            if error_value & value:
-                errors.append(name)
-        return errors
+        try:
+            self.send_feedback("Detaching from ODrive...")
+            
+            # Unsubscribe from device manager
+            if self.subscription:
+                try:
+                    self.device_manager.unsubscribe(self.subscription)
+                    self.subscription = None
+                except Exception as e:
+                    print(f"Error unsubscribing: {e}")
+            
+            # Clear ODrive reference
+            self.odrive = None
+            self._is_connected = False
+            self.send_feedback("ODrive detached")
+            
+        except Exception as e:
+            print(f"Error detaching: {e}")
+            self.odrive = None
+            self._is_connected = False
     
     def get_axis_report(self, axis, axis_name="axis"):
         """Generate detailed diagnostic report for a given axis"""
@@ -650,33 +697,34 @@ class Config_ODrive:
         report.append(f"\n--- {axis_name.upper()} DIAGNOSTIC REPORT ---")
         
         try:
-            axis_errors = self.decode_errors(axis.error, AXIS_ERROR)
-            report.append(f"Axis Error(s): {', '.join(axis_errors)}")
+            axis_errors = odrive.utils.format_errors(axis)
+            report.append(f"Axis Errors:\n{axis_errors}")
         except Exception as e:
             report.append(f"Axis Error: Could not read - {e}")
         
         try:
-            motor_errors = self.decode_errors(axis.motor.error, MOTOR_ERROR)
-            report.append(f"Motor Error(s): {', '.join(motor_errors)}")
+            motor_errors = odrive.utils.format_errors(axis.motor)
+            report.append(f"Motor Errors:\n{motor_errors}")
         except Exception as e:
             report.append(f"Motor Error: Could not read - {e}")
         
         try:
-            encoder_errors = self.decode_errors(axis.encoder.error, ENCODER_ERROR)
-            report.append(f"Encoder Error(s): {', '.join(encoder_errors)}")
+            encoder_errors = odrive.utils.format_errors(axis.encoder)
+            report.append(f"Encoder Errors:\n{encoder_errors}")
         except Exception as e:
             report.append(f"Encoder Error: Could not read - {e}")
         
         try:
-            controller_errors = self.decode_errors(axis.controller.error, CONTROLLER_ERROR)
-            report.append(f"Controller Error(s): {', '.join(controller_errors)}")
+            controller_errors = odrive.utils.format_errors(axis.controller)
+            report.append(f"Controller Errors:\n{controller_errors}")
         except Exception as e:
             report.append(f"Controller Error: Could not read - {e}")
         
         # Optional subcomponents
         if hasattr(axis, "sensorless_estimator"):
             try:
-                report.append(f"Sensorless Estimator Error: {axis.sensorless_estimator.error}")
+                sensorless_errors = odrive.utils.format_errors(axis.sensorless_estimator)
+                report.append(f"Sensorless Estimator Errors:\n{sensorless_errors}")
             except:
                 pass
         
