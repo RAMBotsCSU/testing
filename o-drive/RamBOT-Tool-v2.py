@@ -19,6 +19,8 @@ import odrive
 import odrive.utils
 from odrive.device_manager import *
 import threading
+import asyncio
+from odrive.enums import AxisState
 
 
 class RamBOTToolQt(QMainWindow):
@@ -535,74 +537,110 @@ class Config_ODrive:
             print(message)
         
     def calibrate(self):
-        """Full calibration sequence"""
-        self.send_feedback("Setting constants...")
-        self.set_constants()
+        """Full calibration sequence - matches calibrate.py with subscription model"""
+        # Step 1: Erase configuration
+        self.send_feedback("Erasing configuration...")
+        try:
+            self.odrive.erase_configuration()
+        except Exception as e:
+            self.send_feedback(f"Erase completed (connection lost as expected)")
+        
+        # Reconnect after erase
+        self.send_feedback("Reconnecting after erase...")
+        time.sleep(2)
+        if not self.find_odrive():
+            self.send_feedback("Failed to reconnect")
+            return
+        
+        # Step 2: Configure GPIO and encoders
+        self.send_feedback("Configuring GPIO and encoders...")
+        self.configure_spi_encoders()
+        
+        # Step 3: Set motor parameters
+        self.send_feedback("Setting motor parameters...")
         self.define_constants()
         
-        self.send_feedback("Calibrating motors...")
-        self.calibrate_motor(self.ax0)
-        self.calibrate_motor(self.ax1)
+        # Step 4: Save and reconnect
+        self.send_feedback("Saving configuration...")
+        try:
+            self.odrive.save_configuration()
+        except Exception as e:
+            self.send_feedback(f"Save completed (connection may be lost temporarily)")
         
-        self.send_feedback("Calibrating encoders...")
-        self.calibrate_encoders(self.ax0)
-        self.calibrate_encoders(self.ax1)
+        time.sleep(2)
+        if not self.find_odrive():
+            self.send_feedback("Failed to reconnect")
+            return
         
-        self.send_feedback("Applying configuration...")
-        self.cleanup()
-        self.save_and_reboot()
+        # Step 5: Clear errors before calibration
+        self.odrive.clear_errors()
+        time.sleep(0.5)
+        
+        # Step 6: Calibrate motors and encoders
+        self.send_feedback("Calibrating axis0...")
+        self.calibrate_axis(self.odrive.axis0, "axis0")
+        
+        self.send_feedback("Calibrating axis1...")
+        self.calibrate_axis(self.odrive.axis1, "axis1")
+        
+        # Step 7: Clear errors and save
+        self.odrive.clear_errors()
+        self.send_feedback("Saving final configuration...")
+        try:
+            self.odrive.save_configuration()
+        except Exception as e:
+            self.send_feedback(f"Save completed")
         
         self.send_feedback("Calibration complete!")
 
-    def set_constants(self):
-        """Set axis and component references"""
-        self.ax0 = self.odrive.axis0
-        self.ax1 = self.odrive.axis1
-        self.mo0 = self.ax0.motor
-        self.mo1 = self.ax1.motor
-        self.enc0 = self.ax0.encoder
-        self.enc1 = self.ax1.encoder
-        self.contr0 = self.ax0.controller
-        self.contr1 = self.ax1.controller
+    def configure_spi_encoders(self):
+        """Configure SPI absolute encoders on GPIO pins 7 and 8"""
+        # Set GPIO pins to digital mode
+        self.odrive.config.gpio7_mode = 0
+        self.odrive.config.gpio8_mode = 0
+        
+        # Configure SPI chip select pins
+        self.odrive.axis0.encoder.config.abs_spi_cs_gpio_pin = 7
+        self.odrive.axis1.encoder.config.abs_spi_cs_gpio_pin = 8
     
     def define_constants(self):
-        """Define motor and controller constants"""
-        self.mo0.config.current_lim = 22.0
-        self.mo1.config.current_lim = 22.0
-        self.mo0.config.current_lim_margin = 9.0
-        self.mo1.config.current_lim_margin = 9.0
-        self.enc0.config.cpr = 16384                         
-        self.enc1.config.cpr = 16384
-        self.mo0.config.pole_pairs = 20
-        self.mo1.config.pole_pairs = 20
-        self.mo0.config.torque_constant = 0.092
-        self.mo1.config.torque_constant = 0.092
-        self.contr0.config.pos_gain = 60
-        self.contr1.config.pos_gain = 60
-        self.contr0.config.vel_gain = 0.1
-        self.contr1.config.vel_gain = 0.1
-        self.contr0.config.vel_integrator_gain = 0.2
-        self.contr1.config.vel_integrator_gain = 0.2
-        self.contr0.config.vel_limit = math.inf
-        self.contr1.config.vel_limit = math.inf
+        """Define motor and encoder constants - matches calibrate.py"""
+        for axis in [self.odrive.axis0, self.odrive.axis1]:
+            axis.motor.config.pole_pairs = 20
+            axis.encoder.config.mode = 257  # SPI mode
+            axis.encoder.config.cpr = 16384
 
-    def calibrate_motor(self, axis):
-        """Calibrate a motor"""
-        self.send_feedback(f"Calibrating motor on {axis}...")
-        axis.requested_state = 4
-        while not axis.motor.is_calibrated:
-            pass
+    def calibrate_axis(self, axis, axis_name):
+        """Calibrate motor and encoder for an axis - matches calibrate.py"""
+        time.sleep(1)
+        
+        # Motor calibration
+        self.send_feedback(f"{axis_name}: Starting motor calibration...")
+        axis.requested_state = AxisState.MOTOR_CALIBRATION
+        time.sleep(1)
+        
+        # Wait for motor calibration to complete (state returns to IDLE = 1)
+        while axis.current_state != 1:
+            time.sleep(2)
+            self.send_feedback(f"{axis_name}: Motor calibrating...")
+        
         axis.motor.config.pre_calibrated = True
-        self.send_feedback(f"Motor {axis} calibrated")
-
-    def calibrate_encoders(self, axis):
-        """Calibrate an encoder"""
-        self.send_feedback(f"Calibrating encoder on {axis}...")
-        axis.requested_state = 6
-        while not axis.encoder.is_ready:
-            pass
+        self.send_feedback(f"{axis_name}: Motor calibration complete")
+        
+        # Encoder calibration
+        self.send_feedback(f"{axis_name}: Starting encoder calibration...")
+        axis.requested_state = AxisState.ENCODER_OFFSET_CALIBRATION
+        time.sleep(1)
+        
+        # Wait for encoder calibration to complete (state returns to IDLE = 1)
+        while axis.current_state != 1:
+            time.sleep(2)
+            self.send_feedback(f"{axis_name}: Encoder calibrating...")
+        
         axis.encoder.config.pre_calibrated = True
-        self.send_feedback(f"Encoder {axis} calibrated")
+        self.send_feedback(f"{axis_name}: Encoder calibration complete")
+        
+        time.sleep(1)
 
     def on_found(self, dev):
         """Callback when ODrive device is found"""
@@ -633,9 +671,24 @@ class Config_ODrive:
         try:
             self.send_feedback("Searching for ODrive...")
             
+            # Try simple connection first (works better on Windows with driver issues)
+            try:
+                self.send_feedback("Attempting direct connection...")
+                self.odrive = odrive.find_any(timeout=3)
+                if self.odrive:
+                    self._is_connected = True
+                    self.send_feedback("ODrive connected successfully (direct method)")
+                    return self.odrive
+            except Exception as direct_error:
+                self.send_feedback(f"Direct connection failed: {direct_error}")
+            
+            # Fallback to subscription method
+            self.send_feedback("Trying subscription method...")
+            
             # Create subscription if not already created
             if self.subscription is None:
                 self.subscription = Subscription(
+                    debug_name="RamBOT-Tool",
                     on_found=self.on_found,
                     on_lost=self.on_lost,
                     on_connected=self.on_connected,
@@ -653,20 +706,23 @@ class Config_ODrive:
                 self.send_feedback("ODrive connected successfully")
                 return self.odrive
             else:
-                self.send_feedback("Timeout waiting for ODrive - will keep searching")
+                self.send_feedback("Connection failed - Check USB connection and drivers")
+                self.send_feedback("Windows users: Install WinUSB driver with Zadig")
                 return None
                 
         except Exception as e:
             self.send_feedback(f"Error finding ODrive: {e}")
             print(f"Error finding ODrive: {e}")
+            self.send_feedback("Tip: On Windows, use Zadig to install WinUSB driver")
             return None
 
     def cleanup(self):
-        """Apply final configuration settings"""
+        """Apply final configuration settings (optional - not in calibrate.py)"""
+        # This method is kept for backwards compatibility but not used in calibration
         if self.odrive:
             self.odrive.config.enable_brake_resistor = True
-            self.ax0.config.startup_closed_loop_control = True
-            self.ax1.config.startup_closed_loop_control = True
+            self.odrive.axis0.config.startup_closed_loop_control = True
+            self.odrive.axis1.config.startup_closed_loop_control = True
     
     def detach(self):
         """Detach from ODrive without stopping motors"""
@@ -696,34 +752,49 @@ class Config_ODrive:
         report = []
         report.append(f"\n--- {axis_name.upper()} DIAGNOSTIC REPORT ---")
         
-        try:
-            axis_errors = odrive.utils.format_errors(axis)
-            report.append(f"Axis Errors:\n{axis_errors}")
-        except Exception as e:
-            report.append(f"Axis Error: Could not read - {e}")
+        # Helper function to safely call format_errors (handles both sync and async)
+        def safe_format_errors(obj, category):
+            try:
+                result = odrive.utils.format_errors(obj)
+                # Check if it's a coroutine (async)
+                if asyncio.iscoroutine(result):
+                    try:
+                        # Try to run in existing event loop
+                        loop = asyncio.get_event_loop()
+                        if loop.is_running():
+                            # Can't use run_until_complete in running loop, create new loop
+                            import concurrent.futures
+                            with concurrent.futures.ThreadPoolExecutor() as executor:
+                                future = executor.submit(asyncio.run, result)
+                                return future.result(timeout=2)
+                        else:
+                            return loop.run_until_complete(result)
+                    except:
+                        # Fallback: create new loop
+                        return asyncio.run(result)
+                else:
+                    # Synchronous result
+                    return result
+            except Exception as e:
+                return f"{category} Error: Could not read - {e}"
         
-        try:
-            motor_errors = odrive.utils.format_errors(axis.motor)
-            report.append(f"Motor Errors:\n{motor_errors}")
-        except Exception as e:
-            report.append(f"Motor Error: Could not read - {e}")
+        # Get errors for each component
+        axis_errors = safe_format_errors(axis, "Axis")
+        report.append(f"Axis Errors:\n{axis_errors}")
         
-        try:
-            encoder_errors = odrive.utils.format_errors(axis.encoder)
-            report.append(f"Encoder Errors:\n{encoder_errors}")
-        except Exception as e:
-            report.append(f"Encoder Error: Could not read - {e}")
+        motor_errors = safe_format_errors(axis.motor, "Motor")
+        report.append(f"Motor Errors:\n{motor_errors}")
         
-        try:
-            controller_errors = odrive.utils.format_errors(axis.controller)
-            report.append(f"Controller Errors:\n{controller_errors}")
-        except Exception as e:
-            report.append(f"Controller Error: Could not read - {e}")
+        encoder_errors = safe_format_errors(axis.encoder, "Encoder")
+        report.append(f"Encoder Errors:\n{encoder_errors}")
+        
+        controller_errors = safe_format_errors(axis.controller, "Controller")
+        report.append(f"Controller Errors:\n{controller_errors}")
         
         # Optional subcomponents
         if hasattr(axis, "sensorless_estimator"):
             try:
-                sensorless_errors = odrive.utils.format_errors(axis.sensorless_estimator)
+                sensorless_errors = safe_format_errors(axis.sensorless_estimator, "Sensorless")
                 report.append(f"Sensorless Estimator Errors:\n{sensorless_errors}")
             except:
                 pass

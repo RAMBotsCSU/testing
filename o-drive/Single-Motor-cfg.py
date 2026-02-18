@@ -35,7 +35,7 @@ mo.config.torque_constant = 0.025  # 8.27/90
 contr.config.pos_gain = 60
 contr.config.vel_gain = 0.1
 contr.config.vel_integrator_gain = 0.2
-contr.config.vel_limit = math.inf  # Unlimited (careful!)
+contr.config.vel_limit = math.inf 
 
 # Encoder SPI settings
 dev0.config.gpio7_mode = 0  # digital

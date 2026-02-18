@@ -3,6 +3,8 @@ from time import sleep
 import odrive
 from odrive.enums import AxisState, MotorError, EncoderError
 
+from fibre.libfibre import ObjectLostError
+
 def connect():
     while True:
         try:
@@ -20,8 +22,8 @@ odr = connect()
 
 try:
     odr.erase_configuration()
-except Exception as e:
-    print(f"Error during erase_configuration: {type(e).__name__} - {e}")
+except ObjectLostError:
+    pass
 
 odr = connect()
 
@@ -40,8 +42,8 @@ for i, axis in enumerate([odr.axis0, odr.axis1]):
 
 try:
     odr.save_configuration()
-except Exception as e:
-    print(f"Error during save_configuration: {type(e).__name__} - {e}")
+except ObjectLostError:
+    pass
 
 odr = connect()
 
@@ -56,7 +58,7 @@ for i, axis in enumerate([odr.axis0, odr.axis1]):
     sleep(1)
     while(axis.current_state != 1):
         sleep(2)
-        print(f"motor calibrating (err code: {axis.motor.error}, err name: {MotorError(axis.motor.error).name})")
+        print(f"motor calibrating (err: {MotorError(axis.motor.error).name})")
 
     axis.motor.config.pre_calibrated = True
 
@@ -64,7 +66,7 @@ for i, axis in enumerate([odr.axis0, odr.axis1]):
     sleep(1)
     while(axis.current_state != 1):
         sleep(2)
-        print(f"encoder calibrating (err code: {axis.encoder.error}, err name: {EncoderError(axis.encoder.error).name})")
+        print(f"encoder calibrating (err: {EncoderError(axis.encoder.error).name})")
 
     axis.encoder.config.pre_calibrated = True
 
@@ -75,7 +77,7 @@ odr.clear_errors()
 
 try:
     odr.save_configuration()
-except Exception as e:
-    print(f"Error during save_configuration: {type(e).__name__} - {e}")
+except ObjectLostError:
+    pass
 
 print("Done!")
