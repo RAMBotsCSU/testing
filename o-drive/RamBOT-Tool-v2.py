@@ -19,8 +19,55 @@ import odrive
 import odrive.utils
 from odrive.device_manager import *
 import threading
-import asyncio
 from odrive.enums import AxisState
+
+# Common ODrive error code mappings
+AXIS_ERROR_CODES = {
+    0x00: "No Error",
+    0x01: "UNDERCURRENT_FAULT",
+    0x02: "OVERCURRENT_FAULT",
+    0x04: "MOTOR_OVERSPEED_FAULT",
+    0x08: "MOTOR_PHASE_RESISTANCE_OUT_OF_RANGE",
+    0x10: "MOTOR_PHASE_INDUCTANCE_OUT_OF_RANGE",
+    0x20: "ADC_FAILED",
+    0x40: "DRV_FAULT",
+    0x80: "CONTROL_DEADLINE_MISSED",
+    0x100: "NOT_IDLE_FOR_CALIBRATION",
+    0x200: "CALIBRATION_TIMEOUT",
+    0x400: "MOTOR_FAILED",
+}
+
+MOTOR_ERROR_CODES = {
+    0x00: "No Error",
+    0x01: "PHASE_RESISTANCE_OUT_OF_RANGE",
+    0x02: "PHASE_INDUCTANCE_OUT_OF_RANGE",
+    0x04: "ADC_FAILED",
+    0x08: "DRV_FAULT",
+    0x10: "CONTROL_DEADLINE_MISSED",
+    0x20: "NOT_CALIBRATED",
+    0x40: "ENCODER_ERROR",
+}
+
+ENCODER_ERROR_CODES = {
+    0x00: "No Error",
+    0x01: "UNSTABLE_GAIN",
+    0x02: "CPR_OUT_OF_RANGE",
+    0x04: "NO_RESPONSE",
+    0x08: "TIMEOUT",
+    0x10: "HALL_EFFECT_BAD",
+    0x20: "INDEX_NOT_FOUND",
+    0x40: "ABS_SPI_TIMEOUT",
+    0x80: "ABS_SPI_COM_FAIL",
+}
+
+CONTROLLER_ERROR_CODES = {
+    0x00: "No Error",
+    0x01: "OVERSPEED",
+    0x02: "INVALID_INPUT_MODE",
+    0x04: "UNSTABLE_GAIN",
+    0x08: "INVALID_MIRROR_AXIS",
+    0x10: "HOMING_INCOMPLETE",
+}
 
 
 class RamBOTToolQt(QMainWindow):
@@ -42,6 +89,8 @@ class RamBOTToolQt(QMainWindow):
         self.odrive_config = odrive_config
         # Set callback for feedback
         self.odrive_config.set_feedback_callback(self.update_status)
+        # Set callback for GUI connection status updates
+        self.odrive_config.update_gui_connection = self.update_connection_status
         
     def setup_main_window(self):
         """Main Window Setup"""
@@ -321,6 +370,20 @@ class RamBOTToolQt(QMainWindow):
         self.statusBar.showMessage(message)
         QApplication.processEvents()  # Force UI update
     
+    def update_connection_status(self, connected):
+        """Update GUI connection status indicators"""
+        if connected:
+            self.connection_status.setText("Connected")
+            self.connection_status.setStyleSheet("color: #51cf66;")
+            self.connect_btn.setText("Reconnect")
+            self.calibrate_btn.setEnabled(True)
+        else:
+            self.connection_status.setText("Disconnected")
+            self.connection_status.setStyleSheet("color: #ff6b6b;")
+            self.connect_btn.setText("Connect to ODrive")
+            self.calibrate_btn.setEnabled(False)
+        QApplication.processEvents()  # Force UI update
+    
     def connect_odrive(self):
         """Manually connect to ODrive"""
         self.update_status("Connecting to ODrive...")
@@ -330,16 +393,10 @@ class RamBOTToolQt(QMainWindow):
         
         try:
             if self.odrive_config.find_odrive():
-                self.connection_status.setText("Connected")
-                self.connection_status.setStyleSheet("color: #51cf66;")
-                self.connect_btn.setText("Reconnect")
-                self.calibrate_btn.setEnabled(True)
+                self.update_connection_status(True)
                 self.update_status("ODrive connected successfully")
             else:
-                self.connection_status.setText("Connection Failed")
-                self.connection_status.setStyleSheet("color: #ff6b6b;")
-                self.connect_btn.setText("Retry Connection")
-                self.calibrate_btn.setEnabled(False)
+                self.update_connection_status(False)
                 self.update_status("Failed to connect to ODrive")
         except Exception as e:
             self.connection_status.setText("Connection Error")
@@ -535,6 +592,19 @@ class Config_ODrive:
             self.feedback_callback(message)
         else:
             print(message)
+    
+    def get_error_name(self, error_code, error_type="axis"):
+        """Get human-readable error name from error code"""
+        if error_type == "axis":
+            return AXIS_ERROR_CODES.get(error_code, f"Unknown Error Code 0x{error_code:04X}")
+        elif error_type == "motor":
+            return MOTOR_ERROR_CODES.get(error_code, f"Unknown Error Code 0x{error_code:04X}")
+        elif error_type == "encoder":
+            return ENCODER_ERROR_CODES.get(error_code, f"Unknown Error Code 0x{error_code:04X}")
+        elif error_type == "controller":
+            return CONTROLLER_ERROR_CODES.get(error_code, f"Unknown Error Code 0x{error_code:04X}")
+        else:
+            return f"Unknown Error Code 0x{error_code:04X}"
         
     def calibrate(self):
         """Full calibration sequence - matches calibrate.py with subscription model"""
@@ -589,9 +659,17 @@ class Config_ODrive:
         try:
             self.odrive.save_configuration()
         except Exception as e:
-            self.send_feedback(f"Save completed")
+            self.send_feedback(f"Save completed (connection will be lost temporarily)")
         
-        self.send_feedback("Calibration complete!")
+        # Step 8: Wait for device to reboot and reconnect
+        self.send_feedback("Waiting for ODrive to reboot...")
+        time.sleep(3)
+        
+        self.send_feedback("Reconnecting after reboot...")
+        if self.find_odrive():
+            self.send_feedback("Calibration complete! ODrive reconnected successfully.")
+        else:
+            self.send_feedback("Calibration complete but failed to reconnect. Click 'Connect to ODrive' to reconnect.")
 
     def configure_spi_encoders(self):
         """Configure SPI absolute encoders on GPIO pins 7 and 8"""
@@ -659,12 +737,20 @@ class Config_ODrive:
         self.odrive = dev
         serial = dev.info.serial_number if hasattr(dev, 'info') else 'unknown'
         self.send_feedback(f"Connected to ODrive (S/N: {serial})")
+        
+        # Update GUI connection status if callback exists
+        if hasattr(self, 'update_gui_connection'):
+            self.update_gui_connection(True)
     
     def on_disconnected(self, dev):
         """Callback when disconnected from ODrive"""
         self._is_connected = False
         self.odrive = None
         self.send_feedback("ODrive disconnected - will auto-reconnect")
+        
+        # Update GUI connection status if callback exists
+        if hasattr(self, 'update_gui_connection'):
+            self.update_gui_connection(False)
     
     def find_odrive(self):
         """Find and connect to ODrive using subscription"""
@@ -752,53 +838,75 @@ class Config_ODrive:
         report = []
         report.append(f"\n--- {axis_name.upper()} DIAGNOSTIC REPORT ---")
         
-        # Helper function to safely call format_errors (handles both sync and async)
-        def safe_format_errors(obj, category):
-            try:
-                result = odrive.utils.format_errors(obj)
-                # Check if it's a coroutine (async)
-                if asyncio.iscoroutine(result):
-                    try:
-                        # Try to run in existing event loop
-                        loop = asyncio.get_event_loop()
-                        if loop.is_running():
-                            # Can't use run_until_complete in running loop, create new loop
-                            import concurrent.futures
-                            with concurrent.futures.ThreadPoolExecutor() as executor:
-                                future = executor.submit(asyncio.run, result)
-                                return future.result(timeout=2)
-                        else:
-                            return loop.run_until_complete(result)
-                    except:
-                        # Fallback: create new loop
-                        return asyncio.run(result)
-                else:
-                    # Synchronous result
-                    return result
-            except Exception as e:
-                return f"{category} Error: Could not read - {e}"
+        # Read error codes directly
+        try:
+            axis_error = axis.error
+            error_name = self.get_error_name(axis_error, "axis")
+            report.append(f"Axis Error: {error_name} (0x{axis_error:04X})")
+            if axis_error == 0:
+                report.append("  Status: OK")
+            else:
+                report.append(f"  Status: ERROR")
+        except Exception as e:
+            report.append(f"Axis Error: Could not read - {e}")
         
-        # Get errors for each component
-        axis_errors = safe_format_errors(axis, "Axis")
-        report.append(f"Axis Errors:\n{axis_errors}")
+        try:
+            motor_error = axis.motor.error
+            error_name = self.get_error_name(motor_error, "motor")
+            report.append(f"\nMotor Error: {error_name} (0x{motor_error:04X})")
+            if motor_error == 0:
+                report.append("  Status: OK")
+            else:
+                report.append(f"  Status: ERROR")
+        except Exception as e:
+            report.append(f"\nMotor Error: Could not read - {e}")
         
-        motor_errors = safe_format_errors(axis.motor, "Motor")
-        report.append(f"Motor Errors:\n{motor_errors}")
+        try:
+            encoder_error = axis.encoder.error
+            error_name = self.get_error_name(encoder_error, "encoder")
+            report.append(f"\nEncoder Error: {error_name} (0x{encoder_error:04X})")
+            if encoder_error == 0:
+                report.append("  Status: OK")
+            else:
+                report.append(f"  Status: ERROR")
+        except Exception as e:
+            report.append(f"\nEncoder Error: Could not read - {e}")
         
-        encoder_errors = safe_format_errors(axis.encoder, "Encoder")
-        report.append(f"Encoder Errors:\n{encoder_errors}")
+        try:
+            controller_error = axis.controller.error
+            error_name = self.get_error_name(controller_error, "controller")
+            report.append(f"\nController Error: {error_name} (0x{controller_error:04X})")
+            if controller_error == 0:
+                report.append("  Status: OK")
+            else:
+                report.append(f"  Status: ERROR")
+        except Exception as e:
+            report.append(f"\nController Error: Could not read - {e}")
         
-        controller_errors = safe_format_errors(axis.controller, "Controller")
-        report.append(f"Controller Errors:\n{controller_errors}")
+        # Current state
+        try:
+            current_state = axis.current_state
+            state_name = {0: "UNDEFINED", 1: "IDLE", 2: "STARTUP_SEQUENCE", 4: "MOTOR_CALIBRATION", 
+                         6: "ENCODER_OFFSET_CALIBRATION", 8: "CLOSED_LOOP_CONTROL"}.get(current_state, f"Unknown ({current_state})")
+            report.append(f"\nCurrent State: {state_name}")
+        except Exception as e:
+            report.append(f"\nCurrent State: Could not read - {e}")
         
-        # Optional subcomponents
-        if hasattr(axis, "sensorless_estimator"):
-            try:
-                sensorless_errors = safe_format_errors(axis.sensorless_estimator, "Sensorless")
-                report.append(f"Sensorless Estimator Errors:\n{sensorless_errors}")
-            except:
-                pass
+        # Motor calibration status
+        try:
+            is_calibrated = axis.motor.is_calibrated
+            report.append(f"Motor Calibrated: {is_calibrated}")
+        except Exception as e:
+            report.append(f"Motor Calibrated: Could not read - {e}")
         
+        # Encoder status
+        try:
+            is_ready = axis.encoder.is_ready
+            report.append(f"Encoder Ready: {is_ready}")
+        except Exception as e:
+            report.append(f"Encoder Ready: Could not read - {e}")
+        
+        # Optional: DRV fault
         if hasattr(axis.motor, "drv_fault"):
             try:
                 drv = axis.motor.drv_fault
@@ -826,11 +934,12 @@ class Config_ODrive:
         except Exception as e:
             report.append(f"Firmware Version: Could not read - {e}")
         
-        # System error
+        # Serial number
         try:
-            report.append(f"System Error: {self.odrive.system_stats.error}")
+            serial = self.odrive.serial_number if hasattr(self.odrive, 'serial_number') else 'N/A'
+            report.append(f"Serial Number: {serial}")
         except Exception as e:
-            report.append(f"System Error: Could not read - {e}")
+            report.append(f"Serial Number: Could not read - {e}")
         
         # Voltage
         try:
